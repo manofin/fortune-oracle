@@ -1,0 +1,150 @@
+# Fortune Oracle 모바일 웹
+
+기존 사주 계산 엔진을 사용하는 Python/Node 웹이다. 특정 운영 서비스의 배포 상태를 전제로 하지 않는다. [설치·검증·배포 준비](../docs/PUBLIC_SETUP.md)와 [개인정보·비밀 설정](../docs/SECURITY.md)을 함께 확인한다.
+
+## 실행
+
+Python 3.14, Node.js와 npm이 필요하다. 저장소 루트에서 실행한다.
+
+```bash
+python3.14 -m venv .venv
+.venv/bin/python -m pip install -r web/requirements.txt
+npm ci --prefix plugins/hermes_ext/fortune_oracle/scripts
+.venv/bin/python web/preview.py
+```
+
+Node 계산 브리지와 `lunar-javascript`는 잠금 파일에서 복원한다. 기본 웹은 Hermes gateway·Telegram SDK·운영 vendor 없이 실행한다. `node_modules`, venv와 운영 DB는 저장소에 포함하지 않는다.
+
+preview는 `127.0.0.1:8765`만 열고 임시 DB와 비밀키를 사용한다. 종료하면 임시 데이터가 삭제된다. 원격 서버의 loopback 주소는 휴대폰에서 열리는 공개 주소가 아니다. 공개 서비스에는 미리보기 서버를 사용하지 않는다.
+
+## 서비스 설정
+
+| 환경변수 | 용도 |
+| --- | --- |
+| `FORTUNE_WEB_STORE` | 웹 전용 SQLite의 절대 경로. 기존 Telegram store와 분리한다. |
+| `FORTUNE_WEB_SECRET` | 32자 이상 무작위 비밀값. 테스트·다른 앱과 공유하지 않는다. |
+| `FORTUNE_WEB_VERSION` | 배포 소스 식별자. |
+| `FORTUNE_WEB_PUBLIC_ORIGIN` | 정확한 HTTPS origin. 경로·사용자정보는 허용하지 않는다. |
+
+실제 값은 소스 밖의 private `runtime.env`에 두며 비밀값을 Git·명령 인자·셸 기록·로그에 넣지 않는다. `.env.example`은 값 없는 목록이며 자동 로드되지 않는다. [생성 예시](../docs/PUBLIC_SETUP.md)는 값을 화면에 출력하지 않는다.
+
+`web/deploy/fortune-oracle-web.service`는 별도 user systemd 서비스의 템플릿이다. `@RUNTIME@`, `@NODE_DIR@`, `EnvironmentFile`, DB 쓰기 허용 경로를 자신의 설치에 맞춰야 한다. 기존 gateway 환경을 복사하거나 상속하지 않는다. 템플릿을 제공한다는 사실은 서비스 설치·재시작·외부 노출을 수행했다는 뜻이 아니다.
+
+운영은 HTTPS 앞단과 loopback backend를 사용한다. 기본 쿠키는 Secure/HttpOnly/SameSite=Lax다. CSRF Origin을 설정한 public origin과 비교하며 클라이언트 X-Forwarded-*는 신뢰하지 않는다. Gunicorn은 1 worker와 여러 threads로 실행하고 `--preload`는 사용하지 않는다. 앱 시작 이후 만료 정리 스레드가 실행되어야 한다. 계산 동시 실행은 최대 4개다.
+
+현재 프록시 뒤의 120회/분 요청 제한은 같은 backend IP가 공유한다. 다중 사용자 부하·대규모 공개 운영 검증은 별도 과제다. Python/Node subprocess를 실행할 수 없는 Worker 전용 호스팅에는 현재 서버를 그대로 올릴 수 없다.
+
+## 기능과 개인정보 경계
+
+- 입력 폼 → 프로필 저장 → 오늘·내일·월간 흐름을 제공한다. 등록 성공과 계산 성공을 구분한다.
+- 계산된 간지·경험적 해석 지수·비계산 상태를 구분한다. 시각 미상이나 절기 경계일은 엔진이 산출한 범위만 표시한다.
+- 웹 전용 SQLite와 서버 발급 브라우저 토큰으로 자료를 격리한다. 원문 쿠키는 DB에 저장하지 않으며 클라이언트가 소유자 ID를 선택할 수 없다.
+- 현재 브라우저 세션은 90일이다. 계정·기기 간 복원 기능이 없으며 쿠키를 지우면 기존 정보에 접근할 수 없다. 등록 전에 이를 안내한다.
+- 삭제 시 프로필과 세션 행을 제거하고 이전 쿠키의 늦은 저장이 이를 되살리지 않게 한다. 만료 행은 시작·조회·신규 세션 시와 서버 실행 중 60초마다 정리한다.
+- SQLite secure_delete가 파일시스템 스냅샷·호스팅 백업까지 지운다는 보장은 없다. 백업 보존·삭제 정책은 운영자가 별도로 정한다.
+- 궁합은 내 세션 프로필과 요청의 상대 정보를 즉석 비교한다. 상대 이름·사용자 ID를 받지 않으며 상대 출생정보나 풀이 본문을 DB에 저장하지 않는다. 입력칸은 요청 후 비운다. 시각 미상은 부분 비교로 표시하고 관계 성공 확률은 만들지 않는다.
+- D-day는 내 시간대의 오늘부터 365일 뒤까지다. 기존 일일 산식을 사용하고 general/exam/meeting 선택은 성찰 질문만 바꾼다. 시험·발표·만남의 성공률을 제공하지 않는다.
+- 개인정보 응답은 no-store, 공개 정적 파일은 ETag 재검증을 허용한다. 외부 폰트·분석 SDK·모델 호출은 없다.
+
+## 공유
+
+오늘·내일·D-day 카드는 브라우저 Canvas로 만드는 1080×1350 PNG다. 날짜·키워드·해석 지수만 담고 이름·출생 원문·팔자는 넣지 않는다. 엔진이 키워드를 더 반환해도 카드에는 기존 순서의 첫 3개만 표시하며 상세 계산은 바꾸지 않는다. 세 키워드는 같은 영역·서체 크기·색으로 묶고 날짜와 한계 설명은 보조정보로 둔다.
+
+미리보기에서 앱 공유·PNG 다운로드·홈 링크 복사를 제공한다. 파일 공유가 없는 브라우저에서는 저장을 주 동작으로 올린다. 휴대폰 버튼 높이는 44px 이상이다. 공유 내용도 출생정보에서 파생된 해석이므로 익명 정보라고 부르지 않는다. 파일 공유를 누르면 선택한 앱에 PNG가 전달될 수 있음을 안내한다.
+
+공통 OG 소개 이미지와 canonical은 `FORTUNE_WEB_PUBLIC_ORIGIN`의 절대 URL을 사용한다. JavaScript 없는 크롤러도 제목·설명·1200×630 PNG를 읽을 수 있다. 개인 이름·출생정보·개인 결과는 넣지 않으며 HTML/이미지 조회 자체로 쿠키·프로필·계측 행을 만들지 않는다. PNG는 체크인된 정적 파일이고 운영 요청마다 생성하지 않는다.
+
+홈 링크 복사는 `/?from=card` 고정 표식만 만든다. 기존 query/hash·개인정보를 복사하지 않는다. 개인 결과 URL·개인 OG·친구 초대 세션·외부 공유 SDK는 없다. 이미지 공유와 별도 링크 복사는 독립 동작이다. 실제 모바일 OS의 앱 전달·게시 여부·공유 앱의 OG 캐시는 플랫폼별로 별도 확인해야 한다.
+
+## 계측 계약
+
+`POST /api/events`는 유효한 세션·CSRF·Origin 검사를 거치고 허용된 `event`/`view` 라벨만 받는다. 자유 문자열·URL·목표 날짜·이름·출생정보·풀이·궁합 본문을 받지 않는다. 서버 이벤트는 클라이언트가 보낼 수 없다. 집계 오류가 계산·등록을 막지 않는 best-effort 방식이다.
+
+집계 단위는 **KST 날짜 × 브라우저 세션 × 이벤트 × 화면당 최대 1회**다. 사람 수·클릭 수가 아니다. 쿠키 삭제·다른 기기는 다른 세션이다. 중복 제거 영수증에는 세션 연결 해시 키가 있으며 삭제·만료 시 제거한다. 식별자 없는 날짜별 합계는 남는다. 해시를 익명화 보장으로 표현하지 않는다.
+
+| 이벤트 | 의미와 한계 |
+| --- | --- |
+| `visit` | 서버 세션 조회/생성. 최초 유입 코호트가 아니다. |
+| `shared_link_visit` / `card` | 고정 표식 링크로 방문한 세션. 게시·발신자·SNS·이미지 열람은 알 수 없다. |
+| `form_started`, `profile_saved` | 입력 첫 변경과 저장 성공. 계산 성공과 구분한다. |
+| `reading_viewed` | today/tomorrow/month/dday/compat 결과 표시. |
+| `share_card_opened` | 미리보기 열기. 이미지 공유 완료가 아니다. |
+| `share_requested`, `share_handoff` | 공유 요청과 Web Share Promise 성공. 실제 게시 완료는 아니다. |
+| `share_cancelled`, `share_failed` | 취소/실패. 같은 세션의 성공과 함께 집계될 수 있다. |
+| `share_download_requested`, `share_link_copied` | 다운로드 요청과 링크 복사. 저장·붙여넣기·유입 완료는 알 수 없다. |
+
+입력 완료 비율 `profile_saved / form_started`와 같은 화면의 카드 진입 비율 `share_card_opened / reading_viewed`는 일별 세션 비율이다. 분모 0이면 산출하지 않는다. 동일 유입 코호트의 전환율이 아니며 여러 공유 동작을 더해 공유율로 표시하지 않는다. D1/D7 유지율·공개 게시율·추천인 전환·바이럴 계수·결제 전환은 산출하지 않는다.
+
+`?from=card`는 메모리에서 판별 후 주소창에서 제거한다. 알 수 없는 표식이나 중복 `from`은 무시하고 원문 URL·referrer·발신자 ID를 통계 API에 보내지 않는다. 처리 전 페이지 오류로 집계가 누락될 수 있고 표식은 위조 가능하다. PNG만 전달하면 링크 유입으로 추적되지 않는다. 별도 localStorage/sessionStorage는 사용하지 않는다.
+
+공개 통계 API는 없다. 운영자가 승인한 DB 사본에서 다음 읽기 전용 명령으로 식별자 없는 날짜별 합계만 확인할 수 있다. 운영 DB를 테스트용으로 가져오지 않는다.
+
+```bash
+.venv/bin/python web/metrics_report.py --database /path/to/approved-copy.sqlite3
+```
+
+## 상품 샘플·관심 표시
+
+`/samples`는 가상 성인 캐릭터의 편집 예시, 목차, 가설 가격을 보여 준다. 실제 출생정보를 계산한 결과가 아니며 사주·자미두수·서양·베딕·외부 모델을 호출하지 않는다. 샘플 열람에 출생정보나 연락처는 필요하지 않다.
+
+| 버전 라벨 | 상품 | 가설 가격 |
+| --- | --- | --- |
+| `self_manual_v1` | 내 사용설명서 | 9,900원 |
+| `conversation_guide_v1` | 싸우기 전에 읽는 대화집 | 12,900원 |
+| `four_perspectives_v1` | 네 관점 교차 리포트 | 19,900원 |
+
+가격은 수요·시장조사 결과가 아닌 실험 가설이다. 결제·예약·출시 알림은 없고 관심 표시도 구매 확정이 아니다. 실제 판매에는 결제·구매 복구와 별도 권한 계약이 필요하다. 네 체계 실제 리포트에는 베딕 라이선스 적용 방식 해결과 계산·해석 검수가 선행돼야 한다.
+
+정적 HTML 조회는 세션·집계를 만들지 않는다. 샘플을 열면 브라우저 세션을 준비하고 `product_sample_viewed`를 기록한다. 완독 증거는 아니다. `product_sample_interest`는 같은 날 같은 상품의 열람 영수증과 만 19세 이상 자기확인 후 허용한다. 자기확인은 나이 검증이 아니며 생년월일을 추가 수집하지 않는다.
+
+두 이벤트는 위 세 버전 라벨만 허용한다. 같은 세션·KST 날짜·상품별로 중복 제거하며 내 프로필은 필요하지 않다. 열람 없이 관심 전송은 409, 세션 없음·만료는 401, 저장 실패는 503이다. 저장 또는 당일 중복 확인에 성공해야 `202 {"ok":true}`를 반환한다. 기록 삭제는 같은 브라우저의 출생정보가 있으면 함께 지우므로 확인 화면에서 설명한다. 가격·내용을 바꾸는 실험은 새 버전 라벨을 사용한다.
+
+무료 풀이 후 여섯 테마의 `premium_interest`도 제공한다. 이 경로는 기존 내 프로필 요구를 유지하고 추가 연락처를 수집하지 않는다. 세션·KST 날짜·테마별 집계이며 새 상품 샘플 관심과 합치지 않는다. 서버 확인 202 이후에만 완료를 표시하고 503·401·8초 확인 제한에는 재시도와 늦은 응답 차단을 제공한다. 관심/열람 비율은 탐색 지표이며 사람 수·구매 전환·알림 구독자 수가 아니다.
+
+## 추가 API
+
+`POST /api/compat`와 `POST /api/readings/date`는 유효 세션·내 프로필·CSRF가 필요하다. 다른 사용자 ID로 프로필을 선택할 수 없다. 입력 오류 400, 세션 없음 401, CSRF/Origin 오류 403, 내 프로필 없음 409, 계산 실패는 `computed:false`와 503이다. 실패 시 가짜 점수를 반환하지 않는다.
+
+- 궁합 입력 구조는 `{"partner":{"birth_date":"1990-01-01","birth_time":"","timezone":"Asia/Seoul"}}`다. 가상 예시이며 상대 시간대는 내 시간대와 독립적이다. 간지·오행 응답도 파생 개인정보다.
+- D-day는 ISO 날짜 `date`와 general/exam/meeting의 `scenario`를 받는다. 세션/저장 응답의 `reading_window`를 기준으로 날짜를 선택한다. 이 필드 없는 이전 응답에서는 D-day를 비활성화하고 기존 일일 풀이를 유지한다.
+
+## 통합 성향과 출생 위치 — 기본 비활성
+
+| 환경변수 | 정확히 `1`일 때 허용하는 기능 |
+| --- | --- |
+| `FORTUNE_WEB_INTEGRATED_ENABLED` | 통합 탭·결과 이미지·`GET /api/readings/integrated` |
+| `FORTUNE_WEB_BIRTH_LOCATION_ENABLED` | 선택 출생 도시·위도·경도 입력·저장 |
+
+설정은 앱 생성 시 읽고 서로 독립적이다. 빈 값·`0`·`false`는 활성화하지 않는다. Python 앱 설정 주입 시 각각 `INTEGRATED_ENABLED=True`, `BIRTH_LOCATION_ENABLED=True`를 명시한다. 켜면 해당 앱의 등록 사용자에게 제공되며 결제·유료 권한 검사가 아니다.
+
+통합 비활성 시 세션 유무와 관계없이 API는 404이고 엔진을 호출하지 않는다. 비활성 화면 계측도 거절한다. 위치 비활성 시 위치 키를 포함한 저장은 빈 문자열·null도 거절한다. 기존 위치를 조회·일반 수정으로 자동 삭제하지는 않으며 명시적 정보 삭제는 위치와 세션 연결 기록까지 제거한다.
+
+위치 수집을 켠 경우 도시명은 선택 입력 80자 이내, 좌표는 유한한 숫자 쌍(위도 -90~90, 경도 -180~180)이다. 도시에서 좌표를 추정하지 않는다. 수집 목적과 개인정보 안내를 정리한 뒤 제공해야 한다. 시간대는 한국·일본·미국 동부/서부·영국의 한국어 이름을 IANA 식별자로 정규화하고 그 외 지역은 IANA 직접 입력을 유지한다.
+
+통합 성향은 사주·자미두수·서양·베딕의 출생 성향을 규칙으로 연결하고 문장별 계산 근거를 제공한다. 계산 불가·부분 계산·실제 사용 여부를 구분하고 기간별 예측이나 적중률을 만들지 않는다. 파생 자료를 익명 정보라고 부르지 않는다. 외부 모델 호출은 없다.
+
+선택 환경은 `web/requirements-integrated.txt`다. **pyswisseph 바인딩과 Swiss Ephemeris의 라이선스 적용 방식·상용 이용은 미해결**이며 Professional 라이선스가 바인딩까지 재허가한다고 가정하지 않는다. 코드 공개, 기능의 공개 서비스 활성화, 실제 판매를 별도 결정으로 다룬다. [의존성 범위](../docs/PUBLIC_SETUP.md)를 먼저 확인한다.
+
+로컬 임시 미리보기에서 선택 기능을 시험하는 예시다. 운영 활성화 지시가 아니다.
+
+```bash
+FORTUNE_WEB_INTEGRATED_ENABLED=1 FORTUNE_WEB_BIRTH_LOCATION_ENABLED=1 \
+  .venv/bin/python -B web/preview.py --port 8767
+```
+
+## 검증과 정적 자료
+
+[개발 환경 설치](../docs/PUBLIC_SETUP.md) 후 공개 후보본에 남아 있는 테스트만 실행한다. 비공개 운영 자료·개인 기준 연구 fixture·그에 의존하는 회귀 테스트는 이 후보본에서 제외했다. 원본의 전체 회귀 범위와 동일하다고 주장하지 않는다.
+
+기본 HTTP·계측·궁합/D-day 검증 예시:
+
+```bash
+.venv/bin/python scripts/run_fortune_tests.py tests/test_fortune_oracle_web.py \
+  tests/test_fortune_oracle_web_metrics.py tests/test_fortune_oracle_web_situations.py
+```
+
+브라우저 검사는 실행 중인 로컬 임시 preview와 가상 프로필만 사용한다. Playwright/Chromium이 필요하다. 기본·공유·샘플·관심·기능 스위치·통합 검사 스크립트가 `scripts/check_fortune_web_*browser.py`에 있다. 각 스크립트의 `--help`로 인자를 확인하고 `--output`은 소스 밖의 임시 산출물 디렉터리로 지정한다. 기능 스위치 기본 검사는 비활성 preview, 통합 검사는 위 선택적 preview에 연결한다.
+
+등록·재방문·삭제 격리, 응답 유실·늦은 응답, PNG 형식·한글 표시와 계측 입력 경계를 검증한다. 네이티브 공유·클립보드는 대역이므로 실제 모바일 앱 게시나 공개 배포까지 검증했다는 뜻은 아니다.
+
+웹 글꼴은 Noto Sans CJK KR의 OFL 고지를 함께 배포한다. `scripts/build_fortune_web_font.py` 재생성에는 fonttools·brotli가 필요하다. 공통 OG 이미지 재생성은 `scripts/build_fortune_web_og_image.py`와 Playwright를 사용한다. 제3자 고지·출처를 유지하고, 생성된 정적 자료를 사용하더라도 루트 라이선스 선택이나 선택적 계산 의존성의 권리 문제를 해결한 것으로 간주하지 않는다.

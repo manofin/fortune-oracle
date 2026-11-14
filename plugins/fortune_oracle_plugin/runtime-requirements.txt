@@ -1,0 +1,12 @@
+# Plugin-only dependencies, installed into <plugin>/vendor for the Hermes runtime Python.
+# kinqimen==0.0.6.6 is installed separately with --no-deps. PyPI's sxtwl source
+# distribution omits src/JD.cpp. Pin the official 2.0.7 source including src/ so
+# native builds also work on the actual gateway Python (including CPython 3.14).
+matplotlib>=3.8
+numpy>=1.26
+skyfield==1.55
+jplephem==2.24
+sgp4==2.27
+certifi
+ephem
+sxtwl @ git+https://github.com/yuangu/sxtwl_cpp.git@7598b0601a76cfdaa9266257b1b5690720c1e2ce#subdirectory=python

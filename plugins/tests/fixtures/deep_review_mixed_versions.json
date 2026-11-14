@@ -1,0 +1,37 @@
+[
+  {
+    "id": "legacy_optional_fields_absent",
+    "response": {"sections": [{"title": "흐름", "summary": "차분히 정리합니다."}]},
+    "style": "",
+    "expected_sections": [{"title": "흐름", "summary": "차분히 정리합니다."}]
+  },
+  {
+    "id": "taheo_v2_with_future_metadata",
+    "response": {
+      "ok": true,
+      "style": "taheo_qna",
+      "sections": [{"heading": "핵심 구조", "body": "속도를 점검합니다.", "emphasis": "관찰"}],
+      "final_advice": "기록을 돌아보세요.",
+      "schema_version": 3,
+      "future_metadata": {"request_id": "fixture-only"}
+    },
+    "style": "taheo_qna",
+    "expected_sections": [{"heading": "핵심 구조", "body": "속도를 점검합니다.", "emphasis": "관찰"}]
+  },
+  {
+    "id": "mixed_legacy_and_new_sections",
+    "response": {
+      "style": "taheo_qna",
+      "sections": [
+        {"title": "이전 형식", "summary": "오늘의 기록을 남깁니다.", "reflection_question": "무엇을 보았나요?"},
+        {"heading": "현재 형식", "body": "내일의 계획을 정리합니다.", "emphasis": "천천히"}
+      ],
+      "source": "untrusted-server-source"
+    },
+    "style": "taheo_qna",
+    "expected_sections": [
+      {"title": "이전 형식", "summary": "오늘의 기록을 남깁니다.", "reflection_question": "무엇을 보았나요?"},
+      {"heading": "현재 형식", "body": "내일의 계획을 정리합니다.", "emphasis": "천천히"}
+    ]
+  }
+]

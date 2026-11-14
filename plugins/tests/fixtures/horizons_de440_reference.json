@@ -1,0 +1,96 @@
+{
+  "source": "https://ssd.jpl.nasa.gov/api/horizons.api",
+  "epochs_utc": [
+    "2000-01-01T12:00",
+    "2024-01-01T00:00"
+  ],
+  "quantity": "31 apparent observer ecliptic longitude",
+  "retrieved": "2026-10-03",
+  "records": {
+    "Sun": {
+      "target": 10,
+      "longitudes": [
+        280.3689092,
+        280.0389812
+      ],
+      "query": {
+        "format": "json",
+        "COMMAND": "10",
+        "EPHEM_TYPE": "OBSERVER",
+        "CENTER": "500@399",
+        "TLIST": "2451545.0,2460310.5",
+        "QUANTITIES": "31",
+        "CSV_FORMAT": "YES",
+        "TIME_TYPE": "UT"
+      }
+    },
+    "Moon": {
+      "target": 301,
+      "longitudes": [
+        223.323786,
+        155.9921866
+      ],
+      "query": {
+        "format": "json",
+        "COMMAND": "301",
+        "EPHEM_TYPE": "OBSERVER",
+        "CENTER": "500@399",
+        "TLIST": "2451545.0,2460310.5",
+        "QUANTITIES": "31",
+        "CSV_FORMAT": "YES",
+        "TIME_TYPE": "UT"
+      }
+    },
+    "Mercury": {
+      "target": 1,
+      "longitudes": [
+        271.8892699,
+        262.2816922
+      ],
+      "query": {
+        "format": "json",
+        "COMMAND": "1",
+        "EPHEM_TYPE": "OBSERVER",
+        "CENTER": "500@399",
+        "TLIST": "2451545.0,2460310.5",
+        "QUANTITIES": "31",
+        "CSV_FORMAT": "YES",
+        "TIME_TYPE": "UT"
+      }
+    },
+    "Saturn": {
+      "target": 6,
+      "longitudes": [
+        40.3956492,
+        333.2435419
+      ],
+      "query": {
+        "format": "json",
+        "COMMAND": "6",
+        "EPHEM_TYPE": "OBSERVER",
+        "CENTER": "500@399",
+        "TLIST": "2451545.0,2460310.5",
+        "QUANTITIES": "31",
+        "CSV_FORMAT": "YES",
+        "TIME_TYPE": "UT"
+      }
+    },
+    "Pluto": {
+      "target": 9,
+      "longitudes": [
+        251.4547643,
+        299.3576539
+      ],
+      "query": {
+        "format": "json",
+        "COMMAND": "9",
+        "EPHEM_TYPE": "OBSERVER",
+        "CENTER": "500@399",
+        "TLIST": "2451545.0,2460310.5",
+        "QUANTITIES": "31",
+        "CSV_FORMAT": "YES",
+        "TIME_TYPE": "UT"
+      }
+    }
+  }
+}

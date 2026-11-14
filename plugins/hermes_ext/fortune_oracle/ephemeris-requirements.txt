@@ -1,0 +1,6 @@
+# Validated isolated ephemeris environment; install explicitly in the target venv.
+skyfield==1.55
+jplephem==2.24
+sgp4==2.27
+numpy==2.5.3
+certifi==2026.7.22

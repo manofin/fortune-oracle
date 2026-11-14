@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "shared": {"display_name": "구형 LINE", "birth_date": "1990-05-15"},
+    "line:shared": {"display_name": "같은 표시명", "birth_date": "1988-03-02", "timezone": "Asia/Seoul"},
+    "telegram:shared": {"display_name": "같은 표시명", "birth_date": "1992-06-12", "reading_timezone": "America/New_York"},
+    "legacy-only": {"display_name": "구형 사용자", "birth_date": "1991-01-02"}
+  },
+  "daily_push": {
+    "legacy-only": {"time": "00:00", "target": "legacy-chat", "opt_in": true},
+    "telegram:shared": {"platform": "telegram", "user_id": "shared", "time": "23:59", "target": "-1000001", "opt_in": true},
+    "telegram:disabled": {"platform": "telegram", "user_id": "disabled", "time": "12:00", "target": "-1000002", "opt_in": false}
+  },
+  "future_metadata": {"schema_version": 3, "preserve_on_write": true}
+}

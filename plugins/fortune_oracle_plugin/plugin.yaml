@@ -1,0 +1,5 @@
+name: fortune-oracle
+version: 2.0.0
+description: "Fortune Oracle — 사주·K선·타로·주역·궁합·점성술 풀이와 음성 낭독 (오락·자기성찰용)."
+author: manofin
+requires_env: []

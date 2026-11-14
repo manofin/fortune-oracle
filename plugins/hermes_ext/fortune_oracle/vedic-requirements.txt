@@ -1,0 +1,6 @@
+# Optional natal Vedic backend. Install only in an explicitly chosen isolated venv.
+# pyswisseph is AGPL-3.0. Swiss Ephemeris offers AGPL / Professional licensing;
+# a professional Swiss licence alone must not be assumed to relicense this binding.
+# Resolve applicable package/library licences before public service activation.
+# https://pypi.org/project/pyswisseph/  https://www.astro.com/swisseph/swephprg.htm
+pyswisseph==2.10.3.2

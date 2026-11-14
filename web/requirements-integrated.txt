@@ -1,0 +1,5 @@
+# Optional four-system natal report environment. Public deployment requires
+# an applicable pyswisseph/Swiss Ephemeris licence choice; see web/README.md.
+-r requirements.txt
+-r ../plugins/hermes_ext/fortune_oracle/ephemeris-requirements.txt
+-r ../plugins/hermes_ext/fortune_oracle/vedic-requirements.txt

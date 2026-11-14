@@ -1,0 +1,145 @@
+# ── Runtime state (never commit) ───────────────────────────────────────────
+homes/*/sessions/
+homes/*/logs/
+homes/*/cron/output/
+homes/*/checkpoints/
+homes/*/pastes/
+homes/*/state.db
+homes/*/kanban.db
+homes/**/*.db
+homes/*/processes.json
+homes/*/gateway.lock
+homes/*/gateway_state.json
+homes/*/auth.lock
+homes/*/interrupt_debug.log
+homes/*/models_dev_cache.json
+homes/*/ollama_cloud_models_cache.json
+homes/*/context_length_cache.yaml
+homes/*/channel_directory.json
+homes/*/discord_threads.json
+homes/*/feishu_seen_message_ids.json
+homes/*/gateway.pid
+homes/*/cron/jobs.json
+homes/*/.clean_shutdown
+homes/*/.update_check
+homes/*/.hermes_history
+homes/*/.skills_prompt_snapshot.json
+homes/*/skills/.usage.json
+homes/*/skills/.curator_state
+homes/*/bin/
+homes/*/skills/.bundled_manifest
+
+# ── Secrets (never commit) ──────────────────────────────────────────────────
+homes/*/.env
+homes/*/.env.bak.*
+homes/*/auth.json
+# Ignore only prevents new additions; it does not remove tracked files or history.
+# A public export must also pass scripts/check_public_release.py.
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+auth.json
+auth.json.*
+!auth.json.example
+credentials.json
+credentials.json.*
+!credentials.json.example
+token.json
+token.json.*
+!token.json.example
+tokens.json
+tokens.json.*
+!tokens.json.example
+*.pem
+*.key
+*.p12
+*.pfx
+id_rsa
+id_ed25519
+.ssh/
+.aws/
+.gnupg/
+
+# ── Backup files ────────────────────────────────────────────────────────────
+homes/*/config.yaml.bak.*
+*.bak
+*.bak.*
+*.backup
+*.backup.*
+*.old
+*.orig
+*~
+homes/*/profiles/
+homes/*/profile-backups/
+homes/*/backups/
+
+# ── Python cache ────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+
+# ── Logs at top level ───────────────────────────────────────────────────────
+logs/
+*.log
+*.log.*
+*.db
+*.db.*
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite.*
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+*.sqlite3
+*.sqlite3.*
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+sessions/
+checkpoints/
+pastes/
+cron/output/
+cron/jobs.json
+crontab
+*.crontab
+
+# ── Untracked large dirs (optional - uncomment if not needed in git) ────────
+# homes/*/skills/autonomous-ai-agents/hermes-agent/references/
+# runs/
+
+# ── Recovery worktrees (nested git repos, exclude from outer tracking) ──────
+recovery/
+.venv/
+venv/
+store/fortune_oracle_store.json
+store/daily_fortune_dedupe.json
+
+# ── 외부 AI 도구 첨부 (참고 이미지, 코드 아님) ─────────────────────────────
+.codex-attachments/
+
+# Public source must not collect operator state or local dependencies.
+/homes/
+/store/
+/runs/
+/upstream-rescue/
+/chronicle/
+/notes/
+/snapshots/
+/ops/
+node_modules/
+.venv*/
+.pytest_cache/
+*.jsonl
+*.ndjson
+*.env
+*.env.*
+!.env.example
+!.env.sample
+!.env.template
+!*.env.example
+!*.env.sample
+!*.env.template
