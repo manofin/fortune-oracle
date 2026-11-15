@@ -199,6 +199,9 @@ def main():
     sources = ["web/fortune_web/static/index.html", "web/fortune_web/static/app.js",
                "web/fortune_web/static/style.css", "web/fortune_web/service.py",
                "plugins/hermes_ext/fortune_oracle/daily_fortune_engine.py",
+               "plugins/hermes_ext/fortune_oracle/bazi_bridge.py",
+               "plugins/hermes_ext/fortune_oracle/localization.py",
+               "plugins/hermes_ext/fortune_oracle/scripts/life_kline_bazi_bridge.mjs",
                "scripts/check_fortune_web_basic_reading_browser.py"]
     fingerprints = lambda: {path: hashlib.sha256((root / path).read_bytes()).hexdigest() for path in sources}
     source_hashes = fingerprints()
@@ -372,6 +375,12 @@ def main():
                 assert context_observations[-1]["baseFinancialCautionAbsent"]
                 inspect_scenario_layouts(page, result, sample, scenario_layouts)
                 card.screenshot(path=str(args.output / "synthetic-a-dday-meeting-wealth-390-expanded.png"))
+                for width in (320, 390):
+                    page.set_viewport_size({"width": width, "height": 844})
+                    for opened in (False, True):
+                        page.locator("#daily-details").evaluate("(el, value) => {el.open = value}", opened)
+                        card.screenshot(path=str(args.output / f"ui-meeting-{width}-{'expanded' if opened else 'collapsed'}.png"))
+                page.set_viewport_size({"width": 390, "height": 844})
                 inspect_fallbacks(page, result, state_checks)
             page.locator("#delete-button").click()
             page.locator("#confirm-delete").click()

@@ -21,9 +21,11 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE = "2f10b1ee25127f8930082b5b8afd9e34b7603eac"
 ENGINE = "plugins/hermes_ext/fortune_oracle/daily_fortune_engine.py"
 DDAY_BASE = "05460a07be22635f70cc91746cd6882f31a43cbc"
-UI_BASE = "6b892e5b50642c3f027f0fa3a0cc1d621a41ff9a"
 SERVICE = "web/fortune_web/service.py"
 DAILY_READING = "plugins/hermes_ext/fortune_oracle/daily_reading.py"
+READING_SOURCES = [ENGINE, "plugins/hermes_ext/fortune_oracle/bazi_bridge.py",
+                   "plugins/hermes_ext/fortune_oracle/localization.py",
+                   "plugins/hermes_ext/fortune_oracle/scripts/life_kline_bazi_bridge.mjs"]
 DDAY_NOW = datetime(2026, 11, 15, tzinfo=timezone.utc)
 # Invented adult inputs, unrelated to customers or the operator.
 PROFILES = [
@@ -88,6 +90,7 @@ def build(output):
     output.mkdir(parents=True, exist_ok=True)
     data = {"baseline": BASE, "synthetic_only": True, "non_prose_comparisons": comparisons,
             "display_fields_excluded": ["lines", "disclaimer", "sections"],
+            "source_sha256": {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest() for path in READING_SOURCES},
             "samples": samples, "relation_matrix": matrix}
     (output / "basic-reading-samples.json").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
     lines = ["# 기본 풀이 전후 샘플", "", "이 자료는 전부 가상 성인 입력입니다. 고민·외부 모델·고객 자료를 사용하지 않았습니다.", "",
@@ -107,12 +110,13 @@ def build(output):
                   "| 관계 | 이날의 해석 | 해볼 일 | 주의할 점 |", "| --- | --- | --- | --- |"])
     lines.extend(f"| {r['relation']} | {r['theme']} | {r['action']} | {r['caution']} |" for r in matrix)
     lines.extend(["", "## 가림 평가 운영자용 대응표", "", "평가자에게는 아래 대응표와 전후 문서를 주지 않고 `basic-reading-blind.md`만 전달합니다.",
-                  "첫 사례는 변경 후→전, 둘째는 전→후로 순서를 상쇄했습니다. 소규모 준비 자료이며 무작위 사용자 실험을 실행한 결과가 아닙니다.", "",
+                  "이 원문 문서는 사례 내 표기를 고정합니다. 실제 세션의 순서는 evaluation/operator-manifest.json의 사전 배정표를 따르고, 참가자에게는 그 문서의 자료를 한 편씩 제시합니다. 무작위 실험을 실행한 결과가 아닙니다.", "",
                   "| 평가 표기 | 대응 |", "| --- | --- |", "| 1-X | 사례 1 변경 후 |", "| 1-Y | 사례 1 변경 전 |",
                   "| 2-X | 사례 2 변경 전 |", "| 2-Y | 사례 2 변경 후 |", ""])
     (output / "basic-reading-samples.md").write_text("\n".join(lines))
 
-    blind = ["# 기본 풀이 읽기 평가용", "", "가상 사례별 두 글을 읽고 각각 평가합니다. 버전의 출처나 변경 순서는 공개하지 않습니다.",
+    blind = ["# 기본 풀이 읽기 평가용", "", "이 문서는 문구 원문 자료입니다. 모바일 카드의 배치를 평가하지 않습니다. 실제 진행에서는 evaluation/participant의 자료를 운영자 배정표에 따라 한 편씩 제시합니다.", "",
+             "가상 사례별 두 글을 읽고 각각 평가합니다. 버전의 출처나 변경 순서는 공개하지 않습니다.",
              "개인적으로 느껴지는 정도와 근거의 납득도는 별개로 점수를 매깁니다. 1=전혀 그렇지 않음, 5=매우 그러함.",
              "실제 자신에 대한 적중도를 묻는 평가가 아닙니다. 근거가 납득된다는 응답도 예측의 타당성을 입증하지 않습니다. 서로 상의하기 전에 응답을 기록합니다.", "",
              "각 글: 고민 입력 없이 읽을 가치가 있음 __/5 · 이해하기 쉬움 __/5 · 행동의 실행 가능성 __/5 · 개인적으로 느껴짐 __/5 · 근거 납득도 __/5",
@@ -219,71 +223,6 @@ def build_dday(output):
     print(f"Wrote 3 synthetic D-day comparisons for {target}; legacy readings unchanged (sections added).")
 
 
-def build_ui_contract(output):
-    """Compare every existing field and text with the fixed pre-UI revision."""
-    from hermes_ext.fortune_oracle import bazi_bridge, daily_fortune_engine as current, localization
-    from fortune_web import service
-
-    baseline = public_module(UI_BASE, ENGINE, "hermes_ext.fortune_oracle._ui_engine_baseline")
-    baseline_daily = public_module(UI_BASE, DAILY_READING, "hermes_ext.fortune_oracle._ui_daily_baseline")
-    baseline_daily.build_personalized_daily = baseline.build_personalized_daily
-    baseline_daily.build_personalized_series = baseline.build_personalized_series
-    baseline_daily.render_daily_channel_text = baseline.render_daily_channel_text
-    baseline_service = public_module(UI_BASE, SERVICE, "fortune_web._ui_service_baseline")
-    baseline_service.prepare_daily_reading = baseline_daily.prepare_daily_reading
-    baseline_service.build_personalized_daily = baseline.build_personalized_daily
-    baseline_service.daily_display_lines = baseline.daily_display_lines
-
-    def legacy_payload(payload):
-        result = {key: value for key, value in payload.items() if key != "sections"}
-        if "reading" in result:
-            result["reading"] = {key: value for key, value in result["reading"].items() if key != "sections"}
-        if "readings" in result:
-            result["readings"] = [{key: value for key, value in reading.items() if key != "sections"}
-                                  for reading in result["readings"]]
-        return result
-
-    engine_cases, channel_cases, payload_cases = 0, 0, []
-    for index, (profile, target) in enumerate(zip(PROFILES, TARGETS), 1):
-        chart = bazi_bridge.calculate_bazi_from_profile(profile)
-        assert chart.ok
-        for offset in range(30):
-            for aspect in current.ASPECT_TITLE:
-                day = target + timedelta(days=offset)
-                before = baseline._daily_from_chart(profile, chart, day, aspect)
-                after = current._daily_from_chart(profile, chart, day, aspect)
-                assert before == legacy_payload(after), (index, day, aspect)
-                engine_cases += 1
-                for language in ("ko", "en"):
-                    old = localization.localize_daily(before, language)
-                    new = localization.localize_daily(after, language)
-                    assert baseline.render_daily_channel_text(old, reading_timezone="Asia/Seoul") == current.render_daily_channel_text(new, reading_timezone="Asia/Seoul")
-                    channel_cases += 1
-        for language in ("ko", "en"):
-            localized = dict(profile, language=language)
-            for view in ("today", "tomorrow", "week"):
-                before = baseline_service.daily(localized, view, now=DDAY_NOW)
-                after = service.daily(localized, view, now=DDAY_NOW)
-                assert before["ok"] and after["ok"]
-                assert before == legacy_payload(after), (index, language, view)
-                payload_cases.append({"sample": index, "language": language, "view": view})
-        for scenario in ("general", "exam", "meeting"):
-            request = {"date": "2026-11-24", "scenario": scenario}
-            before = baseline_service.dated_reading(profile, request, now=DDAY_NOW)
-            after = service.dated_reading(profile, request, now=DDAY_NOW)
-            assert before["ok"] and after["ok"]
-            assert before == legacy_payload(after), (index, scenario)
-            payload_cases.append({"sample": index, "language": "ko", "view": "dday", "scenario": scenario})
-    data = {"baseline": UI_BASE, "synthetic_only": True,
-            "new_display_field_excluded": "sections", "includes_lines_disclaimer_and_text": True,
-            "engine_comparisons": engine_cases, "channel_text_comparisons": channel_cases,
-            "service_payload_comparisons": payload_cases,
-            "after_code_sha256": {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest()
-                                  for path in (ENGINE, SERVICE, DAILY_READING)}}
-    (output / "basic-reading-ui-compatibility.json").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
-    print(f"UI contract: {engine_cases} complete legacy readings, {channel_cases} channel texts, {len(payload_cases)} API payloads unchanged.")
-
-
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, default=ROOT / "docs/reviews")
@@ -299,7 +238,8 @@ def main():
                           FORTUNE_DEEP_ANALYSIS="0", PYTHONDONTWRITEBYTECODE="1")
         build(args.output)
         build_dday(args.output)
-        build_ui_contract(args.output)
+        # The byte-identical UI result belongs to 103cea0. Later intentional copy
+        # corrections must be compared and reported separately, never overwrite it.
 
 
 if __name__ == "__main__":

@@ -210,14 +210,27 @@ class BaziResult:
         if elements_str:
             lines.append(f"오행: {elements_str}")
         # 절기 기준 limitation 문구 — 기본 모드(일 기준)일 때만 표기
-        if not self.solar_term_month_mode:
+        if not self.solar_term_month_mode and ec.get('month'):
             lines.append("  ※ 월주는 절기 날짜 기준이며, 절기 당일 출생 시각에 따라 일부 차이가 있을 수 있습니다.")
         if self.time_basis:
-            lines.append("  ※ 일·시주는 출생지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다.")
+            if self.time_basis.get('day_hour') == 'local_civil_time' and self.time_basis.get('true_solar_time') is False:
+                lines.append("  ※ 일·시주는 출생지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다."
+                             if ec.get('time') else
+                             "  ※ 일주는 출생지 민간 날짜 기준이며 진태양시 보정은 적용하지 않았습니다.")
+            unknown_time = (not ec.get('time') and self.time_basis.get('solar_terms')
+                            in ('civil_day_interval_confirmed', 'date_only_uncertain'))
+            if unknown_time:
+                lines.append("  ※ 출생시각 미상: 시주·대운은 계산하지 않았습니다.")
+                counted = [(label, ec[key]) for key, label in (('year', '년'), ('month', '월'), ('day', '일'))
+                           if ec.get(key)]
+                total = sum((self.elements or {}).values())
+                if counted and total == sum(len(pillar) for _, pillar in counted):
+                    labels = '·'.join(label for label, _ in counted) + '주'
+                    lines.append(f"  ※ 오행은 시주를 제외한 {labels} {total}글자 기준입니다.")
             if self.time_basis.get('uncertain_pillars'):
                 labels = {'year':'년주', 'month':'월주'}
                 missing = '·'.join(labels[key] for key in self.time_basis['uncertain_pillars'] if key in labels)
-                lines.append(f"  ※ 절기 경계 미확정: {missing} 제외, 시주·대운 미등록.")
+                lines.append(f"  ※ 절기 경계 미확정: {missing} 제외.")
         return "\n".join(lines)
 
 

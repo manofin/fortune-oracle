@@ -90,10 +90,11 @@ def test_sections_schema_preserves_each_content_body_once(stem):
 @pytest.mark.parametrize("basis,expected", [
     ({"solar_terms": "birth_instant_utc_plus_8"}, "진태양시 보정은 적용하지 않았습니다"),
     ({"solar_terms": "civil_day_interval_confirmed"}, "시주와 대운은 제외합니다"),
-    ({"solar_terms": "unresolved"}, "절기 경계의 년·월주는 불확실합니다"),
+    ({"solar_terms": "date_only_uncertain"}, "절기 경계의 년·월주는 불확실합니다"),
 ])
 def test_time_evidence_keeps_the_complete_uncertainty_notice(basis, expected):
-    reading = engine._daily_from_chart(PROFILE, chart(basis=basis), TARGET, "종합")
+    reading = engine._daily_from_chart(PROFILE, chart(basis={"day_hour": "local_civil_time",
+                                                          "true_solar_time": False, **basis}), TARGET, "종합")
     time = next(item for item in reading["sections"]["evidence"] if item["id"] == "time")
     assert expected in "\n".join(time["paragraphs"])
     assert all(paragraph in reading["lines"] for paragraph in time["paragraphs"])

@@ -1,0 +1,236 @@
+{
+  "baseline": "103cea02a1af3968f1507331f69a2598b5b39c96",
+  "synthetic_only": true,
+  "after_code_sha256": {
+    "plugins/hermes_ext/fortune_oracle/daily_fortune_engine.py": "e131b442cc947acf5456df44168a825c092b29c39c928fd7dba3de8f7884481d",
+    "plugins/hermes_ext/fortune_oracle/bazi_bridge.py": "8c1b2b72fb11eb412bbd1731a6129e4837c6c61a8a5e705d20567b8849ee6a40",
+    "plugins/hermes_ext/fortune_oracle/localization.py": "db57fa952ab46b9aaad337bbcaf08a8e86ff57c45746f8453e7b610a5d045a79",
+    "plugins/hermes_ext/fortune_oracle/scripts/life_kline_bazi_bridge.mjs": "136d8e3c089c166b97e28e688c0736b59e1ef81ca490d34c81fe80e6366e1375"
+  },
+  "chart_facts_equal": 5,
+  "chart_cases": [
+    {
+      "sample": 0,
+      "computed_pillars": [
+        "year",
+        "month",
+        "day",
+        "time"
+      ],
+      "element_count": 8,
+      "dayun_present": true,
+      "daily_available": true,
+      "summary_before": "🔮 팔자: 년庚午 월辛巳 일庚辰 시庚辰\n띠: 말띠\n오행: 금(金) 4개 · 화(火) 2개\n  ※ 일·시주는 출생지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다.",
+      "summary_after": "🔮 팔자: 년庚午 월辛巳 일庚辰 시庚辰\n띠: 말띠\n오행: 금(金) 4개 · 화(火) 2개\n  ※ 일·시주는 출생지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다.",
+      "warnings_before": [
+        "일·시주는 출생지 민간시 기준이며 경도·진태양시 보정은 적용하지 않았습니다."
+      ],
+      "warnings_after": [
+        "일·시주는 출생지 민간시 기준이며 경도·진태양시 보정은 적용하지 않았습니다."
+      ]
+    },
+    {
+      "sample": 1,
+      "computed_pillars": [
+        "year",
+        "month",
+        "day"
+      ],
+      "element_count": 6,
+      "dayun_present": false,
+      "daily_available": true,
+      "summary_before": "🔮 팔자: 년戊辰 월甲寅 일丙辰\n띠: 용띠\n오행: 토(土) 3개 · 목(木) 2개\n  ※ 일·시주는 출생지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다.",
+      "summary_after": "🔮 팔자: 년戊辰 월甲寅 일丙辰\n띠: 용띠\n오행: 토(土) 3개 · 목(木) 2개\n  ※ 일주는 출생지 민간 날짜 기준이며 진태양시 보정은 적용하지 않았습니다.\n  ※ 출생시각 미상: 시주·대운은 계산하지 않았습니다.\n  ※ 오행은 시주를 제외한 년·월·일주 6글자 기준입니다.",
+      "warnings_before": [
+        "일·시주는 출생지 민간시 기준이며 경도·진태양시 보정은 적용하지 않았습니다."
+      ],
+      "warnings_after": [
+        "일주는 출생지 민간 날짜 기준이며 경도·진태양시 보정은 적용하지 않았습니다."
+      ]
+    },
+    {
+      "sample": 2,
+      "computed_pillars": [
+        "year",
+        "month",
+        "day"
+      ],
+      "element_count": 6,
+      "dayun_present": false,
+      "daily_available": true,
+      "summary_before": "🔮 팔자: 년戊辰 월甲寅 일丙辰\n띠: 용띠\n오행: 토(土) 3개 · 목(木) 2개\n  ※ 일·시주는 출생지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다.",
+      "summary_after": "🔮 팔자: 년戊辰 월甲寅 일丙辰\n띠: 용띠\n오행: 토(土) 3개 · 목(木) 2개\n  ※ 일주는 출생지 민간 날짜 기준이며 진태양시 보정은 적용하지 않았습니다.\n  ※ 출생시각 미상: 시주·대운은 계산하지 않았습니다.\n  ※ 오행은 시주를 제외한 년·월·일주 6글자 기준입니다.",
+      "warnings_before": [
+        "일·시주는 출생지 민간시 기준이며 경도·진태양시 보정은 적용하지 않았습니다."
+      ],
+      "warnings_after": [
+        "일주는 출생지 민간 날짜 기준이며 경도·진태양시 보정은 적용하지 않았습니다."
+      ]
+    },
+    {
+      "sample": 3,
+      "computed_pillars": [
+        "day"
+      ],
+      "element_count": 2,
+      "dayun_present": false,
+      "daily_available": false,
+      "summary_before": "🔮 팔자: 일壬辰\n띠: 토끼띠\n오행: 토(土) 1개 · 수(水) 1개\n  ※ 월주는 절기 날짜 기준이며, 절기 당일 출생 시각에 따라 일부 차이가 있을 수 있습니다.\n  ※ 일·시주는 출생지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다.\n  ※ 절기 경계 미확정: 년주·월주 제외, 시주·대운 미등록.",
+      "summary_after": "🔮 팔자: 일壬辰\n띠: 토끼띠\n오행: 토(土) 1개 · 수(水) 1개\n  ※ 일주는 출생지 민간 날짜 기준이며 진태양시 보정은 적용하지 않았습니다.\n  ※ 출생시각 미상: 시주·대운은 계산하지 않았습니다.\n  ※ 오행은 시주를 제외한 일주 2글자 기준입니다.\n  ※ 절기 경계 미확정: 년주·월주 제외.",
+      "warnings_before": [
+        "일·시주는 출생지 민간시 기준이며 경도·진태양시 보정은 적용하지 않았습니다.",
+        "절기 비교의 출생 순간이 미확정 — 절기 경계의 년·월주와 대운은 불확실합니다."
+      ],
+      "warnings_after": [
+        "일주는 출생지 민간 날짜 기준이며 경도·진태양시 보정은 적용하지 않았습니다.",
+        "절기 비교의 출생 순간이 미확정 — 절기 경계의 년·월주와 대운은 불확실합니다."
+      ]
+    },
+    {
+      "sample": 4,
+      "computed_pillars": [
+        "year",
+        "day"
+      ],
+      "element_count": 4,
+      "dayun_present": false,
+      "daily_available": false,
+      "summary_before": "🔮 팔자: 년庚辰 일壬戌\n띠: 용띠\n오행: 토(土) 2개 · 금(金) 1개\n  ※ 월주는 절기 날짜 기준이며, 절기 당일 출생 시각에 따라 일부 차이가 있을 수 있습니다.\n  ※ 일·시주는 출생지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다.\n  ※ 절기 경계 미확정: 월주 제외, 시주·대운 미등록.",
+      "summary_after": "🔮 팔자: 년庚辰 일壬戌\n띠: 용띠\n오행: 토(土) 2개 · 금(金) 1개\n  ※ 일주는 출생지 민간 날짜 기준이며 진태양시 보정은 적용하지 않았습니다.\n  ※ 출생시각 미상: 시주·대운은 계산하지 않았습니다.\n  ※ 오행은 시주를 제외한 년·일주 4글자 기준입니다.\n  ※ 절기 경계 미확정: 월주 제외.",
+      "warnings_before": [
+        "일·시주는 출생지 민간시 기준이며 경도·진태양시 보정은 적용하지 않았습니다.",
+        "절기 비교의 출생 순간이 미확정 — 절기 경계의 년·월주와 대운은 불확실합니다."
+      ],
+      "warnings_after": [
+        "일주는 출생지 민간 날짜 기준이며 경도·진태양시 보정은 적용하지 않았습니다.",
+        "절기 비교의 출생 순간이 미확정 — 절기 경계의 년·월주와 대운은 불확실합니다."
+      ]
+    }
+  ],
+  "reading_facts_equal": 300,
+  "changed_reading_copy": 150,
+  "unchanged_theme_action_caution_and_disclaimer": 300,
+  "channel_text_comparisons": 600,
+  "changed_channel_texts": {
+    "ko": 150,
+    "en": 150
+  },
+  "api_facts_equal": 18,
+  "api_cases": [
+    {
+      "id": 0,
+      "language": "ko",
+      "view": "today",
+      "text_changed": false
+    },
+    {
+      "id": 0,
+      "language": "ko",
+      "view": "tomorrow",
+      "text_changed": false
+    },
+    {
+      "id": 0,
+      "language": "ko",
+      "view": "week",
+      "text_changed": false
+    },
+    {
+      "id": 0,
+      "language": "en",
+      "view": "today",
+      "text_changed": false
+    },
+    {
+      "id": 0,
+      "language": "en",
+      "view": "tomorrow",
+      "text_changed": false
+    },
+    {
+      "id": 0,
+      "language": "en",
+      "view": "week",
+      "text_changed": false
+    },
+    {
+      "id": 0,
+      "language": "ko",
+      "view": "dday",
+      "scenario": "general",
+      "text_changed": false
+    },
+    {
+      "id": 0,
+      "language": "ko",
+      "view": "dday",
+      "scenario": "exam",
+      "text_changed": false
+    },
+    {
+      "id": 0,
+      "language": "ko",
+      "view": "dday",
+      "scenario": "meeting",
+      "text_changed": false
+    },
+    {
+      "id": 1,
+      "language": "ko",
+      "view": "today",
+      "text_changed": true
+    },
+    {
+      "id": 1,
+      "language": "ko",
+      "view": "tomorrow",
+      "text_changed": true
+    },
+    {
+      "id": 1,
+      "language": "ko",
+      "view": "week",
+      "text_changed": false
+    },
+    {
+      "id": 1,
+      "language": "en",
+      "view": "today",
+      "text_changed": true
+    },
+    {
+      "id": 1,
+      "language": "en",
+      "view": "tomorrow",
+      "text_changed": true
+    },
+    {
+      "id": 1,
+      "language": "en",
+      "view": "week",
+      "text_changed": false
+    },
+    {
+      "id": 1,
+      "language": "ko",
+      "view": "dday",
+      "scenario": "general",
+      "text_changed": true
+    },
+    {
+      "id": 1,
+      "language": "ko",
+      "view": "dday",
+      "scenario": "exam",
+      "text_changed": true
+    },
+    {
+      "id": 1,
+      "language": "ko",
+      "view": "dday",
+      "scenario": "meeting",
+      "text_changed": true
+    }
+  ],
+  "note": "Only display wording is excluded from facts; known-time results are compared in full. No human evaluation."
+}

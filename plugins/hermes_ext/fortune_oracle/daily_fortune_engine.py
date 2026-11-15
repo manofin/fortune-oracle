@@ -393,7 +393,13 @@ def _daily_from_chart(profile: Mapping[str, Any], result: Any, target_date: date
     relation_body = (
         f"일간(나를 나타내는 기준) {dm_element} · 일진 {day_pillar_today}의 지지(날짜의 아래 글자) {day_element}. "
         f"{RELATION_LINE.get(relation, RELATION_LINE['unknown'])}")
-    distribution_body = (f"계산된 오행 수는 {distribution}입니다. 개수가 적은 순서로 두 오행을 선택하고, "
+    birth_basis = dict(getattr(result, 'time_basis', {}) or {})
+    unknown_time = (not ec.get('time') and birth_basis.get('solar_terms')
+                    in ('civil_day_interval_confirmed', 'date_only_uncertain'))
+    distribution_label = "계산된 오행 수는"
+    if unknown_time and sum(elements.values()) == sum(len(ec[key]) for key in ('year', 'month', 'day')):
+        distribution_label = f"시주를 제외한 년·월·일주 {sum(elements.values())}글자의 오행 수는"
+    distribution_body = (f"{distribution_label} {distribution}입니다. 개수가 적은 순서로 두 오행을 선택하고, "
                          "같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.")
     selection_body = (
         f"이 점수 규칙에서 선택한 오행은 {favorable_label}입니다. 해당 날짜의 오행({day_element})이 {favorable_match}됩니다. "
@@ -405,15 +411,18 @@ def _daily_from_chart(profile: Mapping[str, Any], result: Any, target_date: date
         cycle_line = cycle_body
     else:
         cycle_title = "대운 보정 미적용"
-        cycle_body = "계산 결과에서 이 날짜에 적용할 대운 구간을 확인하지 못했습니다."
+        cycle_body = ("출생시각이 미상이라 대운을 계산하지 않았습니다." if unknown_time else
+                      "계산 결과에서 이 날짜에 적용할 대운 구간을 확인하지 못했습니다.")
         cycle_line = f"{cycle_title}: {cycle_body}"
-    birth_basis = dict(getattr(result, 'time_basis', {}) or {})
     time_paragraphs = []
     if birth_basis:
-        time_paragraphs.append("출생 일·시주는 현지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다.")
-        if birth_basis.get('solar_terms') == 'civil_day_interval_confirmed':
+        if birth_basis.get('day_hour') == 'local_civil_time' and birth_basis.get('true_solar_time') is False:
+            time_paragraphs.append("출생 일·시주는 현지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다."
+                                   if ec.get('time') else
+                                   "출생 일주는 현지 민간 날짜 기준이며 진태양시 보정은 적용하지 않았습니다.")
+        if unknown_time and birth_basis.get('solar_terms') == 'civil_day_interval_confirmed':
             time_paragraphs.append("년·월주는 현지 출생일 하루 전체에서 동일함을 확인했습니다. 시주와 대운은 제외합니다.")
-        elif birth_basis.get('solar_terms') != 'birth_instant_utc_plus_8':
+        elif unknown_time:
             time_paragraphs.append("출생시각 미확정 — 절기 경계의 년·월주는 불확실합니다.")
     limitations_body = ("점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. "
                         "이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다.")
@@ -503,8 +512,11 @@ def render_daily_channel_text(reading: Mapping[str, Any], *, reading_timezone: O
         return "\n".join([header, *reading["lines"], reading["disclaimer"]])
     relation = reading["relation"]
     action, caution = RELATION_PRACTICE.get(relation, RELATION_PRACTICE["unknown"])
+    birth_basis = reading.get("birth_time_basis", {})
     cycle = (f"대운 보정 {reading['dayun_adjustment']:+.0f}점."
              if reading["dayun_pillar"] else "대운 보정 미적용.")
+    if not reading["dayun_pillar"] and birth_basis.get("solar_terms") == "civil_day_interval_confirmed":
+        cycle = "출생시각 미상으로 대운 보정 미적용."
     lines = [
         f"계산된 사주·일진의 경험적 해석 · {reading['date']} · {ASPECT_TITLE.get(reading['aspect'], '종합 운세')} · "
         f"{reading['score']:.0f}점 — {reading['grade']}{zone_suffix}",
@@ -515,10 +527,9 @@ def render_daily_channel_text(reading: Mapping[str, Any], *, reading_timezone: O
         f"({reading['day_element']})의 관계와 오행 수를 반영했습니다. {cycle}",
         f"{reading['date']}의 키워드는 {' · '.join(reading['keywords'])}입니다.",
     ]
-    birth_basis = reading.get("birth_time_basis", {})
     if birth_basis.get("solar_terms") == "civil_day_interval_confirmed":
         lines.append("출생시각 미확정: 시주·대운은 제외했습니다.")
-    elif birth_basis and birth_basis.get("solar_terms") != "birth_instant_utc_plus_8":
+    elif birth_basis.get("solar_terms") == "date_only_uncertain":
         lines.append("출생시각 미확정: 절기 경계의 년·월주는 불확실합니다.")
     lines.append("점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. "
                  "오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다.")
