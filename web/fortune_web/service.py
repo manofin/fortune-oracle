@@ -5,7 +5,9 @@ import re
 
 from hermes_ext.fortune_oracle.bazi_bridge import BaziInput, calculate_bazi_from_profile
 from hermes_ext.fortune_oracle.daily_reading import prepare_daily_reading, prepare_kline_reading
-from hermes_ext.fortune_oracle.daily_fortune_engine import build_personalized_daily, daily_display_lines
+from hermes_ext.fortune_oracle.daily_fortune_engine import (
+    build_personalized_daily, daily_display_lines, daily_display_sections,
+)
 from hermes_ext.fortune_oracle.compatibility import build_compatibility
 from hermes_ext.fortune_oracle.localization import local_today, reading_zone
 
@@ -95,6 +97,8 @@ def integrated(profile):
 
 def daily(profile, day, now=None):
     result = prepare_daily_reading(profile, day=day, now=now)
+    if result.get("kind") == "daily" and "sections" in result.get("reading", {}):
+        result["sections"] = daily_display_sections(result["reading"])
     # The library's missing-profile hint mentions a Telegram command.
     if not profile:
         result["text"] = "계산 결과가 아님\n출생정보를 먼저 등록해 주세요."
@@ -155,7 +159,8 @@ def dated_reading(profile, payload, now=None):
     ])
     return {"ok": True, "computed": True, "kind": "dated", "date": target.isoformat(),
             "reading_timezone": reading_zone(profile).key, "reading": reading,
-            "scenario": scenario, "reflection": reflection, "text": text}
+            "scenario": scenario, "reflection": reflection, "text": text,
+            "sections": daily_display_sections(reading, action_override=action, caution_override=caution)}
 
 
 def compatibility(profile, payload):

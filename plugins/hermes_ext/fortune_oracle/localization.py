@@ -67,6 +67,8 @@ def localize_daily(reading, language='ko'):
     result = {**reading,'language':code}
     if code == 'ko':
         return result
+    # Sections currently carry Korean copy only; preserve the established English text.
+    result.pop('sections', None)
     score = result['score']
     grade = 'Strong momentum' if score >= 78 else 'Supportive' if score >= 62 else 'Steady' if score >= 46 else 'Take care' if score >= 32 else 'Leave more room'
     keywords = [_KEYWORDS[k] for k in result['keywords']]
