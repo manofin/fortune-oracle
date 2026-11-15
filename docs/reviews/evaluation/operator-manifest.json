@@ -1,11 +1,11 @@
 {
   "audience": "operator_only_do_not_give_to_participants",
-  "procedure_revision": "basic-reading-evaluation-v1-draft",
+  "procedure_revision": "basic-reading-evaluation-v2-draft",
   "collection_status": "not_started",
   "responses_received": 0,
   "material_approval": "pending",
-  "candidate_commit": null,
-  "candidate_commit_rule": "Copy the full reviewed PR #2 head SHA before the first session; verify source and material hashes. Never infer a participant's version from the current branch later.",
+  "candidate_commit": "78893ff877b8e2c5ed480e43c3fb40d1a411ebe8",
+  "candidate_commit_rule": "Keep this product candidate fixed. Record the separate reviewed materials commit, procedure revision and manifest hash for every session; a materials-only PR head does not replace the product candidate.",
   "candidate_source_sha256": {
     "plugins/hermes_ext/fortune_oracle/daily_fortune_engine.py": "e131b442cc947acf5456df44168a825c092b29c39c928fd7dba3de8f7884481d",
     "plugins/hermes_ext/fortune_oracle/bazi_bridge.py": "8c1b2b72fb11eb412bbd1731a6129e4837c6c61a8a5e705d20567b8849ee6a40",
@@ -17,12 +17,12 @@
     "web/fortune_web/service.py": "2f8e141e2db0c794defe4698c9e0b1e52129042d044b177f689f9da4945a4fcf"
   },
   "source_samples_sha256": "75cc6ec0fcdea9f236550a3afa5d31bd9d30d5a219f2f0e0406f8b3f64902169",
-  "operator_protocol_sha256": "868ca13473a263df7e6bee5650a9a38eacf58ff68d7a9a25d5a7055c78c58aec",
-  "materials_id": "8ff6f80a7c16a2b5668d401eb4c45e67d4349f6054359132cd40abda95f4d322",
+  "operator_protocol_sha256": "b114bc930c600c364b1164e8d97f5207be13bffc9b092c1dcb93e38babd6998c",
+  "materials_id": "9c4b49d80dab96654b6d8d840c962b33dc38689f23fe02654c92c63b9d1759ac",
   "participant_file_sha256": {
     "participant/comparison-sheet.md": "fc1b7a269bf8910dffb045329265f7bd2ba99e3bf7fb2ee61f795c36abed7085",
-    "participant/instructions.md": "0f3cfb49a141630ea758986d71b6f8887edd8c7d976ada9412f7e30a2059348c",
-    "participant/observation-sheet.md": "e8ffe28cbebacef800f680d3e9f849ef262b0e225557944d16acf97e58bd3722",
+    "participant/instructions.md": "f8916d7b360f3e969c189d60bd7a824cf7343f2facd4136c7b4259c9f156448e",
+    "participant/observation-sheet.md": "d68f435b3eef234c03a6605bd44181ae530b95128bc1e2ad130bc8ab37ea089c",
     "participant/reading-a.md": "7d315ced26f50034f4a5528a2ae8905c9ccb93a1506d08e874ddfcc420db2ae2",
     "participant/reading-b.md": "7b873c5b8776e450cffd8e0c230c580a09b2c2208bba650dd7a0caac0b117c5a",
     "participant/reading-c.md": "dfa5dc1f5db8845dc69c4f598aad9b1601d34032f55bc61b94ddc350a67c9215",
@@ -30,6 +30,7 @@
     "participant/response-sheet.md": "250e489f9479d66d46ba0c3b4ddc375d6cb8db03ce7ca8338a287528b9aa6305",
     "participant/scope-check.md": "d9b4da6bcc10570347d70e6dccaa5dfbaa7e8361c92bdb3b30114af1ed957e97",
     "participant/ui-collapsed.png": "88f11f7e324b1e3c300c0ac860215d62e39491029281a01238fc4920b292016e",
+    "participant/ui-context.md": "de9fd4e1a679000387f232194b62e0b1347a5dd5d86f5cfed6602bccc86e2759",
     "participant/ui-expanded.png": "a749b3e949ea9a06e1402a2db008f7df7fe71099e865cdbb19b272e10a397a40"
   },
   "mapping": {
@@ -167,6 +168,11 @@
     "date": "2026-11-24",
     "scenario": "meeting",
     "initial_details_open": false,
+    "scenario_label": "기대되는 만남",
+    "context_file": "participant/ui-context.md",
+    "context_text": "이 화면은 가상 인물의 2026년 11월 24일 풀이에서 ‘기대되는 만남’을 선택한 결과입니다.",
+    "context_timing": "Once, after text responses are locked and before presenting the initial UI screen; identical in every display mode",
+    "context_interpretation_limit": "Measures source understanding with input context supplied, not recognition of the selected situation from the cropped card alone",
     "collapsed_capture": "participant/ui-collapsed.png",
     "expanded_capture": "participant/ui-expanded.png",
     "capture_viewport": {
