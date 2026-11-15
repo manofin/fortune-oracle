@@ -13,6 +13,12 @@ from urllib.parse import urlsplit
 from playwright.sync_api import expect, sync_playwright
 
 
+SCENARIO_CAUTIONS = {
+    "exam": "풀이 점수로 시험 결과를 예상하거나, 준비 계획을 무리하게 바꾸지 마세요.",
+    "meeting": "풀이 점수로 상대의 마음이나 만남의 결과를 단정하지 말고, 상대의 뜻은 대화로 확인하세요.",
+}
+
+
 def inspect_reading(page, result, view, sample, semantic):
     """Compare rendered meaning with the actual response, not just geometry."""
     reading = result["reading"]
@@ -29,15 +35,23 @@ def inspect_reading(page, result, view, sample, semantic):
     assert page.locator("#full-text").text_content() == result["text"]
     text = result["text"]
     actions = [line for line in text.splitlines() if line.startswith("해볼 일")]
+    cautions = [line for line in text.splitlines() if line.startswith("주의할 점")]
     assert len(actions) == 1, actions
+    assert len(cautions) == 1, cautions
     base_action = next(line for line in reading["lines"] if line.startswith("해볼 일"))
+    base_caution = next(line for line in reading["lines"] if line.startswith("주의할 점"))
     scenario = result.get("scenario")
     if scenario in {"exam", "meeting"}:
         assert result["reflection"] in actions[0]
         assert text.count(result["reflection"]) == 1
         assert base_action not in text
+        expected_caution = f"주의할 점 (선택한 상황에 맞춘 제안): {SCENARIO_CAUTIONS[scenario]}"
+        assert cautions == [expected_caution]
+        assert text.count(SCENARIO_CAUTIONS[scenario]) == 1
+        assert base_caution not in text
     else:
         assert actions == [base_action]
+        assert cautions == [base_caution]
         if scenario == "general":
             assert result["reflection"] not in text
     assert text.count(reading["disclaimer"]) == 1
@@ -49,9 +63,11 @@ def inspect_reading(page, result, view, sample, semantic):
     details.locator("summary").click()
     expect(page.locator("#full-text")).to_be_visible()
     expect(page.locator("#full-text")).to_contain_text(actions[0])
+    expect(page.locator("#full-text")).to_contain_text(cautions[0])
     semantic.append({"sample": sample, "view": view, "scenario": scenario,
-                     "date": result["date"], "summary": reading["lines"][1],
+                     "date": result["date"], "relation": reading["relation"], "summary": reading["lines"][1],
                      "primaryAction": actions[0], "primaryActionCount": len(actions),
+                     "caution": cautions[0], "cautionCount": len(cautions),
                      "disclaimerCount": 1, "baseInterpretationVisible": True,
                      "actionVisibleWhenExpanded": True, "actionVisibleWhenCollapsed": False})
 
@@ -61,6 +77,26 @@ def submit_dated(page):
         page.locator("#date-submit").click()
     assert captured.value.status == 200
     return captured.value.json()
+
+
+def find_wealth_date(page, today):
+    # One twelve-day branch cycle covers every daily element. Use real API results
+    # to select the content regression case, then render it through the form below.
+    for offset in range(12):
+        target = (today + timedelta(days=offset)).isoformat()
+        result = page.evaluate("""async target => {
+          const response = await fetch('/api/readings/date', {
+            method: 'POST', credentials: 'same-origin',
+            headers: {'Content-Type': 'application/json', 'X-CSRF-Token': csrf},
+            body: JSON.stringify({date: target, scenario: 'general'})
+          });
+          if (!response.ok) throw new Error(`Date selection failed: ${response.status}`);
+          return response.json();
+        }""", target)
+        assert result["ok"] and result["computed"]
+        if result["reading"]["relation"] == "wealth":
+            return target, offset + 1
+    raise AssertionError("No wealth relation found in the next twelve available dates")
 
 
 def main():
@@ -73,6 +109,7 @@ def main():
     assert not origin.username and not origin.password and not origin.query and not origin.fragment
     args.output.mkdir(parents=True, exist_ok=True)
     errors, external, observations, semantic, state_checks = [], [], [], [], []
+    context_observations = []
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch()
         context = browser.new_context(viewport={"width": 390, "height": 844},
@@ -209,6 +246,18 @@ def main():
                     assert result["scenario"] == page.locator("#scenario").input_value()
                     inspect_reading(page, result, "dday", sample, semantic)
                     state_checks.append({"sample": sample, "check": f"editing_{edit}_cancels_late_dated_reply", "passed": True})
+                target, inspected_dates = find_wealth_date(page, today)
+                page.locator("#target-date").fill(target)
+                page.locator("#scenario").select_option("meeting")
+                result = submit_dated(page)
+                assert result["reading"]["relation"] == "wealth"
+                inspect_reading(page, result, "dday", sample, context_observations)
+                context_observations[-1].update({
+                    "case": "meeting_with_wealth_relation", "datesInspected": inspected_dates,
+                    "baseFinancialCautionAbsent": "금전적 이익이나 손실" not in result["text"],
+                })
+                assert context_observations[-1]["baseFinancialCautionAbsent"]
+                card.screenshot(path=str(args.output / "synthetic-a-dday-meeting-wealth-390-expanded.png"))
             page.locator("#delete-button").click()
             page.locator("#confirm-delete").click()
             expect(page.locator("#empty-state")).to_be_visible()
@@ -219,7 +268,7 @@ def main():
               "browserVersion": browser_version, "physicalDeviceTested": False,
               "pdfTested": False, "pageErrors": errors, "externalRequests": external,
               "observations": observations, "semanticObservations": semantic,
-              "stateChecks": state_checks}
+              "stateChecks": state_checks, "contextObservations": context_observations}
     (args.output / "basic-reading-browser.json").write_text(
         json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(result, ensure_ascii=False))

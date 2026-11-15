@@ -56,26 +56,49 @@ def test_short_message_retains_birth_time_uncertainty(basis, notice):
     assert len(text.splitlines()) <= 8
 
 
-def test_detailed_action_override_is_labelled_without_mutating_or_using_positions():
+def test_detailed_practice_override_is_labelled_without_mutating_or_using_positions():
     reading = engine._daily_from_chart(PROFILE, chart(), TARGET, "종합")
     reading["lines"].reverse()
     original = deepcopy(reading)
-    lines = engine.daily_display_lines(reading, action_override="조건 하나를 메모하세요.")
-    action, _ = engine.RELATION_PRACTICE[reading["relation"]]
+    lines = engine.daily_display_lines(reading, action_override="조건 하나를 메모하세요.",
+                                       caution_override="점수만으로 조건을 판단하지 마세요.")
+    action, caution = engine.RELATION_PRACTICE[reading["relation"]]
     assert f"해볼 일: {action}" not in lines
+    assert f"주의할 점: {caution}" not in lines
     assert "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 조건 하나를 메모하세요." in lines
+    assert "주의할 점 (선택한 상황에 맞춘 제안): 점수만으로 조건을 판단하지 마세요." in lines
     assert len(lines) == len(original["lines"])
-    assert sum(a != b for a, b in zip(lines, original["lines"])) == 1
+    assert sum(a != b for a, b in zip(lines, original["lines"])) == 2
     assert reading == original
     general = engine.daily_display_lines(reading)
     assert general == reading["lines"] and general is not reading["lines"]
 
 
-def test_action_override_rejects_unknown_paragraph_contract():
+@pytest.mark.parametrize("heading", ["해볼 일:", "주의할 점:"])
+@pytest.mark.parametrize("duplicate", [False, True])
+def test_practice_override_rejects_missing_or_duplicate_paragraphs(heading, duplicate):
     reading = engine._daily_from_chart(PROFILE, chart(), TARGET, "종합")
-    reading["lines"] = ["해볼 일: 다른 렌더러의 문장"]
-    with pytest.raises(ValueError, match="action paragraph"):
-        engine.daily_display_lines(reading, action_override="상황 제안")
+    paragraph = next(line for line in reading["lines"] if line.startswith(heading))
+    if duplicate:
+        reading["lines"].append(paragraph)
+    else:
+        reading["lines"].remove(paragraph)
+    original = deepcopy(reading)
+    with pytest.raises(ValueError, match="action/caution paragraphs"):
+        engine.daily_display_lines(reading, action_override="상황 제안", caution_override="상황 주의")
+    assert reading == original
+
+
+@pytest.mark.parametrize("action,caution", [
+    ("상황 제안", None), (None, "상황 주의"), ("", "상황 주의"),
+    ("상황 제안", "  "), (123, "상황 주의"), ("상황 제안", []),
+])
+def test_practice_overrides_cannot_be_partial_or_empty(action, caution):
+    reading = engine._daily_from_chart(PROFILE, chart(), TARGET, "종합")
+    original = deepcopy(reading)
+    with pytest.raises(ValueError, match="supplied together"):
+        engine.daily_display_lines(reading, action_override=action, caution_override=caution)
+    assert reading == original
 
 
 @pytest.mark.parametrize("command,day,expected", [

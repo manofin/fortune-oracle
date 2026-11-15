@@ -429,24 +429,28 @@ def _daily_from_chart(profile: Mapping[str, Any], result: Any, target_date: date
     }
 
 
-def daily_display_lines(reading: Mapping[str, Any], *, action_override: Optional[str] = None) -> list[str]:
-    """Copy detailed lines and optionally replace the known action paragraph.
+def daily_display_lines(reading: Mapping[str, Any], *, action_override: Optional[str] = None,
+                        caution_override: Optional[str] = None) -> list[str]:
+    """Copy detailed lines and optionally replace an action/caution pair.
 
     Situation suggestions are explicitly labelled and never mutate the reading
     or rely on an array position or a parsed heading.
     """
     lines = list(reading["lines"])
-    if action_override is None:
+    if action_override is None and caution_override is None:
         return lines
-    action, _ = RELATION_PRACTICE.get(reading["relation"], RELATION_PRACTICE["unknown"])
-    original = f"해볼 일: {action}"
-    if lines.count(original) != 1:
-        raise ValueError("Daily action paragraph is unavailable or ambiguous")
-    return [
-        f"해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): {action_override}"
-        if line == original else line
-        for line in lines
-    ]
+    if any(not isinstance(value, str) or not value.strip()
+           for value in (action_override, caution_override)):
+        raise ValueError("Daily action and caution overrides must be supplied together")
+    action, caution = RELATION_PRACTICE.get(reading["relation"], RELATION_PRACTICE["unknown"])
+    replacements = {
+        f"해볼 일: {action}":
+            f"해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): {action_override}",
+        f"주의할 점: {caution}": f"주의할 점 (선택한 상황에 맞춘 제안): {caution_override}",
+    }
+    if any(lines.count(original) != 1 for original in replacements):
+        raise ValueError("Daily action/caution paragraphs are unavailable or ambiguous")
+    return [replacements.get(line, line) for line in lines]
 
 
 def render_daily_channel_text(reading: Mapping[str, Any], *, reading_timezone: Optional[str] = None) -> str:
