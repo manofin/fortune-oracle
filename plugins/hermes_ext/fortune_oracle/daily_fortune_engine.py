@@ -160,12 +160,31 @@ def _element_day_relation(day_master_element: str, day_element: str) -> str:
 
 
 RELATION_LINE = {
-    "same": "자기 흐름이 잘 맞아 체감이 좋은 날입니다.",
-    "output": "말과 표현이 잘 풀리는 날입니다.",
-    "input": "배우고 정리하는 쪽에 유리한 날입니다.",
-    "pressure": "컨디션 관리가 필요한 날입니다.",
-    "wealth": "돈과 의무가 걸릴 수 있는 날입니다.",
-    "unknown": "무난한 하루입니다.",
+    "same": "같은 오행이므로, 자기 기준을 점검하는 주제로 읽습니다.",
+    "output": "내 오행이 날짜의 오행을 돕는 관계이므로, 표현하는 주제로 읽습니다.",
+    "input": "날짜의 오행이 내 오행을 돕는 관계이므로, 배우고 정리하는 주제로 읽습니다.",
+    "pressure": "날짜의 오행이 내 오행을 제어하는 관계이므로, 요구와 여유를 점검하는 주제로 읽습니다.",
+    "wealth": "내 오행이 날짜의 오행을 제어하는 관계이므로, 자원과 책임을 점검하는 주제로 읽습니다.",
+    "unknown": "관계를 확인할 수 없어 일반적인 점검 주제로만 읽습니다.",
+}
+
+RELATION_THEME = {
+    "same": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+    "output": "생각을 짧고 분명하게 전하는 주제로 읽습니다.",
+    "input": "필요한 것을 배우고 정리하는 주제로 읽습니다.",
+    "pressure": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+    "wealth": "쓸 수 있는 자원과 맡을 책임을 살피는 주제로 읽습니다.",
+    "unknown": "계산 관계를 확인할 수 없어 일반적인 점검 주제로만 읽습니다.",
+}
+
+# Suggestions follow the symbolic relation, not claims about the user's life.
+RELATION_PRACTICE = {
+    "same": ("우선순위 하나를 적어 보세요.", "내 기준만으로 다른 사람의 뜻을 단정하지 마세요."),
+    "output": ("전할 말 하나를 짧게 적고 보내기 전에 읽어 보세요.", "표현이 잘 통할 것이라 가정하지 말고 상대의 뜻을 확인하세요."),
+    "input": ("필요한 자료 하나를 읽고 핵심을 한 줄로 정리해 보세요.", "준비만 늘리기보다 작은 실행 하나로 확인하세요."),
+    "pressure": ("해야 할 일 하나의 마감과 범위를 확인하고 쉴 틈을 남겨 보세요.", "점수를 근거로 무리하거나 건강 상태를 판단하지 마세요."),
+    "wealth": ("지출이나 약속을 앞두고 있다면 조건 하나를 확인해 보세요.", "금전적 이익이나 손실을 예고하는 뜻은 아니니 중요한 결정은 실제 정보로 판단하세요."),
+    "unknown": ("할 수 있는 작은 일 하나를 정해 보세요.", "계산되지 않은 상황을 추측하지 마세요."),
 }
 
 
@@ -357,15 +376,27 @@ def _daily_from_chart(profile: Mapping[str, Any], result: Any, target_date: date
         dm_kw = list(ELEMENT_KEYWORD.get(dm_element) or [])
         keywords = keywords[:2] + dm_kw[:1]
 
+    action, caution = RELATION_PRACTICE.get(relation, RELATION_PRACTICE['unknown'])
+    distribution = ' · '.join(f'{e} {n}' for e, n in elements.items())
+    favorable_label = '·'.join(e for e, _ in ordered[:2])
+    favorable_match = '포함되어 가점' if day_element in favorable else '포함되지 않아 감점'
     lines = [
         f"{ASPECT_TITLE.get(aspect, '종합 운세')} · {score:.0f}점 — {_grade(score)}",
-        f"일진 {day_pillar_today}({day_element}) · {RELATION_LINE.get(relation, RELATION_LINE['unknown'])}",
+        f"이날의 해석: {RELATION_THEME.get(relation, RELATION_THEME['unknown'])}",
+        f"해볼 일: {action}",
+        f"주의할 점: {caution}",
+        f"해석 근거: 일간(나를 나타내는 기준) {dm_element} · 일진 {day_pillar_today}의 지지(날짜의 아래 글자) {day_element}. "
+        f"{RELATION_LINE.get(relation, RELATION_LINE['unknown'])}",
+        f"점수 근거: 계산된 오행 수는 {distribution}입니다. 개수가 적은 순서로 두 오행을 선택하고, "
+        "같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.",
+        f"이 점수 규칙에서 선택한 오행은 {favorable_label}입니다. 해당 날짜의 오행({day_element})이 {favorable_match}됩니다. "
+        "정밀한 용신 분석은 아닙니다.",
         f"{target_date.isoformat()}의 키워드는 {' · '.join(keywords)}입니다.",
     ]
     if dayun_theme:
         lines.append(f"절기 기반 대운 {dayun_theme} · 해석 보정 {dayun_adjustment:+.0f}점 (예측 확률이 아님).")
     else:
-        lines.append(f"{FORTUNE_MASTERS['관음']}")
+        lines.append("대운 보정 미적용: 계산 결과에서 이 날짜에 적용할 대운 구간을 확인하지 못했습니다.")
     birth_basis = dict(getattr(result, 'time_basis', {}) or {})
     if birth_basis:
         lines.append("출생 일·시주는 현지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다.")
@@ -394,7 +425,7 @@ def _daily_from_chart(profile: Mapping[str, Any], result: Any, target_date: date
         "birth_time_basis": birth_basis,
         "lines": lines,
         "favorable_elements": sorted(favorable),
-        "disclaimer": "이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다.",
+        "disclaimer": "해석의 한계: 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. 이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다.",
     }
 
 

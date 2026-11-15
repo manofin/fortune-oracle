@@ -1,0 +1,250 @@
+{
+  "source": "local Chromium mobile viewport emulation; synthetic adult profiles",
+  "browserVersion": "156.0.8078.4",
+  "physicalDeviceTested": false,
+  "pdfTested": false,
+  "pageErrors": [],
+  "externalRequests": [],
+  "observations": [
+    {
+      "sample": "synthetic-a",
+      "expanded": false,
+      "screenshot": "synthetic-a-320-collapsed.png",
+      "viewportWidth": 320,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 631,
+      "fullTextHeight": 693,
+      "cardScreenfuls": 0.75,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "21px",
+      "readingDate": "2026-11-15",
+      "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "semanticSubheadings": 0,
+      "paragraphs": [
+        734
+      ]
+    },
+    {
+      "sample": "synthetic-a",
+      "expanded": true,
+      "screenshot": "synthetic-a-320-expanded.png",
+      "viewportWidth": 320,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 1339,
+      "fullTextHeight": 693,
+      "cardScreenfuls": 1.59,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "21px",
+      "readingDate": "2026-11-15",
+      "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "semanticSubheadings": 0,
+      "paragraphs": [
+        734
+      ]
+    },
+    {
+      "sample": "synthetic-a",
+      "expanded": false,
+      "screenshot": "synthetic-a-390-collapsed.png",
+      "viewportWidth": 390,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 609,
+      "fullTextHeight": 588,
+      "cardScreenfuls": 0.72,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "21px",
+      "readingDate": "2026-11-15",
+      "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "semanticSubheadings": 0,
+      "paragraphs": [
+        734
+      ]
+    },
+    {
+      "sample": "synthetic-a",
+      "expanded": true,
+      "screenshot": "synthetic-a-390-expanded.png",
+      "viewportWidth": 390,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 1212,
+      "fullTextHeight": 588,
+      "cardScreenfuls": 1.44,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "21px",
+      "readingDate": "2026-11-15",
+      "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "semanticSubheadings": 0,
+      "paragraphs": [
+        734
+      ]
+    },
+    {
+      "sample": "synthetic-a",
+      "expanded": false,
+      "screenshot": "synthetic-a-430-collapsed.png",
+      "viewportWidth": 430,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 561,
+      "fullTextHeight": 504,
+      "cardScreenfuls": 0.66,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "21px",
+      "readingDate": "2026-11-15",
+      "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "semanticSubheadings": 0,
+      "paragraphs": [
+        734
+      ]
+    },
+    {
+      "sample": "synthetic-a",
+      "expanded": true,
+      "screenshot": "synthetic-a-430-expanded.png",
+      "viewportWidth": 430,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 1080,
+      "fullTextHeight": 504,
+      "cardScreenfuls": 1.28,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "21px",
+      "readingDate": "2026-11-15",
+      "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "semanticSubheadings": 0,
+      "paragraphs": [
+        734
+      ]
+    },
+    {
+      "sample": "synthetic-b",
+      "expanded": false,
+      "screenshot": "synthetic-b-320-collapsed.png",
+      "viewportWidth": 320,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 631,
+      "fullTextHeight": 714,
+      "cardScreenfuls": 0.75,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "21px",
+      "readingDate": "2026-11-15",
+      "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "semanticSubheadings": 0,
+      "paragraphs": [
+        745
+      ]
+    },
+    {
+      "sample": "synthetic-b",
+      "expanded": true,
+      "screenshot": "synthetic-b-320-expanded.png",
+      "viewportWidth": 320,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 1360,
+      "fullTextHeight": 714,
+      "cardScreenfuls": 1.61,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "21px",
+      "readingDate": "2026-11-15",
+      "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "semanticSubheadings": 0,
+      "paragraphs": [
+        745
+      ]
+    },
+    {
+      "sample": "synthetic-b",
+      "expanded": false,
+      "screenshot": "synthetic-b-390-collapsed.png",
+      "viewportWidth": 390,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 609,
+      "fullTextHeight": 609,
+      "cardScreenfuls": 0.72,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "21px",
+      "readingDate": "2026-11-15",
+      "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "semanticSubheadings": 0,
+      "paragraphs": [
+        745
+      ]
+    },
+    {
+      "sample": "synthetic-b",
+      "expanded": true,
+      "screenshot": "synthetic-b-390-expanded.png",
+      "viewportWidth": 390,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 1233,
+      "fullTextHeight": 609,
+      "cardScreenfuls": 1.46,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "21px",
+      "readingDate": "2026-11-15",
+      "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "semanticSubheadings": 0,
+      "paragraphs": [
+        745
+      ]
+    },
+    {
+      "sample": "synthetic-b",
+      "expanded": false,
+      "screenshot": "synthetic-b-430-collapsed.png",
+      "viewportWidth": 430,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 561,
+      "fullTextHeight": 546,
+      "cardScreenfuls": 0.66,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "21px",
+      "readingDate": "2026-11-15",
+      "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "semanticSubheadings": 0,
+      "paragraphs": [
+        745
+      ]
+    },
+    {
+      "sample": "synthetic-b",
+      "expanded": true,
+      "screenshot": "synthetic-b-430-expanded.png",
+      "viewportWidth": 430,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 1122,
+      "fullTextHeight": 546,
+      "cardScreenfuls": 1.33,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "21px",
+      "readingDate": "2026-11-15",
+      "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "semanticSubheadings": 0,
+      "paragraphs": [
+        745
+      ]
+    }
+  ]
+}

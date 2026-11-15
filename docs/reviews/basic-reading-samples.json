@@ -1,0 +1,301 @@
+{
+  "baseline": "2f10b1ee25127f8930082b5b8afd9e34b7603eac",
+  "synthetic_only": true,
+  "non_prose_comparisons": 300,
+  "samples": [
+    {
+      "id": 1,
+      "synthetic_input": {
+        "birth_date": "1990-05-15",
+        "birth_time": "07:30",
+        "gender": "male",
+        "timezone": "Asia/Seoul"
+      },
+      "date": "2026-10-03",
+      "before": {
+        "ok": true,
+        "score": 54.0,
+        "grade": "평온",
+        "aspect_scores": {
+          "종합": 54.0,
+          "활동": 56.0,
+          "관계": 48.0,
+          "재물": 60.0,
+          "건강": 48.0
+        },
+        "date": "2026-10-03",
+        "day_pillar": "경술",
+        "day_element": "토",
+        "day_master": "庚",
+        "relation": "input",
+        "aspect": "종합",
+        "keywords": [
+          "안정",
+          "묵묵함",
+          "정리"
+        ],
+        "dayun_theme": "甲申(목) · 연도 구간 2017–2026",
+        "dayun_pillar": "甲申",
+        "dayun_years": [
+          2017,
+          2026
+        ],
+        "dayun_adjustment": 1,
+        "dayun_basis": "lunar-javascript sect 2 / calendar_year",
+        "birth_time_basis": {
+          "solar_terms": "birth_instant_utc_plus_8",
+          "uncertain_pillars": [],
+          "pillar_candidates": {},
+          "day_hour": "local_civil_time",
+          "day_boundary": "midnight",
+          "true_solar_time": false,
+          "hour_convention": "lunar_javascript_LunarTime",
+          "dayun": "sect_2_calendar_year_local"
+        },
+        "lines": [
+          "종합 운세 · 54점 — 평온",
+          "일진 경술(토) · 배우고 정리하는 쪽에 유리한 날입니다.",
+          "2026-10-03의 키워드는 안정 · 묵묵함 · 정리입니다.",
+          "절기 기반 대운 甲申(목) · 연도 구간 2017–2026 · 해석 보정 +1점 (예측 확률이 아님).",
+          "출생 일·시주는 현지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다."
+        ],
+        "favorable_elements": [
+          "목",
+          "수"
+        ],
+        "disclaimer": "이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다."
+      },
+      "after": {
+        "ok": true,
+        "score": 54.0,
+        "grade": "평온",
+        "aspect_scores": {
+          "종합": 54.0,
+          "활동": 56.0,
+          "관계": 48.0,
+          "재물": 60.0,
+          "건강": 48.0
+        },
+        "date": "2026-10-03",
+        "day_pillar": "경술",
+        "day_element": "토",
+        "day_master": "庚",
+        "relation": "input",
+        "aspect": "종합",
+        "keywords": [
+          "안정",
+          "묵묵함",
+          "정리"
+        ],
+        "dayun_theme": "甲申(목) · 연도 구간 2017–2026",
+        "dayun_pillar": "甲申",
+        "dayun_years": [
+          2017,
+          2026
+        ],
+        "dayun_adjustment": 1,
+        "dayun_basis": "lunar-javascript sect 2 / calendar_year",
+        "birth_time_basis": {
+          "solar_terms": "birth_instant_utc_plus_8",
+          "uncertain_pillars": [],
+          "pillar_candidates": {},
+          "day_hour": "local_civil_time",
+          "day_boundary": "midnight",
+          "true_solar_time": false,
+          "hour_convention": "lunar_javascript_LunarTime",
+          "dayun": "sect_2_calendar_year_local"
+        },
+        "lines": [
+          "종합 운세 · 54점 — 평온",
+          "이날의 해석: 필요한 것을 배우고 정리하는 주제로 읽습니다.",
+          "해볼 일: 필요한 자료 하나를 읽고 핵심을 한 줄로 정리해 보세요.",
+          "주의할 점: 준비만 늘리기보다 작은 실행 하나로 확인하세요.",
+          "해석 근거: 일간(나를 나타내는 기준) 금 · 일진 경술의 지지(날짜의 아래 글자) 토. 날짜의 오행이 내 오행을 돕는 관계이므로, 배우고 정리하는 주제로 읽습니다.",
+          "점수 근거: 계산된 오행 수는 목 0 · 화 2 · 토 2 · 금 4 · 수 0입니다. 개수가 적은 순서로 두 오행을 선택하고, 같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.",
+          "이 점수 규칙에서 선택한 오행은 목·수입니다. 해당 날짜의 오행(토)이 포함되지 않아 감점됩니다. 정밀한 용신 분석은 아닙니다.",
+          "2026-10-03의 키워드는 안정 · 묵묵함 · 정리입니다.",
+          "절기 기반 대운 甲申(목) · 연도 구간 2017–2026 · 해석 보정 +1점 (예측 확률이 아님).",
+          "출생 일·시주는 현지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다."
+        ],
+        "favorable_elements": [
+          "목",
+          "수"
+        ],
+        "disclaimer": "해석의 한계: 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. 이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다."
+      }
+    },
+    {
+      "id": 2,
+      "synthetic_input": {
+        "birth_date": "1988-03-02",
+        "birth_time_known": false,
+        "gender": "unknown",
+        "timezone": "Asia/Seoul"
+      },
+      "date": "2026-10-04",
+      "before": {
+        "ok": true,
+        "score": 57.0,
+        "grade": "평온",
+        "aspect_scores": {
+          "종합": 57.0,
+          "활동": 55.7,
+          "관계": 62.3,
+          "재물": 51.0,
+          "건강": 59.0
+        },
+        "date": "2026-10-04",
+        "day_pillar": "신해",
+        "day_element": "수",
+        "day_master": "丙",
+        "relation": "pressure",
+        "aspect": "종합",
+        "keywords": [
+          "회복",
+          "유연",
+          "속도"
+        ],
+        "dayun_theme": "",
+        "dayun_pillar": "",
+        "dayun_years": null,
+        "dayun_adjustment": 0.0,
+        "dayun_basis": "unavailable",
+        "birth_time_basis": {
+          "solar_terms": "civil_day_interval_confirmed",
+          "uncertain_pillars": [],
+          "pillar_candidates": {
+            "year": [
+              "戊辰"
+            ],
+            "month": [
+              "甲寅"
+            ]
+          },
+          "day_hour": "local_civil_time",
+          "day_boundary": "midnight",
+          "true_solar_time": false,
+          "hour_convention": "lunar_javascript_LunarTime",
+          "dayun": "sect_2_calendar_year_local"
+        },
+        "lines": [
+          "종합 운세 · 57점 — 평온",
+          "일진 신해(수) · 컨디션 관리가 필요한 날입니다.",
+          "2026-10-04의 키워드는 회복 · 유연 · 속도입니다.",
+          "고민을 말로 꺼내놓으면 정리됩니다.",
+          "출생 일·시주는 현지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다.",
+          "년·월주는 현지 출생일 하루 전체에서 동일함을 확인했습니다. 시주와 대운은 제외합니다."
+        ],
+        "favorable_elements": [
+          "금",
+          "수"
+        ],
+        "disclaimer": "이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다."
+      },
+      "after": {
+        "ok": true,
+        "score": 57.0,
+        "grade": "평온",
+        "aspect_scores": {
+          "종합": 57.0,
+          "활동": 55.7,
+          "관계": 62.3,
+          "재물": 51.0,
+          "건강": 59.0
+        },
+        "date": "2026-10-04",
+        "day_pillar": "신해",
+        "day_element": "수",
+        "day_master": "丙",
+        "relation": "pressure",
+        "aspect": "종합",
+        "keywords": [
+          "회복",
+          "유연",
+          "속도"
+        ],
+        "dayun_theme": "",
+        "dayun_pillar": "",
+        "dayun_years": null,
+        "dayun_adjustment": 0.0,
+        "dayun_basis": "unavailable",
+        "birth_time_basis": {
+          "solar_terms": "civil_day_interval_confirmed",
+          "uncertain_pillars": [],
+          "pillar_candidates": {
+            "year": [
+              "戊辰"
+            ],
+            "month": [
+              "甲寅"
+            ]
+          },
+          "day_hour": "local_civil_time",
+          "day_boundary": "midnight",
+          "true_solar_time": false,
+          "hour_convention": "lunar_javascript_LunarTime",
+          "dayun": "sect_2_calendar_year_local"
+        },
+        "lines": [
+          "종합 운세 · 57점 — 평온",
+          "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+          "해볼 일: 해야 할 일 하나의 마감과 범위를 확인하고 쉴 틈을 남겨 보세요.",
+          "주의할 점: 점수를 근거로 무리하거나 건강 상태를 판단하지 마세요.",
+          "해석 근거: 일간(나를 나타내는 기준) 화 · 일진 신해의 지지(날짜의 아래 글자) 수. 날짜의 오행이 내 오행을 제어하는 관계이므로, 요구와 여유를 점검하는 주제로 읽습니다.",
+          "점수 근거: 계산된 오행 수는 목 2 · 화 1 · 토 3 · 금 0 · 수 0입니다. 개수가 적은 순서로 두 오행을 선택하고, 같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.",
+          "이 점수 규칙에서 선택한 오행은 금·수입니다. 해당 날짜의 오행(수)이 포함되어 가점됩니다. 정밀한 용신 분석은 아닙니다.",
+          "2026-10-04의 키워드는 회복 · 유연 · 속도입니다.",
+          "대운 보정 미적용: 계산 결과에서 이 날짜에 적용할 대운 구간을 확인하지 못했습니다.",
+          "출생 일·시주는 현지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다.",
+          "년·월주는 현지 출생일 하루 전체에서 동일함을 확인했습니다. 시주와 대운은 제외합니다."
+        ],
+        "favorable_elements": [
+          "금",
+          "수"
+        ],
+        "disclaimer": "해석의 한계: 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. 이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다."
+      }
+    }
+  ],
+  "relation_matrix": [
+    {
+      "stem": "甲",
+      "relation": "wealth",
+      "score": 66.2,
+      "theme": "이날의 해석: 쓸 수 있는 자원과 맡을 책임을 살피는 주제로 읽습니다.",
+      "action": "해볼 일: 지출이나 약속을 앞두고 있다면 조건 하나를 확인해 보세요.",
+      "caution": "주의할 점: 금전적 이익이나 손실을 예고하는 뜻은 아니니 중요한 결정은 실제 정보로 판단하세요."
+    },
+    {
+      "stem": "丙",
+      "relation": "output",
+      "score": 75.2,
+      "theme": "이날의 해석: 생각을 짧고 분명하게 전하는 주제로 읽습니다.",
+      "action": "해볼 일: 전할 말 하나를 짧게 적고 보내기 전에 읽어 보세요.",
+      "caution": "주의할 점: 표현이 잘 통할 것이라 가정하지 말고 상대의 뜻을 확인하세요."
+    },
+    {
+      "stem": "戊",
+      "relation": "same",
+      "score": 78.2,
+      "theme": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "action": "해볼 일: 우선순위 하나를 적어 보세요.",
+      "caution": "주의할 점: 내 기준만으로 다른 사람의 뜻을 단정하지 마세요."
+    },
+    {
+      "stem": "庚",
+      "relation": "input",
+      "score": 73.2,
+      "theme": "이날의 해석: 필요한 것을 배우고 정리하는 주제로 읽습니다.",
+      "action": "해볼 일: 필요한 자료 하나를 읽고 핵심을 한 줄로 정리해 보세요.",
+      "caution": "주의할 점: 준비만 늘리기보다 작은 실행 하나로 확인하세요."
+    },
+    {
+      "stem": "壬",
+      "relation": "pressure",
+      "score": 63.2,
+      "theme": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "action": "해볼 일: 해야 할 일 하나의 마감과 범위를 확인하고 쉴 틈을 남겨 보세요.",
+      "caution": "주의할 점: 점수를 근거로 무리하거나 건강 상태를 판단하지 마세요."
+    }
+  ]
+}
