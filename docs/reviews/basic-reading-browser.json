@@ -14,7 +14,7 @@
       "viewportHeight": 844,
       "pageOverflow": false,
       "cardHeight": 631,
-      "fullTextHeight": 693,
+      "fullTextHeight": 651,
       "cardScreenfuls": 0.75,
       "textOutside": false,
       "textFontSize": "14px",
@@ -23,7 +23,7 @@
       "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
       "semanticSubheadings": 0,
       "paragraphs": [
-        734
+        704
       ]
     },
     {
@@ -33,9 +33,9 @@
       "viewportWidth": 320,
       "viewportHeight": 844,
       "pageOverflow": false,
-      "cardHeight": 1339,
-      "fullTextHeight": 693,
-      "cardScreenfuls": 1.59,
+      "cardHeight": 1297,
+      "fullTextHeight": 651,
+      "cardScreenfuls": 1.54,
       "textOutside": false,
       "textFontSize": "14px",
       "textLineHeight": "21px",
@@ -43,7 +43,7 @@
       "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
       "semanticSubheadings": 0,
       "paragraphs": [
-        734
+        704
       ]
     },
     {
@@ -54,7 +54,7 @@
       "viewportHeight": 844,
       "pageOverflow": false,
       "cardHeight": 609,
-      "fullTextHeight": 588,
+      "fullTextHeight": 567,
       "cardScreenfuls": 0.72,
       "textOutside": false,
       "textFontSize": "14px",
@@ -63,7 +63,7 @@
       "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
       "semanticSubheadings": 0,
       "paragraphs": [
-        734
+        704
       ]
     },
     {
@@ -73,9 +73,9 @@
       "viewportWidth": 390,
       "viewportHeight": 844,
       "pageOverflow": false,
-      "cardHeight": 1212,
-      "fullTextHeight": 588,
-      "cardScreenfuls": 1.44,
+      "cardHeight": 1191,
+      "fullTextHeight": 567,
+      "cardScreenfuls": 1.41,
       "textOutside": false,
       "textFontSize": "14px",
       "textLineHeight": "21px",
@@ -83,7 +83,7 @@
       "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
       "semanticSubheadings": 0,
       "paragraphs": [
-        734
+        704
       ]
     },
     {
@@ -94,7 +94,7 @@
       "viewportHeight": 844,
       "pageOverflow": false,
       "cardHeight": 561,
-      "fullTextHeight": 504,
+      "fullTextHeight": 483,
       "cardScreenfuls": 0.66,
       "textOutside": false,
       "textFontSize": "14px",
@@ -103,7 +103,7 @@
       "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
       "semanticSubheadings": 0,
       "paragraphs": [
-        734
+        704
       ]
     },
     {
@@ -113,9 +113,9 @@
       "viewportWidth": 430,
       "viewportHeight": 844,
       "pageOverflow": false,
-      "cardHeight": 1080,
-      "fullTextHeight": 504,
-      "cardScreenfuls": 1.28,
+      "cardHeight": 1059,
+      "fullTextHeight": 483,
+      "cardScreenfuls": 1.25,
       "textOutside": false,
       "textFontSize": "14px",
       "textLineHeight": "21px",
@@ -123,7 +123,7 @@
       "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
       "semanticSubheadings": 0,
       "paragraphs": [
-        734
+        704
       ]
     },
     {
@@ -134,7 +134,7 @@
       "viewportHeight": 844,
       "pageOverflow": false,
       "cardHeight": 631,
-      "fullTextHeight": 714,
+      "fullTextHeight": 672,
       "cardScreenfuls": 0.75,
       "textOutside": false,
       "textFontSize": "14px",
@@ -143,7 +143,7 @@
       "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
       "semanticSubheadings": 0,
       "paragraphs": [
-        745
+        715
       ]
     },
     {
@@ -153,9 +153,9 @@
       "viewportWidth": 320,
       "viewportHeight": 844,
       "pageOverflow": false,
-      "cardHeight": 1360,
-      "fullTextHeight": 714,
-      "cardScreenfuls": 1.61,
+      "cardHeight": 1318,
+      "fullTextHeight": 672,
+      "cardScreenfuls": 1.56,
       "textOutside": false,
       "textFontSize": "14px",
       "textLineHeight": "21px",
@@ -163,7 +163,7 @@
       "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
       "semanticSubheadings": 0,
       "paragraphs": [
-        745
+        715
       ]
     },
     {
@@ -174,7 +174,7 @@
       "viewportHeight": 844,
       "pageOverflow": false,
       "cardHeight": 609,
-      "fullTextHeight": 609,
+      "fullTextHeight": 588,
       "cardScreenfuls": 0.72,
       "textOutside": false,
       "textFontSize": "14px",
@@ -183,7 +183,7 @@
       "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
       "semanticSubheadings": 0,
       "paragraphs": [
-        745
+        715
       ]
     },
     {
@@ -193,9 +193,9 @@
       "viewportWidth": 390,
       "viewportHeight": 844,
       "pageOverflow": false,
-      "cardHeight": 1233,
-      "fullTextHeight": 609,
-      "cardScreenfuls": 1.46,
+      "cardHeight": 1212,
+      "fullTextHeight": 588,
+      "cardScreenfuls": 1.44,
       "textOutside": false,
       "textFontSize": "14px",
       "textLineHeight": "21px",
@@ -203,7 +203,7 @@
       "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
       "semanticSubheadings": 0,
       "paragraphs": [
-        745
+        715
       ]
     },
     {
@@ -214,7 +214,7 @@
       "viewportHeight": 844,
       "pageOverflow": false,
       "cardHeight": 561,
-      "fullTextHeight": 546,
+      "fullTextHeight": 525,
       "cardScreenfuls": 0.66,
       "textOutside": false,
       "textFontSize": "14px",
@@ -223,7 +223,7 @@
       "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
       "semanticSubheadings": 0,
       "paragraphs": [
-        745
+        715
       ]
     },
     {
@@ -233,9 +233,9 @@
       "viewportWidth": 430,
       "viewportHeight": 844,
       "pageOverflow": false,
-      "cardHeight": 1122,
-      "fullTextHeight": 546,
-      "cardScreenfuls": 1.33,
+      "cardHeight": 1101,
+      "fullTextHeight": 525,
+      "cardScreenfuls": 1.3,
       "textOutside": false,
       "textFontSize": "14px",
       "textLineHeight": "21px",
@@ -243,8 +243,250 @@
       "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
       "semanticSubheadings": 0,
       "paragraphs": [
-        745
+        715
       ]
+    }
+  ],
+  "semanticObservations": [
+    {
+      "sample": "synthetic-a",
+      "view": "today",
+      "scenario": null,
+      "date": "2026-11-15",
+      "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일: 해야 할 일 하나의 마감과 범위를 확인하고 쉴 틈을 남겨 보세요.",
+      "primaryActionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": false
+    },
+    {
+      "sample": "synthetic-a",
+      "view": "tomorrow",
+      "scenario": null,
+      "date": "2026-11-16",
+      "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일: 해야 할 일 하나의 마감과 범위를 확인하고 쉴 틈을 남겨 보세요.",
+      "primaryActionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": false
+    },
+    {
+      "sample": "synthetic-a",
+      "view": "today",
+      "scenario": null,
+      "date": "2026-11-15",
+      "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일: 해야 할 일 하나의 마감과 범위를 확인하고 쉴 틈을 남겨 보세요.",
+      "primaryActionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": false
+    },
+    {
+      "sample": "synthetic-a",
+      "view": "dday",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일: 해야 할 일 하나의 마감과 범위를 확인하고 쉴 틈을 남겨 보세요.",
+      "primaryActionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": false
+    },
+    {
+      "sample": "synthetic-a",
+      "view": "dday",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "summary": "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 결과를 예상하기보다, 복습과 휴식에 필요한 시간을 하나씩 정해 보세요.",
+      "primaryActionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": false
+    },
+    {
+      "sample": "synthetic-a",
+      "view": "dday",
+      "scenario": "exam",
+      "date": "2026-11-17",
+      "summary": "이날의 해석: 필요한 것을 배우고 정리하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 결과를 예상하기보다, 복습과 휴식에 필요한 시간을 하나씩 정해 보세요.",
+      "primaryActionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": false
+    },
+    {
+      "sample": "synthetic-a",
+      "view": "dday",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "summary": "이날의 해석: 필요한 것을 배우고 정리하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 상대의 마음을 단정하기보다, 나누고 싶은 이야기와 듣고 싶은 이야기를 떠올려 보세요.",
+      "primaryActionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": false
+    },
+    {
+      "sample": "synthetic-a",
+      "view": "dday",
+      "scenario": "exam",
+      "date": "2026-11-17",
+      "summary": "이날의 해석: 필요한 것을 배우고 정리하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 결과를 예상하기보다, 복습과 휴식에 필요한 시간을 하나씩 정해 보세요.",
+      "primaryActionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": false
+    },
+    {
+      "sample": "synthetic-a",
+      "view": "dday",
+      "scenario": "exam",
+      "date": "2026-11-18",
+      "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 결과를 예상하기보다, 복습과 휴식에 필요한 시간을 하나씩 정해 보세요.",
+      "primaryActionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": false
+    },
+    {
+      "sample": "synthetic-b",
+      "view": "today",
+      "scenario": null,
+      "date": "2026-11-15",
+      "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "primaryAction": "해볼 일: 우선순위 하나를 적어 보세요.",
+      "primaryActionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": false
+    },
+    {
+      "sample": "synthetic-b",
+      "view": "tomorrow",
+      "scenario": null,
+      "date": "2026-11-16",
+      "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "primaryAction": "해볼 일: 우선순위 하나를 적어 보세요.",
+      "primaryActionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": false
+    },
+    {
+      "sample": "synthetic-b",
+      "view": "today",
+      "scenario": null,
+      "date": "2026-11-15",
+      "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "primaryAction": "해볼 일: 우선순위 하나를 적어 보세요.",
+      "primaryActionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": false
+    },
+    {
+      "sample": "synthetic-b",
+      "view": "dday",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "primaryAction": "해볼 일: 우선순위 하나를 적어 보세요.",
+      "primaryActionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": false
+    },
+    {
+      "sample": "synthetic-b",
+      "view": "dday",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "summary": "이날의 해석: 중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 결과를 예상하기보다, 복습과 휴식에 필요한 시간을 하나씩 정해 보세요.",
+      "primaryActionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": false
+    },
+    {
+      "sample": "synthetic-b",
+      "view": "dday",
+      "scenario": "exam",
+      "date": "2026-11-17",
+      "summary": "이날의 해석: 생각을 짧고 분명하게 전하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 결과를 예상하기보다, 복습과 휴식에 필요한 시간을 하나씩 정해 보세요.",
+      "primaryActionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": false
+    },
+    {
+      "sample": "synthetic-b",
+      "view": "dday",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "summary": "이날의 해석: 생각을 짧고 분명하게 전하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 상대의 마음을 단정하기보다, 나누고 싶은 이야기와 듣고 싶은 이야기를 떠올려 보세요.",
+      "primaryActionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": false
+    }
+  ],
+  "stateChecks": [
+    {
+      "sample": "synthetic-a",
+      "check": "editing_date_and_scenario_preserves_today",
+      "passed": true
+    },
+    {
+      "sample": "synthetic-a",
+      "check": "submitted_date_and_scenario_replace_old_content",
+      "passed": true
+    },
+    {
+      "sample": "synthetic-a",
+      "check": "editing_scenario_cancels_late_dated_reply",
+      "passed": true
+    },
+    {
+      "sample": "synthetic-a",
+      "check": "editing_date_cancels_late_dated_reply",
+      "passed": true
+    },
+    {
+      "sample": "synthetic-b",
+      "check": "editing_date_and_scenario_preserves_today",
+      "passed": true
+    },
+    {
+      "sample": "synthetic-b",
+      "check": "submitted_date_and_scenario_replace_old_content",
+      "passed": true
     }
   ]
 }

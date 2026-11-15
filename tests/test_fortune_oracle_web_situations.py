@@ -53,6 +53,42 @@ def test_inclusive_date_limits_and_same_daily_score(app, offset):
     assert general["reading"] == data["reading"]  # scenario adds a reflection, no invented score
 
 
+@pytest.mark.parametrize("scenario", ["general", "exam", "meeting"])
+def test_date_view_uses_one_action_and_retains_base_reading(app, scenario):
+    client, headers = registered(app)
+    baseline = client.get("/api/readings/today").json
+    original = json.loads(json.dumps(baseline["reading"]))
+    result = client.post("/api/readings/date", json={"date": baseline["date"], "scenario": scenario},
+                         headers=headers).json
+    assert result["reading"] == original
+    assert client.get("/api/readings/today").json["reading"] == original
+    actions = [line for line in result["text"].splitlines() if line.startswith("해볼 일")]
+    assert len(actions) == 1
+    base_action = next(line for line in original["lines"] if line.startswith("해볼 일:"))
+    if scenario == "general":
+        assert actions == [base_action]
+        assert result["reflection"] not in result["text"]
+    else:
+        assert result["reflection"] in actions[0]
+        assert "선택한 상황에 맞춘 제안" in actions[0]
+        assert "별도 점수·성공 확률 아님" in actions[0]
+        assert base_action not in result["text"]
+        assert result["text"].count(result["reflection"]) == 1
+    for line in original["lines"]:
+        if line != base_action:
+            assert line in result["text"]
+    assert result["text"].count(original["disclaimer"]) == 1
+    assert result["text"].count("점수와 조언은 경험적 해석이며 예측 확률이 아닙니다.") == 1
+
+
+@pytest.mark.parametrize("day", ["today", "tomorrow", "week"])
+def test_daily_limit_statement_is_shown_once(app, day):
+    result = service.daily(PROFILE, day, now=app.config["NOW"])
+    assert result["computed"]
+    assert result["text"].count("점수와 조언은 경험적 해석이며 예측 확률이 아닙니다.") == 1
+    assert result["text"].startswith("계산된 사주·일진을 바탕으로 한 해석입니다.")
+
+
 @pytest.mark.parametrize("zone, expected", [("Asia/Seoul", "2026-10-29"), ("America/New_York", "2026-10-28")])
 def test_date_bounds_follow_the_explicit_profile_zone(app, zone, expected):
     app.config["NOW"] = datetime(2026, 10, 28, 23, tzinfo=timezone.utc)

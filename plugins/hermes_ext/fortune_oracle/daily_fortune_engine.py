@@ -429,6 +429,62 @@ def _daily_from_chart(profile: Mapping[str, Any], result: Any, target_date: date
     }
 
 
+def daily_display_lines(reading: Mapping[str, Any], *, action_override: Optional[str] = None) -> list[str]:
+    """Copy detailed lines and optionally replace the known action paragraph.
+
+    Situation suggestions are explicitly labelled and never mutate the reading
+    or rely on an array position or a parsed heading.
+    """
+    lines = list(reading["lines"])
+    if action_override is None:
+        return lines
+    action, _ = RELATION_PRACTICE.get(reading["relation"], RELATION_PRACTICE["unknown"])
+    original = f"해볼 일: {action}"
+    if lines.count(original) != 1:
+        raise ValueError("Daily action paragraph is unavailable or ambiguous")
+    return [
+        f"해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): {action_override}"
+        if line == original else line
+        for line in lines
+    ]
+
+
+def render_daily_channel_text(reading: Mapping[str, Any], *, reading_timezone: Optional[str] = None) -> str:
+    """Render the calculated daily result for a short message or narration.
+
+    Detailed ``lines`` remain available to the web renderer. Build the Korean
+    summary from calculated fields, without parsing or truncating those lines.
+    English retains its existing localized presentation.
+    """
+    from .localization import language_code
+    zone_suffix = f" · {reading_timezone}" if reading_timezone else ""
+    if language_code(reading.get("language")) == "en":
+        header = f"Interpretation of calculated chart data (heuristic) · {reading['date']}{zone_suffix}"
+        return "\n".join([header, *reading["lines"], reading["disclaimer"]])
+    relation = reading["relation"]
+    action, caution = RELATION_PRACTICE.get(relation, RELATION_PRACTICE["unknown"])
+    cycle = (f"대운 보정 {reading['dayun_adjustment']:+.0f}점."
+             if reading["dayun_pillar"] else "대운 보정 미적용.")
+    lines = [
+        f"계산된 사주·일진의 경험적 해석 · {reading['date']} · {ASPECT_TITLE.get(reading['aspect'], '종합 운세')} · "
+        f"{reading['score']:.0f}점 — {reading['grade']}{zone_suffix}",
+        f"이날의 해석: {RELATION_THEME.get(relation, RELATION_THEME['unknown'])}",
+        f"해볼 일: {action}",
+        f"주의할 점: {caution}",
+        f"계산 근거: 일간 {_stem_element(reading['day_master'])}·일진 {reading['day_pillar']}"
+        f"({reading['day_element']})의 관계와 오행 수를 반영했습니다. {cycle}",
+        f"{reading['date']}의 키워드는 {' · '.join(reading['keywords'])}입니다.",
+    ]
+    birth_basis = reading.get("birth_time_basis", {})
+    if birth_basis.get("solar_terms") == "civil_day_interval_confirmed":
+        lines.append("출생시각 미확정: 시주·대운은 제외했습니다.")
+    elif birth_basis and birth_basis.get("solar_terms") != "birth_instant_utc_plus_8":
+        lines.append("출생시각 미확정: 절기 경계의 년·월주는 불확실합니다.")
+    lines.append("점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. "
+                 "오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다.")
+    return "\n".join(lines)
+
+
 def render_personalized_daily_text(
     profile: Optional[Mapping[str, Any]],
     *,
@@ -436,8 +492,8 @@ def render_personalized_daily_text(
     aspect: str = "종합",
     language: Optional[str] = None,
 ) -> Optional[str]:
-    """사람이 읽을 텍스트. 실패 시 None(호출부가 기존 정적 문구로 폴백)."""
+    """짧은 메시지용 텍스트. 실패 시 None(호출부가 기존 정적 문구로 폴백)."""
     d = build_personalized_daily(profile, target_date=target_date, aspect=aspect, language=language)
     if not d:
         return None
-    return "\n".join(d["lines"] + [d["disclaimer"]])
+    return render_daily_channel_text(d)

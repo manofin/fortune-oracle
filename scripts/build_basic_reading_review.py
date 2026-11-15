@@ -60,7 +60,8 @@ def build(output):
         before = baseline._daily_from_chart(profile, chart, target, "종합")
         after = current._daily_from_chart(profile, chart, target, "종합")
         samples.append({"id": index, "synthetic_input": profile, "date": target.isoformat(),
-                        "before": before, "after": after})
+                        "before": before, "after": after,
+                        "channel_text": current.render_daily_channel_text(after)})
 
     # Controlled charts test all relation themes; they are not real birth charts.
     matrix = []
@@ -87,6 +88,9 @@ def build(output):
                       f"풀이 날짜: {sample['date']}", ""])
         for key, label in (("before", "변경 전"), ("after", "변경 후")):
             lines.extend([f"### {label}", "", "```text", output_text(sample[key]), "```", ""])
+        lines.extend(["### 메시지·직접 음성용 요약 (보완본)", "",
+                      "웹의 상세 풀이와 별도 표시입니다. Telegram과 시간대를 지정한 음성 경로에는 풀이 시간대도 표시합니다.", "",
+                      "```text", sample["channel_text"], "```", ""])
     lines.extend(["## 관계별 문구 확인용 합성 차트", "", "아래 차트는 분기를 확인하기 위한 가공 입력이며 실제 출생 계산 사례가 아닙니다.", "",
                   "| 관계 | 이날의 해석 | 해볼 일 | 주의할 점 |", "| --- | --- | --- | --- |"])
     lines.extend(f"| {r['relation']} | {r['theme']} | {r['action']} | {r['caution']} |" for r in matrix)
@@ -99,12 +103,16 @@ def build(output):
     blind = ["# 기본 풀이 읽기 평가용", "", "가상 사례별 두 글을 읽고 각각 평가합니다. 버전의 출처나 변경 순서는 공개하지 않습니다.",
              "개인적으로 느껴지는 정도와 근거의 납득도는 별개로 점수를 매깁니다. 1=전혀 그렇지 않음, 5=매우 그러함.",
              "실제 자신에 대한 적중도를 묻는 평가가 아닙니다. 근거가 납득된다는 응답도 예측의 타당성을 입증하지 않습니다. 서로 상의하기 전에 응답을 기록합니다.", "",
-             "각 글: 이해하기 쉬움 __/5 · 행동의 실행 가능성 __/5 · 개인적으로 느껴짐 __/5 · 근거 납득도 __/5",
+             "각 글: 고민 입력 없이 읽을 가치가 있음 __/5 · 이해하기 쉬움 __/5 · 행동의 실행 가능성 __/5 · 개인적으로 느껴짐 __/5 · 근거 납득도 __/5",
+             "해볼 일 하나를 본인 말로 적어주세요: ____________________",
              "단정으로 느껴진 문장 / 부담스러운 행동 / 실제로 도움이 된 문장: ____________________", "",
              "각 쌍: 더 유용한 글 X / Y / 차이 없음 / 판단 어려움 · 이유: ____________________", ""]
     for sample, order in zip(samples, [("after", "before"), ("before", "after")]):
         for label, key in zip("XY", order):
             blind.extend([f"## {sample['id']}-{label}", "", "```text", output_text(sample[key]), "```", ""])
+            blind.extend(["읽을 가치 __/5 · 이해하기 쉬움 __/5 · 행동 실행 가능성 __/5 · 개인적으로 느껴짐 __/5 · 근거 납득도 __/5",
+                          "해볼 일 하나를 본인 말로: ____________________",
+                          "도움이 된 문장 / 부담스럽거나 단정적인 문장: ____________________", ""])
     (output / "basic-reading-blind.md").write_text("\n".join(blind))
     print(f"Wrote 2 synthetic comparisons and 5 relation themes; {comparisons} non-prose comparisons passed.")
 

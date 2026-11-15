@@ -10,6 +10,7 @@ if (location.search) history.replaceState(history.state, "", location.pathname +
 let csrf = "", profile = null, generation = 0, pending = new AbortController(), deleting = false;
 let sessionReady = false, sessionInitialization = null, saving = false, busyState = false;
 let shareSource = null, shareFile = null, shareVersion = 0, dateAvailable = false, formStartedDay = "";
+let pendingDatedGeneration = null;
 const downloadUrls = new Set();
 let integratedReport = null, integratedPages = [], integratedPage = 0, integratedShareVersion = 0;
 const integratedUrls = new Set();
@@ -133,7 +134,7 @@ function clearShare() {
   $("download-share").disabled = true; $("native-share").hidden = true;
   downloadUrls.forEach(url => URL.revokeObjectURL(url)); downloadUrls.clear();
 }
-function cancelPending() { pending.abort(); pending = new AbortController(); hidePremiumInterest(); return ++generation; }
+function cancelPending() { pending.abort(); pending = new AbortController(); pendingDatedGeneration = null; hidePremiumInterest(); return ++generation; }
 function measure(event, view) {
   if (!csrf) return;
   // Independent of reading cancellation; a revoked session rejects late events server-side.
@@ -265,7 +266,7 @@ function drawDaily(result, view) {
     label.textContent = `${{tomorrow:"내일의 일진", dday:"그날의 일진"}[view] || "오늘의 일진"} · ${dayGlyphs[0].ko}${dayGlyphs[1].ko}일`;
     $("day-pillar").replaceChildren(...dayGlyphs.map(tile), label);
   } else $("day-pillar").replaceChildren();
-  $("day-relation").textContent = result.reflection ? `상황별 성찰 질문: ${result.reflection}` : reading.lines[1] || `일진 ${reading.day_pillar}`;
+  $("day-relation").textContent = reading.lines[1] || `일진 ${reading.day_pillar}`;
   $("score").textContent = String(Math.round(reading.score)); $("full-text").textContent = result.text;
   $("score").closest(".interpretation-index").style.setProperty("--score", String(Math.max(0, Math.min(100, Math.round(reading.score)))));
   $("daily-result").hidden = false;
@@ -623,6 +624,7 @@ $("download-integrated-share").addEventListener("click", () => {
 async function loadSpecial(view, payload) {
   if (deleting || !profile) return;
   const mine = cancelPending(); busy(true); clearResults(); showError("reading-error", "");
+  if (view === "dday") pendingDatedGeneration = mine;
   document.querySelectorAll("[data-view]").forEach(b => b.setAttribute("aria-pressed", "false"));
   try {
     const result = await api(view === "dday" ? "/api/readings/date" : "/api/compat", {method:"POST", body:JSON.stringify(payload)});
@@ -637,8 +639,13 @@ async function loadSpecial(view, payload) {
     }
   } catch (err) {
     if (err.name !== "AbortError" && mine === generation) { showError("reading-error", err.message); $("reading-error").scrollIntoView({block:"center"}); }
-  } finally { if (mine === generation) busy(false); }
+  } finally { if (mine === generation) { pendingDatedGeneration = null; busy(false); } }
 }
+$("date-form").addEventListener("input", () => {
+  if (deleting || (pendingDatedGeneration !== generation && shareSource?.view !== "dday")) return;
+  // A changed date or situation invalidates only its dated result, including a late reply.
+  cancelPending(); busy(false); clearResults(); showError("reading-error", "");
+});
 $("date-form").addEventListener("submit", event => {
   event.preventDefault(); loadSpecial("dday", Object.fromEntries(new FormData(event.currentTarget)));
 });

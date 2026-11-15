@@ -117,12 +117,13 @@ def synthesize_reading(reading: dict, *, tts=None, output_root=None, speed=1.0, 
 
 
 def prepare_daily_voice(profile, *, target_date=None, tts=None, output_root=None, speed=1.0, provider=None):
-    from .daily_fortune_engine import build_personalized_daily
+    from .daily_fortune_engine import build_personalized_daily, render_daily_channel_text
     daily = build_personalized_daily(profile,target_date=target_date)
     if not daily:
         return {'ok':False,'error':'reading_unavailable',
                 'text_fallback':'등록된 출생정보가 없거나 계산하지 못했습니다. 출생정보를 확인해 주세요.'}
-    reading = {'ok':True,'kind':'daily','text':'\n'.join(daily['lines']+[daily['disclaimer']]),
+    reading = {'ok':True,'kind':'daily','text':render_daily_channel_text(daily),
+               'language':daily.get('language','ko'),
                'evidence':{'day_pillar':daily['day_pillar'],'dayun_pillar':daily['dayun_pillar'],
                            'score':daily['score'],'basis':daily['dayun_basis']}}
     return synthesize_reading(reading,tts=tts,output_root=output_root,speed=speed,provider=provider)

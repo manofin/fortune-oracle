@@ -5,7 +5,7 @@ import re
 
 from hermes_ext.fortune_oracle.bazi_bridge import BaziInput, calculate_bazi_from_profile
 from hermes_ext.fortune_oracle.daily_reading import prepare_daily_reading, prepare_kline_reading
-from hermes_ext.fortune_oracle.daily_fortune_engine import build_personalized_daily
+from hermes_ext.fortune_oracle.daily_fortune_engine import build_personalized_daily, daily_display_lines
 from hermes_ext.fortune_oracle.compatibility import build_compatibility
 from hermes_ext.fortune_oracle.localization import local_today, reading_zone
 
@@ -138,9 +138,10 @@ def dated_reading(profile, payload, now=None):
     scenario = payload.get("scenario", "general")
     reflection = SCENARIOS[scenario]
     text = "\n".join([
-        "계산된 사주·일진을 바탕으로 한 해석입니다. 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다.",
-        f"{target.isoformat()} · {reading_zone(profile).key}", *reading["lines"],
-        "상황별 성찰 질문 (별도 점수·성공 확률 아님): " + reflection, reading["disclaimer"],
+        "계산된 사주·일진을 바탕으로 한 해석입니다.",
+        f"{target.isoformat()} · {reading_zone(profile).key}",
+        *daily_display_lines(reading, action_override=reflection if scenario != "general" else None),
+        reading["disclaimer"],
     ])
     return {"ok": True, "computed": True, "kind": "dated", "date": target.isoformat(),
             "reading_timezone": reading_zone(profile).key, "reading": reading,

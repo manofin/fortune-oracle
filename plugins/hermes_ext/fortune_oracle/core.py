@@ -26,7 +26,7 @@ def _render_fortune(day: str = "today", *, profile: Optional[Mapping[str, Any]] 
             return f"{NOT_CALCULATED_KO} / Not a calculated result\nUnsupported language; use ko or en. / 한국어(ko) 또는 영어(en)를 선택해 주세요."
         if code == "en":
             from .daily_reading import prepare_daily_reading
-            return prepare_daily_reading(profile, day=day, language=code)["text"]
+            return prepare_daily_reading(profile, day=day, language=code, compact=True)["text"]
     # 개인화 일일 운세: 출생정보가 있으면 사주 기반 계산 결과를 우선 사용한다.
     # 일반 문구는 계산 결과와 구분한다. 점수를 임의로 만들지 않는다.
     personalization_failed = False
