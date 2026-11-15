@@ -200,9 +200,10 @@ async function api(path, options = {}) {
 function empty() {
   monthResizeObserver?.disconnect(); monthResizeObserver = null;
   clearShare(); clearIntegrated(); hidePremiumInterest(true);
+  clearDailySections();
   $("reading-panel").hidden = true; $("empty-state").hidden = false; document.body.dataset.state = "empty";
   $("reading-title").textContent = "나의 하루"; $("reading-date").textContent = ""; $("reading-date").removeAttribute("datetime");
-  ["full-text", "month-text", "keywords", "day-relation", "score", "pillars", "element-bars", "day-pillar", "reading-date-label", "chart-warning", "kline-chart", "compat-text", "status"].forEach(id => $(id).replaceChildren());
+  ["full-text", "month-text", "keywords", "day-relation", "score", "pillars", "element-bars", "day-pillar", "reading-date-label", "reading-timezone", "chart-warning", "kline-chart", "compat-text", "status"].forEach(id => $(id).replaceChildren());
   ["daily-result", "month-result", "chart-section", "compat-result"].forEach(id => $(id).hidden = true);
   $("compat-form").reset(); $("partner-time").disabled = true; $("date-form").reset();
   showError("reading-error", "");
@@ -252,7 +253,8 @@ function drawDaily(result, view) {
   const keywords = reading.keywords.slice(0, 3);
   $("keyword-title").textContent = view === "tomorrow" ? "내일을 바라보는 키워드" : view === "dday" ? "그날을 준비하는 키워드" : "오늘을 바라보는 키워드";
   $("reading-date").textContent = result.date; $("reading-date").dateTime = result.date;
-  $("reading-date-label").textContent = koreanDate(result.date);
+  $("reading-date-label").textContent = `${result.date.slice(0, 4)}년 ${koreanDate(result.date)}`;
+  $("reading-timezone").textContent = typeof result.reading_timezone === "string" ? result.reading_timezone : "";
   // Chips keep the " · " separators as text so the summary still reads "회복 · 유연 · 시작".
   $("keywords").replaceChildren(...keywords.flatMap((word, i) => {
     const chip = document.createElement("span"); chip.className = "kw"; chip.textContent = word;
@@ -266,19 +268,80 @@ function drawDaily(result, view) {
     label.textContent = `${{tomorrow:"내일의 일진", dday:"그날의 일진"}[view] || "오늘의 일진"} · ${dayGlyphs[0].ko}${dayGlyphs[1].ko}일`;
     $("day-pillar").replaceChildren(...dayGlyphs.map(tile), label);
   } else $("day-pillar").replaceChildren();
-  $("day-relation").textContent = reading.lines[1] || `일진 ${reading.day_pillar}`;
-  $("score").textContent = String(Math.round(reading.score)); $("full-text").textContent = result.text;
+  drawDailySections(result);
+  $("score").textContent = String(Math.round(reading.score));
   $("score").closest(".interpretation-index").style.setProperty("--score", String(Math.max(0, Math.min(100, Math.round(reading.score)))));
   $("daily-result").hidden = false;
   shareSource = {date:result.date, keywords, score:reading.score, view};
   measure("reading_viewed", view); showPremiumInterest();
 }
+function validDailySections(sections) {
+  const object = value => value !== null && typeof value === "object" && !Array.isArray(value);
+  const text = value => typeof value === "string" && value.trim().length > 0;
+  const guidance = value => object(value) && text(value.title) && text(value.text) && typeof value.qualifier === "string";
+  if (!object(sections) || sections.schema_version !== 1
+      || ![sections.theme, sections.action, sections.caution].every(guidance)
+      || !Array.isArray(sections.evidence) || sections.evidence.length < 4 || sections.evidence.length > 5) return false;
+  const allowed = new Set(["relation", "score", "cycle", "time", "limitations"]);
+  const ids = new Set();
+  for (const section of sections.evidence) {
+    if (!object(section) || !allowed.has(section.id) || ids.has(section.id) || !text(section.title)
+        || !Array.isArray(section.paragraphs) || !section.paragraphs.length || !section.paragraphs.every(text)) return false;
+    ids.add(section.id);
+  }
+  return ["relation", "score", "cycle", "limitations"].every(id => ids.has(id));
+}
+function clearDailySections() {
+  ["daily-theme-title", "day-relation", "daily-theme-qualifier", "daily-action-title", "daily-action",
+   "daily-caution-title", "daily-caution", "daily-practice-qualifiers", "daily-evidence", "full-text"].forEach(id => $(id).replaceChildren());
+  ["daily-guidance", "daily-theme-qualifier", "daily-practice-qualifiers", "daily-evidence"].forEach(id => $(id).hidden = true);
+  $("full-text").hidden = false;
+  $("daily-details").open = false;
+  $("daily-details-summary").textContent = "계산 근거와 전체 풀이 읽기";
+  delete $("daily-result").dataset.structured;
+}
+function drawDailySections(result) {
+  clearDailySections();
+  const sections = result.sections;
+  if (!validDailySections(sections)) {
+    $("full-text").textContent = typeof result.text === "string" ? result.text : "";
+    return;
+  }
+  $("daily-theme-title").textContent = sections.theme.title;
+  $("day-relation").textContent = sections.theme.text;
+  $("daily-theme-qualifier").textContent = sections.theme.qualifier;
+  $("daily-theme-qualifier").hidden = !sections.theme.qualifier;
+  for (const name of ["action", "caution"]) {
+    $("daily-" + name + "-title").textContent = sections[name].title;
+    $("daily-" + name).textContent = sections[name].text;
+  }
+  // A shared qualifier plus a longer version with the same prefix needs only the longer original caption.
+  const qualifiers = [...new Set([sections.action.qualifier, sections.caution.qualifier].filter(Boolean))];
+  const captions = qualifiers.filter(value => !qualifiers.some(other => other !== value && other.startsWith(value + " · ")));
+  $("daily-practice-qualifiers").replaceChildren(...captions.map(value => reportElement("p", "daily-qualifier", value)));
+  $("daily-practice-qualifiers").hidden = !captions.length;
+  $("daily-evidence").replaceChildren(...sections.evidence.map((section, index) => {
+    const block = reportElement("section", "daily-evidence-section");
+    const heading = reportElement("h4", "", section.title);
+    heading.id = `daily-evidence-title-${index}`;
+    block.setAttribute("aria-labelledby", heading.id);
+    block.dataset.evidence = section.id;
+    block.append(heading, ...section.paragraphs.map(value => reportElement("p", "", value)));
+    return block;
+  }));
+  $("daily-guidance").hidden = false;
+  $("daily-evidence").hidden = false;
+  $("full-text").hidden = true;
+  $("daily-details-summary").textContent = "해석 근거와 한계 읽기";
+  $("daily-result").dataset.structured = "true";
+}
 let monthResizeObserver = null;
 function clearResults() {
   clearShare(); clearIntegrated(); hidePremiumInterest();
+  clearDailySections();
   monthResizeObserver?.disconnect(); monthResizeObserver = null;
   ["daily-result", "month-result", "chart-section", "compat-result"].forEach(id => $(id).hidden = true);
-  ["pillars", "element-bars", "day-pillar", "chart-warning", "compat-text", "full-text", "month-text"].forEach(id => $(id).replaceChildren());
+  ["pillars", "element-bars", "day-pillar", "chart-warning", "compat-text", "full-text", "month-text", "reading-timezone"].forEach(id => $(id).replaceChildren());
 }
 function reportElement(tag, className, text) {
   const node = document.createElement(tag); if (className) node.className = className;

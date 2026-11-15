@@ -1,0 +1,111 @@
+{
+  "baseline": "6b892e5b50642c3f027f0fa3a0cc1d621a41ff9a",
+  "synthetic_only": true,
+  "new_display_field_excluded": "sections",
+  "includes_lines_disclaimer_and_text": true,
+  "engine_comparisons": 300,
+  "channel_text_comparisons": 600,
+  "service_payload_comparisons": [
+    {
+      "sample": 1,
+      "language": "ko",
+      "view": "today"
+    },
+    {
+      "sample": 1,
+      "language": "ko",
+      "view": "tomorrow"
+    },
+    {
+      "sample": 1,
+      "language": "ko",
+      "view": "week"
+    },
+    {
+      "sample": 1,
+      "language": "en",
+      "view": "today"
+    },
+    {
+      "sample": 1,
+      "language": "en",
+      "view": "tomorrow"
+    },
+    {
+      "sample": 1,
+      "language": "en",
+      "view": "week"
+    },
+    {
+      "sample": 1,
+      "language": "ko",
+      "view": "dday",
+      "scenario": "general"
+    },
+    {
+      "sample": 1,
+      "language": "ko",
+      "view": "dday",
+      "scenario": "exam"
+    },
+    {
+      "sample": 1,
+      "language": "ko",
+      "view": "dday",
+      "scenario": "meeting"
+    },
+    {
+      "sample": 2,
+      "language": "ko",
+      "view": "today"
+    },
+    {
+      "sample": 2,
+      "language": "ko",
+      "view": "tomorrow"
+    },
+    {
+      "sample": 2,
+      "language": "ko",
+      "view": "week"
+    },
+    {
+      "sample": 2,
+      "language": "en",
+      "view": "today"
+    },
+    {
+      "sample": 2,
+      "language": "en",
+      "view": "tomorrow"
+    },
+    {
+      "sample": 2,
+      "language": "en",
+      "view": "week"
+    },
+    {
+      "sample": 2,
+      "language": "ko",
+      "view": "dday",
+      "scenario": "general"
+    },
+    {
+      "sample": 2,
+      "language": "ko",
+      "view": "dday",
+      "scenario": "exam"
+    },
+    {
+      "sample": 2,
+      "language": "ko",
+      "view": "dday",
+      "scenario": "meeting"
+    }
+  ],
+  "after_code_sha256": {
+    "plugins/hermes_ext/fortune_oracle/daily_fortune_engine.py": "3d715e95821c7595e845124caf262adfc5b5118892c8afe0dab25f280dc64a3f",
+    "web/fortune_web/service.py": "2f8e141e2db0c794defe4698c9e0b1e52129042d044b177f689f9da4945a4fcf",
+    "plugins/hermes_ext/fortune_oracle/daily_reading.py": "1ef8378be6aeca7d705133665f52b2fe814b003b7ce04a6f644805513ef72ae8"
+  }
+}

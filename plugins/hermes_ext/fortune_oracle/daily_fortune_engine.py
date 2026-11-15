@@ -23,6 +23,7 @@ Not a medical, investment, or legal instruction. 오락과 자기성찰용.
 
 from __future__ import annotations
 
+from copy import deepcopy
 from datetime import date, datetime, timedelta, timezone
 from typing import Any, Dict, Mapping, Optional
 
@@ -303,6 +304,11 @@ def _profile_today(profile=None):
     return _kst_today() if zone.key == "Asia/Seoul" else local_today(profile)
 
 
+def _section_line(section: Mapping[str, str]) -> str:
+    qualifier = f" ({section['qualifier']})" if section["qualifier"] else ""
+    return f"{section['title']}{qualifier}: {section['text']}"
+
+
 def _daily_from_chart(profile: Mapping[str, Any], result: Any, target_date: date, aspect: str) -> Dict[str, Any]:
     """Shared interpretation for single-day and period readings. No subprocesses."""
     birth_date = profile["birth_date"].strip()
@@ -380,30 +386,59 @@ def _daily_from_chart(profile: Mapping[str, Any], result: Any, target_date: date
     distribution = ' · '.join(f'{e} {n}' for e, n in elements.items())
     favorable_label = '·'.join(e for e, _ in ordered[:2])
     favorable_match = '포함되어 가점' if day_element in favorable else '포함되지 않아 감점'
-    lines = [
-        f"{ASPECT_TITLE.get(aspect, '종합 운세')} · {score:.0f}점 — {_grade(score)}",
-        f"이날의 해석: {RELATION_THEME.get(relation, RELATION_THEME['unknown'])}",
-        f"해볼 일: {action}",
-        f"주의할 점: {caution}",
-        f"해석 근거: 일간(나를 나타내는 기준) {dm_element} · 일진 {day_pillar_today}의 지지(날짜의 아래 글자) {day_element}. "
-        f"{RELATION_LINE.get(relation, RELATION_LINE['unknown'])}",
-        f"점수 근거: 계산된 오행 수는 {distribution}입니다. 개수가 적은 순서로 두 오행을 선택하고, "
-        "같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.",
-        f"이 점수 규칙에서 선택한 오행은 {favorable_label}입니다. 해당 날짜의 오행({day_element})이 {favorable_match}됩니다. "
-        "정밀한 용신 분석은 아닙니다.",
-        f"{target_date.isoformat()}의 키워드는 {' · '.join(keywords)}입니다.",
-    ]
-    if dayun_theme:
-        lines.append(f"절기 기반 대운 {dayun_theme} · 해석 보정 {dayun_adjustment:+.0f}점 (예측 확률이 아님).")
-    else:
-        lines.append("대운 보정 미적용: 계산 결과에서 이 날짜에 적용할 대운 구간을 확인하지 못했습니다.")
+    theme_section = {"title": "이날의 해석", "text": RELATION_THEME.get(relation, RELATION_THEME['unknown']), "qualifier": ""}
+    action_section = {"title": "해볼 일", "text": action, "qualifier": ""}
+    caution_section = {"title": "주의할 점", "text": caution, "qualifier": ""}
+    score_summary = f"{ASPECT_TITLE.get(aspect, '종합 운세')} · {score:.0f}점 — {_grade(score)}"
+    relation_body = (
+        f"일간(나를 나타내는 기준) {dm_element} · 일진 {day_pillar_today}의 지지(날짜의 아래 글자) {day_element}. "
+        f"{RELATION_LINE.get(relation, RELATION_LINE['unknown'])}")
     birth_basis = dict(getattr(result, 'time_basis', {}) or {})
+    unknown_time = (not ec.get('time') and birth_basis.get('solar_terms')
+                    in ('civil_day_interval_confirmed', 'date_only_uncertain'))
+    distribution_label = "계산된 오행 수는"
+    if unknown_time and sum(elements.values()) == sum(len(ec[key]) for key in ('year', 'month', 'day')):
+        distribution_label = f"시주를 제외한 년·월·일주 {sum(elements.values())}글자의 오행 수는"
+    distribution_body = (f"{distribution_label} {distribution}입니다. 개수가 적은 순서로 두 오행을 선택하고, "
+                         "같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.")
+    selection_body = (
+        f"이 점수 규칙에서 선택한 오행은 {favorable_label}입니다. 해당 날짜의 오행({day_element})이 {favorable_match}됩니다. "
+        "정밀한 용신 분석은 아닙니다.")
+    keyword_line = f"{target_date.isoformat()}의 키워드는 {' · '.join(keywords)}입니다."
+    if dayun_theme:
+        cycle_title = "대운 보정"
+        cycle_body = f"절기 기반 대운 {dayun_theme} · 해석 보정 {dayun_adjustment:+.0f}점 (예측 확률이 아님)."
+        cycle_line = cycle_body
+    else:
+        cycle_title = "대운 보정 미적용"
+        cycle_body = ("출생시각이 미상이라 대운을 계산하지 않았습니다." if unknown_time else
+                      "계산 결과에서 이 날짜에 적용할 대운 구간을 확인하지 못했습니다.")
+        cycle_line = f"{cycle_title}: {cycle_body}"
+    time_paragraphs = []
     if birth_basis:
-        lines.append("출생 일·시주는 현지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다.")
-        if birth_basis.get('solar_terms') == 'civil_day_interval_confirmed':
-            lines.append("년·월주는 현지 출생일 하루 전체에서 동일함을 확인했습니다. 시주와 대운은 제외합니다.")
-        elif birth_basis.get('solar_terms') != 'birth_instant_utc_plus_8':
-            lines.append("출생시각 미확정 — 절기 경계의 년·월주는 불확실합니다.")
+        if birth_basis.get('day_hour') == 'local_civil_time' and birth_basis.get('true_solar_time') is False:
+            time_paragraphs.append("출생 일·시주는 현지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다."
+                                   if ec.get('time') else
+                                   "출생 일주는 현지 민간 날짜 기준이며 진태양시 보정은 적용하지 않았습니다.")
+        if unknown_time and birth_basis.get('solar_terms') == 'civil_day_interval_confirmed':
+            time_paragraphs.append("년·월주는 현지 출생일 하루 전체에서 동일함을 확인했습니다. 시주와 대운은 제외합니다.")
+        elif unknown_time:
+            time_paragraphs.append("출생시각 미확정 — 절기 경계의 년·월주는 불확실합니다.")
+    limitations_body = ("점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. "
+                        "이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다.")
+    evidence = [
+        {"id": "relation", "title": "해석 근거", "paragraphs": [relation_body, keyword_line]},
+        {"id": "score", "title": "점수 근거", "paragraphs": [score_summary, distribution_body, selection_body]},
+        {"id": "cycle", "title": cycle_title, "paragraphs": [cycle_body]},
+    ]
+    if time_paragraphs:
+        evidence.append({"id": "time", "title": "출생시각 기준", "paragraphs": list(time_paragraphs)})
+    evidence.append({"id": "limitations", "title": "해석의 한계", "paragraphs": [limitations_body]})
+    sections = {"schema_version": 1, "theme": theme_section, "action": action_section,
+                "caution": caution_section, "evidence": evidence}
+    lines = [score_summary, _section_line(theme_section), _section_line(action_section),
+             _section_line(caution_section), f"해석 근거: {relation_body}",
+             f"점수 근거: {distribution_body}", selection_body, keyword_line, cycle_line, *time_paragraphs]
 
     return {
         "ok": True,
@@ -424,9 +459,25 @@ def _daily_from_chart(profile: Mapping[str, Any], result: Any, target_date: date
         "dayun_basis": "lunar-javascript sect 2 / calendar_year" if dayun_data else "unavailable",
         "birth_time_basis": birth_basis,
         "lines": lines,
+        "sections": sections,
         "favorable_elements": sorted(favorable),
-        "disclaimer": "해석의 한계: 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. 이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다.",
+        "disclaimer": f"해석의 한계: {limitations_body}",
     }
+
+
+def daily_display_sections(reading: Mapping[str, Any], *, action_override: Optional[str] = None,
+                           caution_override: Optional[str] = None) -> dict:
+    """Return independent Korean display sections, preserving the base reading."""
+    sections = deepcopy(reading["sections"])
+    if action_override is None and caution_override is None:
+        return sections
+    if any(not isinstance(value, str) or not value.strip()
+           for value in (action_override, caution_override)):
+        raise ValueError("Daily action and caution overrides must be supplied together")
+    sections["action"].update(text=action_override,
+                              qualifier="선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님")
+    sections["caution"].update(text=caution_override, qualifier="선택한 상황에 맞춘 제안")
+    return sections
 
 
 def daily_display_lines(reading: Mapping[str, Any], *, action_override: Optional[str] = None,
@@ -439,15 +490,9 @@ def daily_display_lines(reading: Mapping[str, Any], *, action_override: Optional
     lines = list(reading["lines"])
     if action_override is None and caution_override is None:
         return lines
-    if any(not isinstance(value, str) or not value.strip()
-           for value in (action_override, caution_override)):
-        raise ValueError("Daily action and caution overrides must be supplied together")
-    action, caution = RELATION_PRACTICE.get(reading["relation"], RELATION_PRACTICE["unknown"])
-    replacements = {
-        f"해볼 일: {action}":
-            f"해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): {action_override}",
-        f"주의할 점: {caution}": f"주의할 점 (선택한 상황에 맞춘 제안): {caution_override}",
-    }
+    display = daily_display_sections(reading, action_override=action_override, caution_override=caution_override)
+    replacements = {_section_line(reading["sections"][key]): _section_line(display[key])
+                    for key in ("action", "caution")}
     if any(lines.count(original) != 1 for original in replacements):
         raise ValueError("Daily action/caution paragraphs are unavailable or ambiguous")
     return [replacements.get(line, line) for line in lines]
@@ -467,8 +512,11 @@ def render_daily_channel_text(reading: Mapping[str, Any], *, reading_timezone: O
         return "\n".join([header, *reading["lines"], reading["disclaimer"]])
     relation = reading["relation"]
     action, caution = RELATION_PRACTICE.get(relation, RELATION_PRACTICE["unknown"])
+    birth_basis = reading.get("birth_time_basis", {})
     cycle = (f"대운 보정 {reading['dayun_adjustment']:+.0f}점."
              if reading["dayun_pillar"] else "대운 보정 미적용.")
+    if not reading["dayun_pillar"] and birth_basis.get("solar_terms") == "civil_day_interval_confirmed":
+        cycle = "출생시각 미상으로 대운 보정 미적용."
     lines = [
         f"계산된 사주·일진의 경험적 해석 · {reading['date']} · {ASPECT_TITLE.get(reading['aspect'], '종합 운세')} · "
         f"{reading['score']:.0f}점 — {reading['grade']}{zone_suffix}",
@@ -479,10 +527,9 @@ def render_daily_channel_text(reading: Mapping[str, Any], *, reading_timezone: O
         f"({reading['day_element']})의 관계와 오행 수를 반영했습니다. {cycle}",
         f"{reading['date']}의 키워드는 {' · '.join(reading['keywords'])}입니다.",
     ]
-    birth_basis = reading.get("birth_time_basis", {})
     if birth_basis.get("solar_terms") == "civil_day_interval_confirmed":
         lines.append("출생시각 미확정: 시주·대운은 제외했습니다.")
-    elif birth_basis and birth_basis.get("solar_terms") != "birth_instant_utc_plus_8":
+    elif birth_basis.get("solar_terms") == "date_only_uncertain":
         lines.append("출생시각 미확정: 절기 경계의 년·월주는 불확실합니다.")
     lines.append("점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. "
                  "오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다.")

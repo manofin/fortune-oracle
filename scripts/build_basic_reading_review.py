@@ -22,6 +22,10 @@ BASE = "2f10b1ee25127f8930082b5b8afd9e34b7603eac"
 ENGINE = "plugins/hermes_ext/fortune_oracle/daily_fortune_engine.py"
 DDAY_BASE = "05460a07be22635f70cc91746cd6882f31a43cbc"
 SERVICE = "web/fortune_web/service.py"
+DAILY_READING = "plugins/hermes_ext/fortune_oracle/daily_reading.py"
+READING_SOURCES = [ENGINE, "plugins/hermes_ext/fortune_oracle/bazi_bridge.py",
+                   "plugins/hermes_ext/fortune_oracle/localization.py",
+                   "plugins/hermes_ext/fortune_oracle/scripts/life_kline_bazi_bridge.mjs"]
 DDAY_NOW = datetime(2026, 11, 15, tzinfo=timezone.utc)
 # Invented adult inputs, unrelated to customers or the operator.
 PROFILES = [
@@ -62,7 +66,7 @@ def build(output):
             for aspect in current.ASPECT_TITLE:
                 before = baseline._daily_from_chart(profile, chart, day, aspect)
                 after = current._daily_from_chart(profile, chart, day, aspect)
-                facts = lambda value: {k: v for k, v in value.items() if k not in {"lines", "disclaimer"}}
+                facts = lambda value: {k: v for k, v in value.items() if k not in {"lines", "disclaimer", "sections"}}
                 if facts(before) != facts(after):
                     raise AssertionError(f"Non-prose fields changed: sample {index}, {day}, {aspect}")
                 comparisons += 1
@@ -80,17 +84,19 @@ def build(output):
                                 dayun=None, time_basis={})
         reading = current._daily_from_chart(PROFILES[0], chart, TARGETS[0], "종합")
         matrix.append({"stem": stem, "relation": reading["relation"], "score": reading["score"],
-                       "theme": reading["lines"][1], "action": reading["lines"][2],
-                       "caution": reading["lines"][3]})
+                       **{key: f'{reading["sections"][key]["title"]}: {reading["sections"][key]["text"]}'
+                          for key in ("theme", "action", "caution")}})
 
     output.mkdir(parents=True, exist_ok=True)
     data = {"baseline": BASE, "synthetic_only": True, "non_prose_comparisons": comparisons,
+            "display_fields_excluded": ["lines", "disclaimer", "sections"],
+            "source_sha256": {path: hashlib.sha256((ROOT / path).read_bytes()).hexdigest() for path in READING_SOURCES},
             "samples": samples, "relation_matrix": matrix}
     (output / "basic-reading-samples.json").write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n")
     lines = ["# 기본 풀이 전후 샘플", "", "이 자료는 전부 가상 성인 입력입니다. 고민·외부 모델·고객 자료를 사용하지 않았습니다.", "",
              f"기준: 공개 `main` 커밋 `{BASE}`. 변경 후는 이 문서와 함께 검토하는 변경분입니다.", "",
              "재생성: `python scripts/build_basic_reading_review.py` (기본 Node 의존성 필요).",
-             f"자동 비교: 가상 프로필 2개 × 30일 × 5영역 = **{comparisons}건**, 문구 외 모든 반환 필드 동일.", "",
+             f"자동 비교: 가상 프로필 2개 × 30일 × 5영역 = **{comparisons}건**, 표시 필드(`lines`, `disclaimer`, `sections`) 외 모든 반환 필드 동일.", "",
              "점수 유지 확인은 문장의 효용이나 점술의 예측 타당성을 검증한 결과가 아닙니다.", ""]
     for sample in samples:
         lines.extend([f"## 가상 사례 {sample['id']}", "", f"입력: `{json.dumps(sample['synthetic_input'], ensure_ascii=False)}`",
@@ -104,12 +110,13 @@ def build(output):
                   "| 관계 | 이날의 해석 | 해볼 일 | 주의할 점 |", "| --- | --- | --- | --- |"])
     lines.extend(f"| {r['relation']} | {r['theme']} | {r['action']} | {r['caution']} |" for r in matrix)
     lines.extend(["", "## 가림 평가 운영자용 대응표", "", "평가자에게는 아래 대응표와 전후 문서를 주지 않고 `basic-reading-blind.md`만 전달합니다.",
-                  "첫 사례는 변경 후→전, 둘째는 전→후로 순서를 상쇄했습니다. 소규모 준비 자료이며 무작위 사용자 실험을 실행한 결과가 아닙니다.", "",
+                  "이 원문 문서는 사례 내 표기를 고정합니다. 실제 세션의 순서는 evaluation/operator-manifest.json의 사전 배정표를 따르고, 참가자에게는 그 문서의 자료를 한 편씩 제시합니다. 무작위 실험을 실행한 결과가 아닙니다.", "",
                   "| 평가 표기 | 대응 |", "| --- | --- |", "| 1-X | 사례 1 변경 후 |", "| 1-Y | 사례 1 변경 전 |",
                   "| 2-X | 사례 2 변경 전 |", "| 2-Y | 사례 2 변경 후 |", ""])
     (output / "basic-reading-samples.md").write_text("\n".join(lines))
 
-    blind = ["# 기본 풀이 읽기 평가용", "", "가상 사례별 두 글을 읽고 각각 평가합니다. 버전의 출처나 변경 순서는 공개하지 않습니다.",
+    blind = ["# 기본 풀이 읽기 평가용", "", "이 문서는 문구 원문 자료입니다. 모바일 카드의 배치를 평가하지 않습니다. 실제 진행에서는 evaluation/participant의 자료를 운영자 배정표에 따라 한 편씩 제시합니다.", "",
+             "가상 사례별 두 글을 읽고 각각 평가합니다. 버전의 출처나 변경 순서는 공개하지 않습니다.",
              "개인적으로 느껴지는 정도와 근거의 납득도는 별개로 점수를 매깁니다. 1=전혀 그렇지 않음, 5=매우 그러함.",
              "실제 자신에 대한 적중도를 묻는 평가가 아닙니다. 근거가 납득된다는 응답도 예측의 타당성을 입증하지 않습니다. 서로 상의하기 전에 응답을 기록합니다.", "",
              "각 글: 고민 입력 없이 읽을 가치가 있음 __/5 · 이해하기 쉬움 __/5 · 행동의 실행 가능성 __/5 · 개인적으로 느껴짐 __/5 · 근거 납득도 __/5",
@@ -152,7 +159,7 @@ def build_dday(output):
         before = baseline_service.dated_reading(profile, request, now=DDAY_NOW)
         after = service.dated_reading(profile, request, now=DDAY_NOW)
         assert before["ok"] and after["ok"]
-        assert before["reading"] == after["reading"], "D-day calculation or full reading changed"
+        assert before["reading"] == {key: value for key, value in after["reading"].items() if key != "sections"}, "D-day calculation or legacy reading changed"
         assert before["reflection"] == after["reflection"]
         paragraphs = {}
         for version, payload in (("before", before), ("after", after)):
@@ -166,7 +173,7 @@ def build_dday(output):
             assert all("선택한 상황" in paragraph for paragraph in paragraphs["after"].values())
         scenarios.append({"scenario": scenario, "request": request,
                           "before": before, "after": after, "paragraphs": paragraphs,
-                          "full_reading_unchanged": True,
+                          "legacy_reading_unchanged": True,
                           "action_paragraph_count": 1, "caution_paragraph_count": 1})
     assert all(item["after"]["reading"] == scenarios[0]["after"]["reading"] for item in scenarios)
     meeting = scenarios[-1]["paragraphs"]
@@ -180,7 +187,8 @@ def build_dday(output):
         "synthetic_input": profile, "fixed_now": DDAY_NOW.isoformat(),
         "date_selection": "First wealth relation in days 1 through 30 after fixed_now",
         "selected_date": target.isoformat(), "relation": "wealth",
-        "full_reading_unchanged_before_after_and_across_scenarios": True,
+        "legacy_reading_unchanged_before_after_and_across_scenarios": True,
+        "new_display_fields_excluded": ["sections"],
         "scenarios": scenarios,
     }
     output.mkdir(parents=True, exist_ok=True)
@@ -195,7 +203,7 @@ def build_dday(output):
         f"가상 입력: `{json.dumps(profile, ensure_ascii=False)}`",
         f"고정 시각: `{DDAY_NOW.isoformat()}`. 다음 30일 중 첫 `wealth` 관계 날짜: **{target.isoformat()}**.",
         "`wealth`는 이 엔진의 오행 관계 분류입니다. 실제 재산·금전 상황을 확인한 값이 아닙니다.", "",
-        "자동 확인: 세 상황 모두 전후 `reading` 전체가 같으며, 상황 사이에서도 동일합니다. 점수뿐 아니라 계산 근거·원래 상세 문구도 보존됩니다.",
+        "자동 확인: 신규 표시 필드 `sections`를 제외한 기존 `reading` 필드는 세 상황 모두 전후 같으며, 상황 사이에서도 동일합니다. 점수뿐 아니라 계산 근거·원래 상세 문구도 보존됩니다.",
         "화면용 본문에는 행동 1개·주의 1개만 있습니다. 시험·만남의 두 문단에는 선택한 상황에 따른 제안이라는 출처 표시를 붙입니다.",
         "general 본문은 그대로 유지됩니다. 아래는 비교에 필요한 두 문단만 발췌했으며 전체 본문은 JSON에 있습니다.", "",
     ]
@@ -212,7 +220,7 @@ def build_dday(output):
         "이 생성기는 화면·PDF·실제 기기·TTS·운영 전송을 검사하지 않습니다.", "",
     ])
     (output / "basic-reading-dday.md").write_text("\n".join(lines))
-    print(f"Wrote 3 synthetic D-day comparisons for {target}; full readings unchanged.")
+    print(f"Wrote 3 synthetic D-day comparisons for {target}; legacy readings unchanged (sections added).")
 
 
 def main():
@@ -230,6 +238,8 @@ def main():
                           FORTUNE_DEEP_ANALYSIS="0", PYTHONDONTWRITEBYTECODE="1")
         build(args.output)
         build_dday(args.output)
+        # The byte-identical UI result belongs to 103cea0. Later intentional copy
+        # corrections must be compared and reported separately, never overwrite it.
 
 
 if __name__ == "__main__":

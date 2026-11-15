@@ -163,11 +163,13 @@ def main():
             response = route.fetch(); data = response.json()
             data["reading"]["keywords"] = ["속도", "표현", "관심", "행동", "관계의 온도"]
             data["text"] = "키워드: 속도 · 표현 · 관심 · 행동 · 관계의 온도\n" + data["text"]
+            relation = next(section for section in data["sections"]["evidence"] if section["id"] == "relation")
+            relation["paragraphs"][-1] = "키워드: 속도 · 표현 · 관심 · 행동 · 관계의 온도"
             route.fulfill(response=response, json=data)
         page.route("**/api/readings/tomorrow", five_keyword_reading)
         page.locator('[data-view="tomorrow"]').click()
         expect(page.locator("#keywords")).to_have_text("속도 · 표현 · 관심")
-        expect(page.locator("#full-text")).to_contain_text("관계의 온도")
+        expect(page.locator("#daily-evidence")).to_contain_text("관계의 온도")
         page.locator("#open-share").click(); expect(page.locator("#share-canvas")).to_be_visible()
         expect(page.locator("#download-share")).to_be_enabled()
         page.locator("#close-share").click(); page.unroute("**/api/readings/tomorrow")
@@ -180,8 +182,10 @@ def main():
             page.locator("#date-submit").click()
         expect(page.locator("#reading-date")).to_have_text(target)
         expect(page.locator("#keyword-title")).to_have_text("그날을 준비하는 키워드")
-        expect(page.locator("#day-relation")).to_have_text(dated_response.value.json()["reading"]["lines"][1])
-        expect(page.locator("#full-text")).to_contain_text("해볼 일 (선택한 상황에 맞춘 제안")
+        dated = dated_response.value.json()
+        expect(page.locator("#day-relation")).to_have_text(dated["sections"]["theme"]["text"])
+        expect(page.locator("#daily-action")).to_have_text(dated["sections"]["action"]["text"])
+        expect(page.locator("#daily-practice-qualifiers")).to_contain_text("선택한 상황에 맞춘 제안")
         expect(page.locator("#open-share")).to_be_enabled()
         page.screenshot(path=str(args.output / "mobile-dday.png"))
         page.locator("#open-share").click(); expect(page.locator("#share-canvas")).to_be_visible()

@@ -47,7 +47,7 @@ def test_short_message_preserves_complete_action_caution_and_calculation(stem):
 
 @pytest.mark.parametrize("basis,notice", [
     ({"solar_terms": "civil_day_interval_confirmed"}, "시주·대운은 제외했습니다"),
-    ({"solar_terms": "unresolved"}, "년·월주는 불확실합니다"),
+    ({"solar_terms": "date_only_uncertain"}, "년·월주는 불확실합니다"),
 ])
 def test_short_message_retains_birth_time_uncertainty(basis, notice):
     reading = engine._daily_from_chart(PROFILE, chart(basis=basis), TARGET, "종합")

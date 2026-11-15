@@ -97,15 +97,22 @@
         <p id="loading" class="loading" role="status" hidden>계산 근거를 확인하고 있습니다…</p>
         <p id="reading-error" class="error prominent" role="alert" hidden></p>
         <article id="daily-result" class="result-card" hidden>
-          <div class="result-top"><span class="badge">계산에 바탕을 둔 해석</span><span><span id="reading-date-label" class="date-label" aria-hidden="true"></span><time id="reading-date" class="sr-only"></time></span></div>
+          <div class="result-top"><span class="badge">계산된 사주·일진을 바탕으로 한 해석입니다.</span><span class="daily-date-context"><span id="reading-date-label" class="date-label" aria-hidden="true"></span><time id="reading-date" class="sr-only"></time><span id="reading-timezone"></span></span></div>
           <div id="day-pillar" class="day-pillar" aria-hidden="true"></div>
           <p class="result-kicker" id="keyword-title">오늘을 바라보는 키워드</p>
           <h3 id="keywords"></h3>
-          <p id="day-relation" class="relation"></p>
+          <div id="daily-guidance" hidden>
+            <section class="daily-theme" aria-labelledby="daily-theme-title"><h4 id="daily-theme-title"></h4><p id="day-relation" class="relation"></p><p id="daily-theme-qualifier" class="daily-qualifier" hidden></p></section>
+            <div class="daily-practice">
+              <div id="daily-practice-qualifiers" hidden></div>
+              <section aria-labelledby="daily-action-title"><h4 id="daily-action-title"></h4><p id="daily-action"></p></section>
+              <section aria-labelledby="daily-caution-title"><h4 id="daily-caution-title"></h4><p id="daily-caution"></p></section>
+            </div>
+          </div>
           <section class="interpretation-index" aria-label="경험적 해석 지수와 한계"><div class="score-row"><span>경험적 해석 지수</span><strong id="score"></strong><span class="score-unit">/ 100</span></div>
           <p class="field-note">이 지수는 예측 확률이 아닙니다. 선택은 자신의 상황에 비춰 판단해 주세요.</p>
           </section>
-          <details class="full-reading"><summary>계산 근거와 전체 풀이 읽기</summary><p id="full-text" class="preserve-lines"></p></details>
+          <details id="daily-details" class="full-reading"><summary id="daily-details-summary">계산 근거와 전체 풀이 읽기</summary><div id="daily-evidence" hidden></div><p id="full-text" class="preserve-lines"></p></details>
           <button id="open-share" class="secondary" type="button">내 키워드 카드 만들기 ↗</button>
           <p class="field-note">이름·출생정보·팔자를 빼고, 날짜·키워드·해석 지수만 이미지에 담습니다.</p>
         </article>

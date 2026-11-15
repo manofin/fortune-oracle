@@ -1,0 +1,47 @@
+{
+  "note": "Executed after the JS/HTML change, before the final CSS-only spacing adjustment. Final layout checks are recorded separately in basic-reading-ui-browser.json.",
+  "runs": {
+    "growth": {
+      "passed": [
+        "320px phone, mobile and desktop previews keep card and actions visible with 44px touch targets",
+        "1080x1350 nonblank Korean PNG; only date/keywords/index, no nickname, birth data or natal pillars",
+        "native sharing cancellation/failure/handoff distinguished; home link has only fixed from=card, no fragment or personal result",
+        "browsers without native file sharing retain PNG download and home link",
+        "PNG encoding failure leaves no preview or downloadable file",
+        "mixed-version session without date capability preserves daily readings and disables D-day",
+        "five-keyword response keeps all details but projects exactly three keywords into summary and PNG",
+        "D-day computes the inclusive maximum date, preserves the basic interpretation and labels the selected situation action",
+        "compatibility uses partner time zone, omits unknown hour and clears partner fields without browser storage",
+        "failed comparison clears old result and does not record a successful reading",
+        "malformed upstream JSON produces a plain retry message without leaking the body",
+        "a completed D-day response arriving after deletion cannot restore the old result",
+        "late PNG generation after deletion never reopens preview or enables download",
+        "allowlisted events contain no personal inputs; failed/stale responses are not measured as viewed",
+        "no horizontal overflow, JavaScript errors or external requests"
+      ],
+      "page_errors": [],
+      "external_requests": [],
+      "scope": "local Chromium + real API; synthetic data; OS sharing/clipboard simulated; no deployment"
+    },
+    "state": {
+      "passed": [
+        "fresh cookie: delayed session permits no PUT; one click after ready saves exactly once",
+        "existing cookie: a guarded submit waits for bootstrap and saves exactly once",
+        "failed session leaves a working same-form retry; second session and first PUT succeed without reload",
+        "post-delete session reinitialization blocks early PUT and accepts one fresh registration",
+        "real PUT 400 preserves the visible daily result and its working share card",
+        "successful profile replacement invalidates the previous share source and file",
+        "real PUT 400 keeps the month observer alive; 1280-to-320 resize retains at least 12px text",
+        "successful resave and deletion discard old chart, share and profile state",
+        "stalled session times out, re-enables the form and retries without reload",
+        "stalled reading times out with a visible error and a successful same-view retry",
+        "stalled profile PUT times out without destroying old results and a later save succeeds",
+        "stalled telemetry times out without blocking or invalidating the share card",
+        "deletion cancels an in-flight save and a late completed PUT cannot restore personal state"
+      ],
+      "page_errors": [],
+      "external_requests": [],
+      "scope": "local Chromium, temporary preview store and synthetic profiles"
+    }
+  }
+}
