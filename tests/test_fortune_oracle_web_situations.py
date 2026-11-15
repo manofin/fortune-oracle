@@ -53,6 +53,71 @@ def test_inclusive_date_limits_and_same_daily_score(app, offset):
     assert general["reading"] == data["reading"]  # scenario adds a reflection, no invented score
 
 
+@pytest.mark.parametrize("scenario", ["general", "exam", "meeting"])
+def test_date_view_uses_one_action_and_retains_base_reading(app, scenario):
+    client, headers = registered(app)
+    baseline = client.get("/api/readings/today").json
+    original = json.loads(json.dumps(baseline["reading"]))
+    result = client.post("/api/readings/date", json={"date": baseline["date"], "scenario": scenario},
+                         headers=headers).json
+    assert result["reading"] == original
+    assert client.get("/api/readings/today").json["reading"] == original
+    actions = [line for line in result["text"].splitlines() if line.startswith("해볼 일")]
+    cautions = [line for line in result["text"].splitlines() if line.startswith("주의할 점")]
+    assert len(actions) == 1
+    assert len(cautions) == 1
+    base_action = next(line for line in original["lines"] if line.startswith("해볼 일:"))
+    base_caution = next(line for line in original["lines"] if line.startswith("주의할 점:"))
+    if scenario == "general":
+        assert actions == [base_action]
+        assert cautions == [base_caution]
+        assert result["reflection"] not in result["text"]
+    else:
+        assert result["reflection"] in actions[0]
+        assert "선택한 상황에 맞춘 제안" in actions[0]
+        assert "별도 점수·성공 확률 아님" in actions[0]
+        assert base_action not in result["text"]
+        assert base_caution not in result["text"]
+        assert "선택한 상황에 맞춘 제안" in cautions[0]
+        assert service.SCENARIO_PRACTICES[scenario][1] in cautions[0]
+        assert result["text"].count(result["reflection"]) == 1
+    for line in original["lines"]:
+        if line not in (base_action, base_caution):
+            assert line in result["text"]
+    assert result["text"].count(original["disclaimer"]) == 1
+    assert result["text"].count("점수와 조언은 경험적 해석이며 예측 확률이 아닙니다.") == 1
+
+
+@pytest.mark.parametrize("scenario,expected_action,expected_caution", [
+    ("meeting", "나누고 싶은 이야기와 듣고 싶은 이야기", "상대의 뜻은 대화로 확인하세요."),
+    ("exam", "복습과 휴식에 필요한 시간", "준비 계획을 무리하게 바꾸지 마세요."),
+])
+def test_wealth_date_situation_keeps_action_and_caution_on_the_same_topic(app, scenario, expected_action, expected_caution):
+    app.config["NOW"] = datetime(2026, 11, 15, tzinfo=timezone.utc)
+    profile = {**PROFILE, "birth_date": "1990-05-15", "birth_time": "07:30"}
+    client, headers = registered(app, profile)
+    target = "2026-11-24"
+    general = client.post("/api/readings/date", json={"date": target, "scenario": "general"},
+                          headers=headers).json
+    result = client.post("/api/readings/date", json={"date": target, "scenario": scenario},
+                         headers=headers).json
+    assert result["computed"] and result["reading"]["relation"] == "wealth"
+    assert result["reading"] == general["reading"]
+    assert "금전적 이익이나 손실" in general["text"]
+    assert "금전적 이익이나 손실" not in result["text"]
+    assert expected_action in result["text"] and expected_caution in result["text"]
+    assert len([line for line in result["text"].splitlines() if line.startswith("해볼 일")]) == 1
+    assert len([line for line in result["text"].splitlines() if line.startswith("주의할 점")]) == 1
+
+
+@pytest.mark.parametrize("day", ["today", "tomorrow", "week"])
+def test_daily_limit_statement_is_shown_once(app, day):
+    result = service.daily(PROFILE, day, now=app.config["NOW"])
+    assert result["computed"]
+    assert result["text"].count("점수와 조언은 경험적 해석이며 예측 확률이 아닙니다.") == 1
+    assert result["text"].startswith("계산된 사주·일진을 바탕으로 한 해석입니다.")
+
+
 @pytest.mark.parametrize("zone, expected", [("Asia/Seoul", "2026-10-29"), ("America/New_York", "2026-10-28")])
 def test_date_bounds_follow_the_explicit_profile_zone(app, zone, expected):
     app.config["NOW"] = datetime(2026, 10, 28, 23, tzinfo=timezone.utc)

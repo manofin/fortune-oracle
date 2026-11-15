@@ -9,6 +9,7 @@ import hashlib
 import json
 import re
 from datetime import datetime
+from functools import partial
 from typing import Callable
 from urllib.request import Request, build_opener, HTTPRedirectHandler
 from zoneinfo import ZoneInfo
@@ -70,7 +71,7 @@ def reason_for(data, key, entry, now):
 
 
 def run_delivery(store: FortuneStore, *, send=False, sender: Callable | None = None,
-                 now=None, renderer=prepare_daily_reading):
+                 now=None, renderer=partial(prepare_daily_reading, compact=True)):
     """Return masked decisions only. Dry-run never changes consent/delivery data.
 
     Locks cover fresh consent/profile check, rendering, durable claim and bounded

@@ -5,7 +5,7 @@ import re
 
 from hermes_ext.fortune_oracle.bazi_bridge import BaziInput, calculate_bazi_from_profile
 from hermes_ext.fortune_oracle.daily_reading import prepare_daily_reading, prepare_kline_reading
-from hermes_ext.fortune_oracle.daily_fortune_engine import build_personalized_daily
+from hermes_ext.fortune_oracle.daily_fortune_engine import build_personalized_daily, daily_display_lines
 from hermes_ext.fortune_oracle.compatibility import build_compatibility
 from hermes_ext.fortune_oracle.localization import local_today, reading_zone
 
@@ -17,10 +17,19 @@ ZONE_VALUES = {label: zone for zone, label in ZONE_LABELS.items()}
 
 FIELDS = {"birth_date", "birth_time", "display_name", "timezone", "gender"}
 LOCATION_FIELDS = {"birthplace_text", "latitude", "longitude"}
+SCENARIO_PRACTICES = {
+    "exam": (
+        "결과를 예상하기보다, 복습과 휴식에 필요한 시간을 하나씩 정해 보세요.",
+        "풀이 점수로 시험 결과를 예상하거나, 준비 계획을 무리하게 바꾸지 마세요.",
+    ),
+    "meeting": (
+        "상대의 마음을 단정하기보다, 나누고 싶은 이야기와 듣고 싶은 이야기를 떠올려 보세요.",
+        "풀이 점수로 상대의 마음이나 만남의 결과를 단정하지 말고, 상대의 뜻은 대화로 확인하세요.",
+    ),
+}
 SCENARIOS = {
     "general": "그날 내가 직접 선택할 수 있는 작은 일은 무엇일까요?",
-    "exam": "결과를 예상하기보다, 복습과 휴식에 필요한 시간을 하나씩 정해 보세요.",
-    "meeting": "상대의 마음을 단정하기보다, 나누고 싶은 이야기와 듣고 싶은 이야기를 떠올려 보세요.",
+    **{scenario: practice[0] for scenario, practice in SCENARIO_PRACTICES.items()},
 }
 
 
@@ -137,10 +146,12 @@ def dated_reading(profile, payload, now=None):
                 "text": "계산 결과가 아님\n선택한 날의 풀이를 계산하지 못했습니다. 출생정보를 확인해 주세요."}
     scenario = payload.get("scenario", "general")
     reflection = SCENARIOS[scenario]
+    action, caution = SCENARIO_PRACTICES.get(scenario, (None, None))
     text = "\n".join([
-        "계산된 사주·일진을 바탕으로 한 해석입니다. 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다.",
-        f"{target.isoformat()} · {reading_zone(profile).key}", *reading["lines"],
-        "상황별 성찰 질문 (별도 점수·성공 확률 아님): " + reflection, reading["disclaimer"],
+        "계산된 사주·일진을 바탕으로 한 해석입니다.",
+        f"{target.isoformat()} · {reading_zone(profile).key}",
+        *daily_display_lines(reading, action_override=action, caution_override=caution),
+        reading["disclaimer"],
     ])
     return {"ok": True, "computed": True, "kind": "dated", "date": target.isoformat(),
             "reading_timezone": reading_zone(profile).key, "reading": reading,

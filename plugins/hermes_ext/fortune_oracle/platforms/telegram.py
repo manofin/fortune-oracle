@@ -213,7 +213,7 @@ def prepare_reading(text: str, *, profile=None, partner_profile=None, rng=None, 
         from ..daily_reading import prepare_daily_reading
         day = {"today_fortune": "today", "tomorrow_fortune": "tomorrow", "week_fortune": "week"}[parsed["command"]]
         return prepare_daily_reading(profile, day=day, language=language,
-                                     reading_timezone=reading_timezone, now=now)
+                                     reading_timezone=reading_timezone, now=now, compact=True)
     if parsed and parsed["command"] == "voice_fortune":
         from ..speech import prepare_daily_voice, synthesize_reading
         if not parsed["args"]:
@@ -221,7 +221,8 @@ def prepare_reading(text: str, *, profile=None, partner_profile=None, rng=None, 
                 return localize_reading({"ok": False, "error": "invalid_input", "text": "궁합 명령을 지정해 주세요."}, code)
             if language is not None or reading_timezone is not None or now is not None or (profile and profile.get("language")):
                 from ..daily_reading import prepare_daily_reading
-                reading = prepare_daily_reading(profile, language=language, reading_timezone=reading_timezone, now=now)
+                reading = prepare_daily_reading(profile, language=language, reading_timezone=reading_timezone, now=now,
+                                                compact=True)
                 return synthesize_reading(reading, tts=tts, output_root=output_root)
             return prepare_daily_voice(profile, tts=tts, output_root=output_root)
         nested = parse_command(parsed["args"])
