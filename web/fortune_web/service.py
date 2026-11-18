@@ -18,6 +18,7 @@ ZONE_LABELS = {"Asia/Seoul": "한국 시간", "Asia/Tokyo": "일본 시간",
 ZONE_VALUES = {label: zone for zone, label in ZONE_LABELS.items()}
 
 FIELDS = {"birth_date", "birth_time", "display_name", "timezone", "gender"}
+CALENDAR_FIELDS = {"birth_calendar", "birth_leap_month"}
 LOCATION_FIELDS = {"birthplace_text", "latitude", "longitude"}
 SCENARIO_PRACTICES = {
     "exam": (
@@ -40,11 +41,13 @@ class InvalidProfile(ValueError):
 
 
 def validate_birth(payload, *, allow_location=False):
-    accepted = FIELDS | LOCATION_FIELDS if allow_location is True else FIELDS
+    accepted = FIELDS | CALENDAR_FIELDS
+    if allow_location is True:
+        accepted |= LOCATION_FIELDS
     if not isinstance(payload, dict) or set(payload) - accepted:
         raise InvalidProfile("출생정보 입력 항목을 확인해 주세요.")
     if any(not isinstance(value, str) for key, value in payload.items()
-           if key not in {"latitude", "longitude"}):
+           if key not in {"latitude", "longitude", "birth_leap_month"}):
         raise InvalidProfile("입력값의 형식을 확인해 주세요.")
     try:
         for value in payload.values():
@@ -65,6 +68,24 @@ def validate_birth(payload, *, allow_location=False):
     profile["gender"] = profile["gender"] or "unknown"
     if profile["gender"] not in ("male", "female", "unknown"):
         raise InvalidProfile("성별 항목을 다시 선택해 주세요.")
+    from korean_lunar_calendar import KoreanLunarCalendar
+
+    calendar = payload.get("birth_calendar", "solar")
+    leap = payload.get("birth_leap_month", False)
+    if calendar not in ("solar", "lunar") or type(leap) is not bool or (calendar == "solar" and leap):
+        raise InvalidProfile("양력·음력과 윤달 여부를 확인해 주세요.")
+    original = profile["birth_date"]
+    if calendar == "lunar":
+        if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", original):
+            raise InvalidProfile("음력 날짜는 YYYY-MM-DD 형식으로 입력해 주세요.")
+        year, month, day = map(int, original.split("-"))
+        converter = KoreanLunarCalendar()
+        if not 1900 <= year <= 2050 or not converter.setLunarDate(year, month, day, leap):
+            raise InvalidProfile("지원하는 한국 음력 날짜(1900-01-01~2050-11-18)와 실제 윤달을 입력해 주세요.")
+        if (converter.lunarYear, converter.lunarMonth, converter.lunarDay, converter.isIntercalation) != (year, month, day, leap):
+            raise InvalidProfile("음력 날짜나 윤달이 일치하지 않습니다.")
+        profile["birth_date"] = converter.SolarIsoFormat()
+    profile.update(birth_calendar=calendar, birth_leap_month=leap, birth_date_input=original)
     error = BaziInput(birth_date=profile["birth_date"], birth_time=profile["birth_time"],
                       timezone=profile["timezone"], gender=profile["gender"]).validate()
     if error:
@@ -168,7 +189,7 @@ def compatibility(profile, payload):
         raise InvalidProfile("비교할 상대의 출생정보만 입력해 주세요.")
     # A nickname is unnecessary for comparison and is not accepted at this boundary.
     partner = payload["partner"]
-    if not isinstance(partner, dict) or set(partner) - (FIELDS - {"display_name"}):
+    if not isinstance(partner, dict) or set(partner) - ((FIELDS | CALENDAR_FIELDS) - {"display_name"}):
         raise InvalidProfile("상대 이름이나 사용자 ID는 받지 않습니다. 출생정보만 입력해 주세요.")
     partner = validate_birth(partner)
     try:

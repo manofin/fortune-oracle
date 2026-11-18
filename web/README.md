@@ -105,6 +105,7 @@ preview는 `127.0.0.1:8765`만 열고 임시 DB와 비밀키를 사용한다. �
 
 `POST /api/compat`와 `POST /api/readings/date`는 유효 세션·내 프로필·CSRF가 필요하다. 다른 사용자 ID로 프로필을 선택할 수 없다. 입력 오류 400, 세션 없음 401, CSRF/Origin 오류 403, 내 프로필 없음 409, 계산 실패는 `computed:false`와 503이다. 실패 시 가짜 점수를 반환하지 않는다.
 
+- 한국 음력 출생일·윤달 입력, 양력 정규화와 원본 날짜 수정 계약, 지원 범위 및 독립 대조 자료는 [한국 음력 입력](../docs/web-lunar-calendar.md)을 참고한다. 본인과 상대 입력 모두 지원하며, 기존 저장 정보는 양력을 기본으로 읽는다.
 - 궁합 입력 구조는 `{"partner":{"birth_date":"1990-01-01","birth_time":"","timezone":"Asia/Seoul"}}`다. 가상 예시이며 상대 시간대는 내 시간대와 독립적이다. 간지·오행 응답도 파생 개인정보다.
 - D-day는 ISO 날짜 `date`와 general/exam/meeting의 `scenario`를 받는다. 세션/저장 응답의 `reading_window`를 기준으로 날짜를 선택한다. 이 필드 없는 이전 응답에서는 D-day를 비활성화하고 기존 일일 풀이를 유지한다.
 
