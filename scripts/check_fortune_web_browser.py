@@ -117,8 +117,12 @@ with sync_playwright() as p:
         else:
             route.continue_()
     a.route("**/api/profile", hold_delete)
+    a.expose_function("__fortuneDeletionCaptured", lambda: bool(held))
     a.locator("#delete-button").click()
     a.locator("#confirm-delete").click()
+    # Client controls lock before route.fetch() has captured the server reply.
+    # Keep that real reply held before exercising cancellation of committed deletion.
+    a.wait_for_function("() => window.__fortuneDeletionCaptured()", timeout=15000)
     expect(a.locator("#cancel-delete")).to_be_disabled()
     expect(a.locator("#save-button")).to_be_disabled()
     expect(a.locator('[data-view="tomorrow"]')).to_be_disabled()

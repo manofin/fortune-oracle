@@ -32,7 +32,9 @@ preview는 `127.0.0.1:8765`만 열고 임시 DB와 비밀키를 사용한다. �
 
 운영은 HTTPS 앞단과 loopback backend를 사용한다. 기본 쿠키는 Secure/HttpOnly/SameSite=Lax다. CSRF Origin을 설정한 public origin과 비교하며 클라이언트 X-Forwarded-*는 신뢰하지 않는다. Gunicorn은 1 worker와 여러 threads로 실행하고 `--preload`는 사용하지 않는다. 앱 시작 이후 만료 정리 스레드가 실행되어야 한다. 계산 동시 실행은 최대 4개다.
 
-현재 프록시 뒤의 120회/분 요청 제한은 같은 backend IP가 공유한다. 다중 사용자 부하·대규모 공개 운영 검증은 별도 과제다. Python/Node subprocess를 실행할 수 없는 Worker 전용 호스팅에는 현재 서버를 그대로 올릴 수 없다.
+유효한 브라우저 세션은 각각 120회/60초 요청 예산을 갖는다. 세션이 없거나 쿠키가 위조·삭제·만료된 요청은 연결 주소별 120회/60초로 묶는다. 같은 프록시를 거치는 정상 사용자들이 하나의 120회 예산을 공유하지 않는다. DB 조회 앞에는 별도로 연결 주소별 3,600회/60초 상한을 둔다. 이 높은 상한은 프록시 뒤에서 공유되므로, 앞단의 남용 방지와 실제 트래픽 용량 검토를 대신하지 않는다. 클라이언트가 보낸 `X-Forwarded-For`로 제한을 우회하거나 원본 주소를 추정하지 않는다.
+
+두 제한기는 각각 최대 4,096개 항목을 메모리에 보관하며, 세션 키는 원문 쿠키가 아닌 해시다. 차단 응답은 `429`와 남은 창에 맞춘 `Retry-After`를 반환하고, 거절 요청이 창을 연장하지 않는다. 한도와 상태는 프로세스 단위이며 여러 worker/인스턴스 사이에 공유되지 않는다. `create_app`의 정수 설정 `RATE_LIMIT_REQUESTS`, `RATE_LIMIT_WINDOW`, `RATE_LIMIT_CAPACITY`, `RATE_LIMIT_INGRESS_REQUESTS`로 조정할 수 있다. 다중 사용자 부하·대규모 공개 운영 검증은 별도 과제다. Python/Node subprocess를 실행할 수 없는 Worker 전용 호스팅에는 현재 서버를 그대로 올릴 수 없다.
 
 ## 기능과 개인정보 경계
 

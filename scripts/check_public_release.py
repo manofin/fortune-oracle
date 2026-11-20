@@ -3,12 +3,17 @@
 
 Usage: python3 scripts/check_public_release.py --root /path/to/public-snapshot
        python3 scripts/check_public_release.py --staged [--root /path/to/repo]
+       python3 scripts/check_public_release.py --pre-push [--root /path/to/repo]
+       python3 scripts/check_public_release.py --history TIP_OID [--exclude BASE_OID]
 
 No HEAD baseline or broad document/test exemption is used. Git is optional before
 initialization; when present it must be an independent repository with at most
 one root commit and no inherited refs, reflogs, alternates, or unreachable objects.
 The --staged mode checks all stage-0 index files for later development commits;
 it does not inspect ignored local files or verify past Git history.
+The --pre-push mode reads Git's pre-push records from stdin and checks every
+introduced commit, including files removed before the tip. --history accepts
+only complete object IDs and provides the same history inspection for CI.
 This is a release guard, not proof that arbitrary prose contains no private data.
 Ignoring a path does not remove previously tracked files or historical objects.
 Only rule names, relative paths, line numbers, and counts are printed.
@@ -25,6 +30,8 @@ import re
 import stat
 import subprocess
 import sys
+from threading import Timer
+from time import monotonic
 
 from check_fortune_secrets import (
     GENERIC_ASSIGNMENT,
@@ -35,6 +42,14 @@ from check_fortune_secrets import (
 
 
 MAX_FILE_BYTES = 32 * 1024 * 1024
+MAX_PUSH_INPUT_BYTES = 128 * 1024
+MAX_PUSH_REFS = 256
+MAX_HISTORY_COMMITS = 4096
+MAX_HISTORY_ENTRIES = 2_000_000
+MAX_HISTORY_BYTES = 512 * 1024 * 1024
+MAX_HISTORY_SECONDS = 120
+MAX_TREE_OUTPUT_BYTES = 32 * 1024 * 1024
+MAX_TAG_DEPTH = 16
 ENV_TEMPLATE_SUFFIXES = (".env.example", ".env.sample", ".env.template")
 PRIVATE_ROOTS = {
     "homes", "store", "var", "instance", "runs", "recovery", "upstream-rescue",
@@ -204,14 +219,43 @@ def scan_content(path: str, data: bytes) -> list[Finding]:
     return sorted(findings)
 
 
-def git(root: Path, *args: str, allow_failure: bool = False, index_file: str | None = None) -> bytes:
+def git(
+    root: Path, *args: str, allow_failure: bool = False,
+    index_file: str | None = None, data: bytes | None = None,
+    max_output: int | None = None,
+) -> bytes:
     env = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
-    env.update(GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull, GIT_TERMINAL_PROMPT="0")
+    env.update(
+        GIT_CONFIG_NOSYSTEM="1", GIT_CONFIG_GLOBAL=os.devnull, GIT_TERMINAL_PROMPT="0",
+        GIT_NO_REPLACE_OBJECTS="1", GIT_NO_LAZY_FETCH="1",
+    )
     if index_file is not None:
         env["GIT_INDEX_FILE"] = index_file
+    command = ["git", "--no-optional-locks", "-c", "core.fsmonitor=false", "-C", str(root), *args]
+    if max_output is not None:
+        if data is not None:
+            raise ValueError("bounded Git output does not accept stdin")
+        # Bound tree output before buffering it in memory. The timer also
+        # prevents a blocked read from hanging a developer's push indefinitely.
+        with subprocess.Popen(command, env=env, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL) as process:
+            timer = Timer(30, process.kill)
+            timer.daemon = True
+            timer.start()
+            try:
+                assert process.stdout is not None
+                output = process.stdout.read(max_output + 1)
+                if len(output) > max_output:
+                    process.kill()
+                    raise RuntimeError("Git inspection output limit exceeded")
+                if process.wait() and not allow_failure:
+                    raise RuntimeError("Git metadata could not be checked")
+                return output
+            finally:
+                timer.cancel()
     result = subprocess.run(
-        ["git", "--no-optional-locks", "-c", "core.fsmonitor=false", "-C", str(root), *args],
-        env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
+        command,
+        input=data, env=env, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        check=False, timeout=30,
     )
     if result.returncode and not allow_failure:
         raise RuntimeError("Git metadata could not be checked")
@@ -370,20 +414,273 @@ def scan_index(root: Path) -> tuple[list[Finding], int]:
     return sorted(set(findings)), scanned
 
 
+def history_repository(root: Path) -> int:
+    """Require complete local objects without snapshot-only history limits."""
+    metadata = root / ".git"
+    if metadata.is_symlink() or not metadata.is_dir():
+        raise RuntimeError("history inspection requires independent Git metadata")
+    for relative in ("shallow", "commondir", "info/grafts", "objects/info/alternates", "objects/info/http-alternates"):
+        path = metadata / relative
+        if path.exists() or path.is_symlink():
+            raise RuntimeError("shared or incomplete Git history")
+    objects = metadata / "objects"
+    if objects.is_symlink() or not objects.is_dir():
+        raise RuntimeError("external or missing object storage")
+    for current, directories, files in os.walk(objects, followlinks=False):
+        if Path(current).is_symlink() or any((Path(current) / name).is_symlink() for name in directories + files):
+            raise RuntimeError("external object storage")
+    top = os.fsdecode(git(root, "rev-parse", "--show-toplevel")).strip()
+    common = os.fsdecode(git(root, "rev-parse", "--git-common-dir")).strip()
+    common_path = Path(common) if Path(common).is_absolute() else root / common
+    if Path(top).resolve() != root or common_path.resolve() != metadata.resolve():
+        raise RuntimeError("history root mismatch")
+    if git(root, "rev-parse", "--is-shallow-repository").strip() != b"false":
+        raise RuntimeError("incomplete Git history")
+    if git(root, "config", "--get-regexp", r"^(extensions\.partialclone|remote\..*\.promisor)$", allow_failure=True):
+        raise RuntimeError("partial Git history")
+    object_format = git(root, "rev-parse", "--show-object-format").strip()
+    if object_format not in {b"sha1", b"sha256"}:
+        raise RuntimeError("unsupported object format")
+    return 40 if object_format == b"sha1" else 64
+
+
+def object_id(value: str, length: int, *, allow_zero: bool = False) -> str:
+    if not re.fullmatch(r"[0-9a-f]{" + str(length) + "}", value):
+        raise ValueError("complete object ID required")
+    if not allow_zero and value == "0" * length:
+        raise ValueError("zero object ID is not a target")
+    return value
+
+
+@dataclass(frozen=True)
+class PushUpdate:
+    local_ref: str
+    local_oid: str
+    remote_ref: str
+    remote_oid: str
+
+
+def push_updates(root: Path, data: bytes, oid_length: int) -> list[PushUpdate]:
+    """Parse the pre-push protocol; refs are labels, never revision expressions."""
+    if len(data) > MAX_PUSH_INPUT_BYTES or b"\r" in data or b"\0" in data:
+        raise ValueError("invalid pre-push input")
+    records = data.splitlines()
+    if len(records) > MAX_PUSH_REFS:
+        raise ValueError("too many push refs")
+    updates = []
+    seen = set()
+    zero = "0" * oid_length
+    for record in records:
+        fields = record.split(b" ")
+        if len(fields) != 4 or any(not field for field in fields):
+            raise ValueError("invalid pre-push record")
+        local_ref, local_oid, remote_ref, remote_oid = map(os.fsdecode, fields)
+        object_id(local_oid, oid_length, allow_zero=True)
+        object_id(remote_oid, oid_length, allow_zero=True)
+        if remote_ref in seen or not remote_ref.startswith(("refs/heads/", "refs/tags/")):
+            raise ValueError("duplicate or unsupported push ref")
+        git(root, "check-ref-format", remote_ref)
+        seen.add(remote_ref)
+        if local_oid == zero:
+            if local_ref != "(delete)" or remote_oid == zero:
+                raise ValueError("invalid delete record")
+        elif local_ref.startswith(("refs/heads/", "refs/tags/")):
+            git(root, "check-ref-format", local_ref)
+        elif local_ref != "HEAD":
+            object_id(local_ref, oid_length)
+        updates.append(PushUpdate(local_ref, local_oid, remote_ref, remote_oid))
+    return updates
+
+
+class HistoryScan:
+    def __init__(self, root: Path, oid_length: int):
+        self.root = root
+        self.oid_length = oid_length
+        self.findings: set[Finding] = set()
+        self.inspected: set[tuple[str, str]] = set()
+        self.object_info: dict[str, tuple[str, int]] = {}
+        self.total_bytes = 0
+        self.entries = 0
+        self.scanned = 0
+        self.started = monotonic()
+
+    def check_time(self) -> None:
+        if monotonic() - self.started > MAX_HISTORY_SECONDS:
+            raise RuntimeError("history inspection time limit exceeded")
+
+    def info(self, oid: str) -> tuple[str, int]:
+        self.check_time()
+        if oid not in self.object_info:
+            record = git(self.root, "cat-file", "--batch-check", data=(oid + "\n").encode("ascii")).split()
+            if len(record) != 3 or record[0].decode("ascii") != oid:
+                raise RuntimeError("missing or invalid history object")
+            kind, size = record[1].decode("ascii"), int(record[2])
+            if size < 0 or kind not in {"blob", "tree", "commit", "tag"}:
+                raise RuntimeError("invalid history object")
+            self.object_info[oid] = kind, size
+        return self.object_info[oid]
+
+    def read(self, oid: str, kind: str, path: str) -> bytes | None:
+        actual_kind, size = self.info(oid)
+        if actual_kind != kind:
+            raise RuntimeError("history object type mismatch")
+        if size > MAX_FILE_BYTES:
+            self.findings.add(Finding(path, 0, "file-too-large-to-inspect"))
+            return None
+        self.total_bytes += size
+        if self.total_bytes > MAX_HISTORY_BYTES:
+            raise RuntimeError("history byte limit exceeded")
+        data = git(self.root, "cat-file", kind, oid)
+        if len(data) != size:
+            raise RuntimeError("history object size mismatch")
+        return data
+
+    def metadata(self, kind: str, data: bytes) -> None:
+        header, _separator, message = data.partition(b"\n\n")
+        self.findings.update(scan_content(f".git/{kind}-metadata", header))
+        self.findings.update(scan_content(f".git/{kind}-message", message))
+
+    def peel(self, oid: str, *, tags: bool, inspect_tags: bool) -> str:
+        for _ in range(MAX_TAG_DEPTH + 1):
+            kind, _size = self.info(oid)
+            if kind == "commit":
+                return oid
+            if kind != "tag" or not tags:
+                raise RuntimeError("only commit targets and commit tags are supported")
+            # Even an existing tag needs its target read locally. Tag messages
+            # are inspected only for outgoing targets, not baseline exclusions.
+            data = self.read(oid, "tag", ".git/tag-message")
+            if data is None:
+                raise RuntimeError("tag too large to inspect")
+            if inspect_tags and (".git/tag-message", oid) not in self.inspected:
+                self.inspected.add((".git/tag-message", oid))
+                self.metadata("tag", data)
+            header = data.partition(b"\n\n")[0].splitlines()
+            if len(header) < 3 or not header[0].startswith(b"object ") or not header[1].startswith(b"type ") or not header[2].startswith(b"tag "):
+                raise RuntimeError("malformed tag target")
+            oid = object_id(header[0][7:].decode("ascii"), self.oid_length)
+            if header[1][5:].decode("ascii") != self.info(oid)[0] or not header[2][4:]:
+                raise RuntimeError("tag target type mismatch")
+        raise RuntimeError("tag nesting limit exceeded")
+
+    def commits(self, tips: list[str], excludes: list[str]) -> None:
+        if not tips:
+            return
+        # Inputs have already been resolved as exact, typed IDs. A separate
+        # --not section ensures none can become a Git option or revision range.
+        records = git(
+            self.root, "rev-list", f"--max-count={MAX_HISTORY_COMMITS + 1}",
+            *sorted(set(tips)), "--not", *sorted(set(excludes)), "--",
+            max_output=(MAX_HISTORY_COMMITS + 1) * (self.oid_length + 1),
+        ).splitlines()
+        if len(records) > MAX_HISTORY_COMMITS:
+            raise RuntimeError("history commit limit exceeded")
+        for record in records:
+            oid = object_id(record.decode("ascii"), self.oid_length)
+            data = self.read(oid, "commit", ".git/commit-message")
+            if data is not None:
+                self.metadata("commit", data)
+            tree = git(
+                self.root, "ls-tree", "-r", "-t", "-z", "--full-tree", oid,
+                max_output=MAX_TREE_OUTPUT_BYTES,
+            )
+            for entry in tree.split(b"\0"):
+                if not entry:
+                    continue
+                self.check_time()
+                self.entries += 1
+                if self.entries > MAX_HISTORY_ENTRIES:
+                    raise RuntimeError("history tree entry limit exceeded")
+                header, raw_path = entry.split(b"\t", 1)
+                mode, kind, raw_oid = header.split()
+                path = os.fsdecode(raw_path)
+                blob_oid = object_id(raw_oid.decode("ascii"), self.oid_length)
+                directory = mode == b"040000" and kind == b"tree"
+                # Modes must be checked before content deduplication: an older
+                # symlink can reuse a newer regular file's exact blob and path.
+                if not directory and (mode not in {b"100644", b"100755"} or kind != b"blob"):
+                    self.findings.add(Finding(path, 0, "git-non-file-history-entry"))
+                    continue
+                pure = PurePosixPath(path)
+                if pure.is_absolute() or pure.as_posix() != path or ".." in pure.parts:
+                    raise RuntimeError("invalid history path")
+                parts = pure.parts
+                rule = next((
+                    result for count in range(1, len(parts))
+                    if (result := forbidden_path(PurePosixPath(*parts[:count]).as_posix(), directory=True))
+                ), None) or forbidden_path(path, directory=directory)
+                if rule:
+                    self.findings.add(Finding(path, 0, rule))
+                    continue
+                if directory:
+                    continue
+                identity = path, blob_oid
+                if identity in self.inspected:
+                    continue
+                self.inspected.add(identity)
+                blob = self.read(blob_oid, "blob", path)
+                if blob is not None:
+                    self.scanned += 1
+                    self.findings.update(scan_content(path, blob))
+
+
+def scan_history(
+    root: Path, tip: str, excludes: list[str],
+) -> tuple[list[Finding], int]:
+    oid_length = history_repository(root)
+    if len(excludes) > MAX_PUSH_REFS:
+        raise ValueError("too many history exclusions")
+    inspector = HistoryScan(root, oid_length)
+    target = inspector.peel(object_id(tip, oid_length), tags=True, inspect_tags=True)
+    bases = [inspector.peel(object_id(oid, oid_length), tags=True, inspect_tags=False) for oid in excludes]
+    inspector.commits([target], bases)
+    return sorted(inspector.findings), inspector.scanned
+
+
+def scan_push(root: Path, data: bytes) -> tuple[list[Finding], int]:
+    oid_length = history_repository(root)
+    updates = push_updates(root, data, oid_length)
+    inspector = HistoryScan(root, oid_length)
+    tips, bases = [], []
+    zero = "0" * oid_length
+    for update in updates:
+        if update.local_oid == zero:
+            # Deleting a remote ref publishes no local objects. In particular,
+            # an unfetched remote ref can safely be deleted without networking.
+            continue
+        tags = update.remote_ref.startswith("refs/tags/")
+        tips.append(inspector.peel(update.local_oid, tags=tags, inspect_tags=True))
+        if update.remote_oid != zero:
+            bases.append(inspector.peel(update.remote_oid, tags=tags, inspect_tags=False))
+    inspector.commits(tips, bases)
+    return sorted(inspector.findings), inspector.scanned
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root", type=Path, default=Path.cwd(), help="snapshot directory, or repository root with --staged")
-    parser.add_argument(
+    mode = parser.add_mutually_exclusive_group()
+    mode.add_argument(
         "--staged", action="store_true",
         help="check index files for normal commits; does not verify past history or ignored local files",
     )
+    mode.add_argument("--pre-push", action="store_true", help="inspect introduced history using Git pre-push records from stdin")
+    mode.add_argument("--history", metavar="TIP_OID", help="inspect complete reachable history of an exact commit/tag object ID")
+    parser.add_argument("--exclude", metavar="BASE_OID", action="append", default=[], help="exclude history already reachable from this exact object ID; requires --history")
     args = parser.parse_args()
+    if args.exclude and not args.history:
+        parser.error("--exclude requires --history")
     try:
         root = args.root.resolve(strict=True)
         if not root.is_dir():
             raise ValueError("not a directory")
-        findings, scanned = scan_index(root) if args.staged else scan(root)
-    except (OSError, RuntimeError, ValueError):
+        if args.pre_push:
+            findings, scanned = scan_push(root, sys.stdin.buffer.read(MAX_PUSH_INPUT_BYTES + 1))
+        elif args.history:
+            findings, scanned = scan_history(root, args.history, args.exclude)
+        else:
+            findings, scanned = scan_index(root) if args.staged else scan(root)
+    except (OSError, RuntimeError, ValueError, subprocess.SubprocessError):
         print("ERROR public-release-inspection-failed", file=sys.stderr)
         return 2
     for finding in findings:
