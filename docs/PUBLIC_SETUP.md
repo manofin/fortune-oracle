@@ -38,7 +38,7 @@ Python 의존성과 Node 의존성은 별개다. Python 설치만으로 `lunar-j
   tests/test_fortune_oracle_web_metrics.py tests/test_fortune_oracle_web_situations.py
 ```
 
-runner는 임시 `HERMES_HOME`과 store를 만들고 종료 시 지운다. 상속된 Fortune 사용자·세션·API 비밀값·pytest 외부 플러그인 설정을 제거하고 checkout의 플러그인만 import한다. 실제 Python 소켓 연결과 runtime TTS를 차단하며, 코드가 연결 예외를 잡더라도 연결 시도 자체가 있으면 실패한다. 테스트에는 운영 비밀값이나 실사용자 자료를 준비하지 않는다. matplotlib/Pillow는 PNG 회귀용이며 기본 웹 의존성이 아니다.
+runner는 임시 `HERMES_HOME`과 store를 만들고 종료 시 지운다. 상속된 Fortune 사용자·세션·API 비밀값·pytest 외부 플러그인 설정을 제거하고 checkout의 플러그인만 import한다. pytest 프로세스의 Python 소켓 연결과 runtime TTS를 차단하며, 코드가 연결 예외를 잡더라도 연결 시도 자체가 있으면 실패한다. 프로세스 재시작 회귀는 별도 자식 프로세스에서만 임시 `127.0.0.1` 서버에 연결한다. 이 HTTP 클라이언트는 고정 API 경로만 허용하고 리디렉션을 거부하므로, 실행 환경에 loopback 소켓 권한이 필요하다. 테스트에는 운영 비밀값이나 실사용자 자료를 준비하지 않는다. matplotlib/Pillow는 PNG 회귀용이며 기본 웹 의존성이 아니다.
 
 브라우저 검사는 별도 추가 항목이다. Playwright/Chromium을 설치한 뒤 별도 터미널에서 실행 중인 로컬 임시 미리보기에만 연결한다.
 
@@ -49,6 +49,13 @@ runner는 임시 `HERMES_HOME`과 store를 만들고 종료 시 지운다. 상�
 ```
 
 기본 브라우저는 Chromium이다. 홈·상품 샘플·공유·성장 경로 검사 스크립트에는 `--browser chromium|firefox|webkit`을 지정할 수 있다. 추가 엔진은 `.venv/bin/python -m playwright install firefox webkit`으로 준비하고, 호스트의 브라우저 실행 의존성도 충족해야 한다. 각 실행은 별도 출력 디렉터리를 사용하며, 실제 운영 주소가 아닌 `local-preview` 버전의 loopback 미리보기에만 연결한다. 결과에는 실제 엔진 버전을 기록한다. Linux WebKit의 휴대폰 화면 검사는 실제 iPhone Safari 검증이 아니며, Firefox는 화면 크기·터치만 모사한다. OS 공유와 클립보드는 자동 검사에서 제어한 대역을 사용한다.
+
+여러 탭의 공유 쿠키와 응답 지연은 다음 검사로 확인한다. 같은 브라우저의 다른 탭에서 삭제·변경했을 때 기존 풀이와 PNG가 사라지는지, 늦은 응답이 이를 되살리지 않는지, 응답을 잃은 관심 기록을 다시 시도할 수 있는지 검사한다. 실제 뒤로 가기와 합성 `persisted` 이벤트 검사는 결과에서 구분한다.
+
+```bash
+.venv/bin/python scripts/check_fortune_web_multitab_browser.py \
+  --url http://127.0.0.1:8765 --browser chromium --output /tmp/fortune-web-multitab
+```
 
 이 절차의 안내가 모든 테스트를 실행했다는 증거는 아니며, 테스트 결과는 실행한 환경에서 확인한다.
 

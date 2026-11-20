@@ -9,6 +9,7 @@ let entryMeasured = false;
 if (location.search) history.replaceState(history.state, "", location.pathname + location.hash);
 let csrf = "", profile = null, generation = 0, pending = new AbortController(), deleting = false;
 let sessionReady = false, sessionInitialization = null, saving = false, busyState = false;
+let sessionController = null, sessionGeneration = 0, saveOperation = null, browserStateChannel = null;
 let shareSource = null, shareFile = null, shareVersion = 0, dateAvailable = false, formStartedDay = "";
 const downloadUrls = new Set();
 let integratedReport = null, integratedPages = [], integratedPage = 0, integratedShareVersion = 0;
@@ -134,6 +135,27 @@ function clearShare() {
   downloadUrls.forEach(url => URL.revokeObjectURL(url)); downloadUrls.clear();
 }
 function cancelPending() { pending.abort(); pending = new AbortController(); hidePremiumInterest(); return ++generation; }
+function invalidateBrowserState(message = "") {
+  cancelPending(); ++sessionGeneration; sessionController?.abort(); sessionController = null;
+  sessionInitialization = null; sessionReady = false; csrf = ""; profile = null; formStartedDay = "";
+  saveOperation = null; saving = false; empty(); $("birth-form").reset(); $("birth-time").disabled = true;
+  $("delete-dialog").close(); showError("form-error", ""); busy(false); $("status").textContent = message;
+}
+function connectBrowserState() {
+  if (browserStateChannel || !window.BroadcastChannel) return;
+  try {
+    browserStateChannel = new BroadcastChannel("fortune-browser-state");
+    browserStateChannel.onmessage = event => {
+      if (event.data === "profile-invalidated") {
+        invalidateBrowserState("다른 탭에서 출생정보가 바뀌었어요. 새로고침해 현재 정보를 확인해 주세요.");
+      }
+    };
+  } catch (_) { /* Browsers that block channels still revalidate restored pages. */ }
+}
+function notifyBrowserState() {
+  // Transient same-origin signal only: no identity, profile, URL or storage.
+  try { browserStateChannel?.postMessage("profile-invalidated"); } catch (_) { /* optional coordination */ }
+}
 function measure(event, view) {
   if (!csrf) return;
   // Independent of reading cancellation; a revoked session rejects late events server-side.
@@ -192,7 +214,10 @@ async function api(path, options = {}) {
       if (err.name === "AbortError") throw err;
       throw new Error("응답을 읽지 못했습니다. 잠시 후 다시 시도해 주세요.");
     }
-    if (!response.ok) throw new Error(data.text || "요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+    if (!response.ok) {
+      const error = new Error(data.text || "요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+      error.status = response.status; throw error;
+    }
     return data;
   }, signal);
 }
@@ -219,9 +244,12 @@ function fillForm(value) {
 async function bootstrap() {
   if (sessionInitialization) return sessionInitialization;
   sessionReady = false;
-  const controller = new AbortController();
+  const controller = new AbortController(), epoch = sessionGeneration;
+  sessionController = controller;
   const initialization = (async () => {
-    const data = await api("/api/session", {signal:controller.signal}); csrf = data.csrf; profile = data.profile;
+    const data = await api("/api/session", {signal:controller.signal});
+    if (epoch !== sessionGeneration || controller.signal.aborted) return;
+    csrf = data.csrf; profile = data.profile;
     sessionReady = true;
     if (sharedEntry && !entryMeasured) { entryMeasured = true; measure("shared_link_visit", "card"); }
     setReadingWindow(data.reading_window);
@@ -230,9 +258,13 @@ async function bootstrap() {
   sessionInitialization = initialization;
   syncSaveButton();
   try { await initialization; }
-  catch (err) { if (!sessionReady) csrf = ""; throw err; }
+  catch (err) {
+    if (epoch !== sessionGeneration || controller.signal.aborted) return;
+    if (!sessionReady) csrf = ""; throw err;
+  }
   finally {
     if (sessionInitialization === initialization) sessionInitialization = null;
+    if (sessionController === controller) sessionController = null;
     syncSaveButton();
   }
 }
@@ -464,6 +496,7 @@ $("birth-form").addEventListener("input", () => {
 $("birth-form").addEventListener("submit", async event => {
   event.preventDefault(); if (deleting || saving) return;
   const data = Object.fromEntries(new FormData(event.currentTarget)); data.birth_time = $("unknown-time").checked ? "" : $("birth-time").value;
+  const operation = {}; saveOperation = operation;
   saving = true; syncSaveButton(); showError("form-error", "");
   let mine = null;
   try {
@@ -478,38 +511,76 @@ $("birth-form").addEventListener("submit", async event => {
     }
     if (!sessionReady) {
       try { await bootstrap(); }
-      catch (_) { showError("form-error", "서비스에 연결하지 못했습니다. 잠시 후 저장을 다시 눌러 주세요."); return; }
+      catch (_) {
+        if (saveOperation === operation) showError("form-error", "서비스에 연결하지 못했습니다. 잠시 후 저장을 다시 눌러 주세요.");
+        return;
+      }
     }
-    if (deleting || !sessionReady) return;
+    if (saveOperation !== operation || deleting || !sessionReady) return;
     mine = cancelPending(); busy(true);
-    const result = await api("/api/profile", {method:"PUT", body:JSON.stringify(data)});
-    if (mine !== generation) return;
+    // Drain submitted mutations independently of reading/UI invalidation: the
+    // server may commit even after a sibling replaces this document's state.
+    const result = await api("/api/profile", {method:"PUT", body:JSON.stringify(data), signal:null});
+    notifyBrowserState();
+    if (mine !== generation || saveOperation !== operation) return;
     profile = result.profile;
     setReadingWindow(result.reading_window);
     $("status").textContent = "출생정보를 저장했습니다.";
-    await loadView("today"); $("reading-title").focus({preventScroll:true});
+    await loadView("today");
+    if (saveOperation !== operation || !profile) return;
+    $("reading-title").focus({preventScroll:true});
     if (window.matchMedia("(max-width: 620px)").matches) $("reading-panel").scrollIntoView({block:"start", behavior:"auto"});
-  } catch (err) { if (err.name !== "AbortError" && (mine === null || mine === generation)) showError("form-error", err.message); }
+  } catch (err) {
+    if (mine !== null && (!Number.isInteger(err.status) || err.status >= 500)) notifyBrowserState();
+    if (saveOperation === operation && err.name !== "AbortError" && (mine === null || mine === generation)) showError("form-error", err.message);
+  }
   finally {
-    if (mine === null || mine === generation) busy(false);
-    saving = false; syncSaveButton();
+    if (saveOperation === operation) {
+      if (mine === null || mine === generation) busy(false);
+      saveOperation = null; saving = false; syncSaveButton();
+    }
   }
 });
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => loadView(button.dataset.view)));
 document.querySelectorAll("[data-premium-interest]").forEach(button => button.addEventListener("click", () => recordPremiumInterest(button)));
-addEventListener("pagehide", () => { clearPremiumRequests(); clearPremiumMessages(); updatePremiumButtons(); });
+addEventListener("pagehide", () => {
+  // A cached document must not retain a private form, result or export after
+  // another tab deletes the shared cookie while this document is suspended.
+  invalidateBrowserState(); browserStateChannel?.close(); browserStateChannel = null;
+});
+addEventListener("pageshow", event => {
+  connectBrowserState();
+  if (event.persisted) {
+    invalidateBrowserState();
+    bootstrap().catch(() => showError("form-error", "현재 정보를 확인하지 못했습니다. 새로고침해 주세요."));
+  } else if (performance.getEntriesByType("navigation")[0]?.type === "back_forward") {
+    // WebKit can restore native date fields into a newly loaded history entry
+    // after the previous document's pagehide scrub. Do this once at pageshow;
+    // a pending bootstrap must preserve input the user types afterwards.
+    $("birth-form").reset(); $("birth-time").disabled = true;
+    $("compat-form").reset(); $("partner-time").disabled = true;
+    $("date-form").reset();
+    if (dateAvailable) $("target-date").value = $("target-date").min;
+    if (sessionReady && profile) fillForm(profile);
+  }
+});
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshPremiumDay(); });
 $("delete-button").addEventListener("click", () => $("delete-dialog").showModal());
 $("cancel-delete").addEventListener("click", () => $("delete-dialog").close());
 $("delete-dialog").addEventListener("cancel", event => { if (deleting) event.preventDefault(); });
 $("confirm-delete").addEventListener("click", async () => {
   if (deleting) return;
-  deleting = true; cancelPending(); busy(true); $("confirm-delete").disabled = true;
+  deleting = true; const mine = cancelPending(); notifyBrowserState(); busy(true); $("confirm-delete").disabled = true;
   $("cancel-delete").disabled = true; $("delete-button").disabled = true;
   try {
-    await api("/api/profile", {method:"DELETE"}); profile = null; formStartedDay = ""; empty(); $("birth-form").reset(); $("birth-time").disabled = true;
+    await api("/api/profile", {method:"DELETE", signal:null});
+    notifyBrowserState();
+    if (mine !== generation) return;
+    profile = null; formStartedDay = ""; empty(); $("birth-form").reset(); $("birth-time").disabled = true;
     $("delete-dialog").close(); await bootstrap(); $("status").textContent = "출생정보를 삭제했습니다.";
   } catch (err) {
+    notifyBrowserState();
+    if (mine !== generation) return;
     // The server may have committed deletion before delivery failed: hide stale data and resync.
     empty(); profile = null; formStartedDay = ""; $("birth-form").reset(); $("birth-time").disabled = true; $("delete-dialog").close();
     try {
@@ -665,6 +736,7 @@ $("compat-form").addEventListener("submit", event => {
 });
 const today = new Date(); $("birth-date").max = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
 $("partner-date").max = $("birth-date").max;
+connectBrowserState();
 bootstrap().catch(err => showError("form-error", err.name === "TimeoutError"
   ? err.message : "서비스에 연결하지 못했습니다. 잠시 후 저장을 다시 눌러 주세요."));
 // Typography rule: text that wraps to two or more lines gets 150% leading; single-line text keeps auto.
