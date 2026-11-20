@@ -57,7 +57,8 @@ jobs:
           cache: npm
           cache-dependency-path: plugins/hermes_ext/fortune_oracle/scripts/package-lock.json
       - name: Install pinned astronomy wheels in the separate Python environment
-        run: python -m pip install --only-binary=:all: -r web/requirements-astronomy-test.txt
+        run: |
+          python -m pip install --only-binary=:all: -r web/requirements-astronomy-test.txt
       - name: Install locked calculation bridges
         run: npm ci --prefix plugins/hermes_ext/fortune_oracle/scripts --ignore-scripts --no-audit --no-fund
       - name: Provision hash-verified public NASA kernel outside the checkout
