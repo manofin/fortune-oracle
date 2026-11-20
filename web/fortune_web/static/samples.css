@@ -134,3 +134,32 @@ dialog p{font-size:14px;color:var(--muted);line-height:1.5}
 .perspective-table{table-layout:fixed;line-height:1.5}
 .perspective-table th:first-child{width:20%}
 @media(max-width:620px){.topbar{flex-wrap:wrap;gap:4px 12px}.brand{min-height:44px}.report-body{padding:0 12px 16px}.perspective-table th,.perspective-table td{padding:8px 6px;word-break:normal;overflow-wrap:anywhere}}
+
+/* Reading comes before the price response. Keep full sentences comfortable on
+   narrow screens and retain the table's row/column relationships for AT. */
+.report-body{font-size:16px}
+.report-body h3{font-size:18px;scroll-margin-top:16px}
+.report-body blockquote,.phrase-list li{font-size:inherit}
+.sample-report>summary{scroll-margin-top:16px}
+.sample-report>summary:focus-visible{outline-offset:-4px;border-radius:10px}
+.sample-interest-help{font-size:12px;line-height:1.5;color:var(--muted);margin:0}
+.report-review{margin-top:24px;padding:18px;border:1px solid #d7c8a7;border-radius:12px;background:#f7f0df}
+.report-review h3:first-of-type{margin:0 0 10px}
+.report-review p{font-size:14px;margin-bottom:12px}
+.report-review ol{margin:0;padding-left:22px}
+.report-review li+li{margin-top:12px}
+.sample-close-button{min-height:44px;margin-top:8px;padding:10px 14px;border:1px solid #b7b0a1;border-radius:10px;background:var(--white);color:var(--green);font-size:14px;font-weight:650}
+.sample-close-button:hover{background:#efe8da}
+.mobile-cell-label{display:none}
+.perspective-table{font-size:14px}
+@media(max-width:620px){
+  .perspective-table,.perspective-table tbody{display:block;width:100%}
+  .perspective-table thead{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .perspective-table tbody{display:grid;gap:12px}
+  .perspective-table tr{display:grid;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .perspective-table th,.perspective-table td{display:block;width:100%;border:0;padding:12px;word-break:keep-all;overflow-wrap:break-word}
+  .perspective-table th:first-child{width:100%;font-size:16px}
+  .perspective-table td+td{border-top:1px dashed var(--line)}
+  .mobile-cell-label{display:block;margin-bottom:6px;color:var(--muted);font-size:12px;font-weight:700}
+  .report-review{padding:14px}
+}

@@ -101,13 +101,30 @@ def main():
                                       and r.request.post_data_json == {"event": VIEWED, "view": product}) as receipt:
                 opener(product).click()
             assert receipt.value.status == 202
+            summary = page.locator(f"#sp-report-{product} > summary")
+            expect(summary).to_be_focused()
+            assert 0 <= summary.bounding_box()["y"] <= 32
 
         def inspect_report(product):
-            for width, height in ((320, 640), (1280, 960)):
+            for width, height in ((320, 640), (390, 844), (1280, 960)):
                 page.set_viewport_size({"width": width, "height": height})
                 assert page.evaluate("document.documentElement.scrollWidth <= innerWidth")
                 report = page.locator(f"#sp-report-{product}")
                 assert report.locator(".report-body").is_visible()
+                assert report.locator(".report-review li").count() == 3
+                assert float(report.locator(".report-body").evaluate("el => parseFloat(getComputedStyle(el).fontSize)")) >= 16
+                if product == PRODUCTS[-1] and width <= 390:
+                    table = report.locator(".perspective-table")
+                    expect(table).to_have_role("table")
+                    assert table.get_by_role("rowheader").all_text_contents() == ["사주", "자미두수", "서양", "베딕"]
+                    # Each sentence gets the row's reading width, rather than a
+                    # narrow third of the 320px screen. No content is clipped.
+                    assert table.locator("tbody td").evaluate_all("""nodes => nodes.every(el => {
+                        const row = el.closest('tr').getBoundingClientRect();
+                        return el.getBoundingClientRect().width >= row.width - 3
+                          && el.scrollWidth <= el.clientWidth;
+                    })""")
+                    assert table.locator(".mobile-cell-label:visible").count() == 8
                 report.screenshot(path=str(args.output / f"{product}-{width}.png"))
             page.set_viewport_size({"width": 390, "height": 844})
 
@@ -120,12 +137,42 @@ def main():
             })""")
             assert all(b["height"] >= 44 and b["left"] >= 0 and b["right"] <= width + .1 for b in boxes)
             page.screenshot(path=str(args.output / f"catalog-{width}.png"), full_page=True)
-        passed.append("320/390/1280px catalog fits without horizontal overflow; sample actions have44px targets")
+        passed.append("320/390/1280px catalog fits without horizontal overflow; sample actions have 44px targets")
 
         page.set_viewport_size({"width": 390, "height": 844})
         first, second, third = PRODUCTS
+        # Failed collection must not block reading. A keyboard reader keeps focus
+        # in the opened report even while its original action is disabled.
+        state.update(event=VIEWED, mode="failure")
+        opener(first).focus()
+        page.keyboard.press("Enter")
+        expect(status(first)).to_contain_text("본문은 읽을 수 있어요")
+        expect(page.locator(f"#sp-report-{first} > summary")).to_be_focused()
+        adult(first).check()
+        expect(button(first)).to_be_disabled()
+        assert "/private/marker" not in status(first).inner_text()
+        close_first = page.locator(f'[data-sample-close="{first}"]')
+        close_first.focus()
+        page.keyboard.press("Enter")
+        expect(opener(first)).to_be_focused()
+        expect(page.locator(f"#sp-report-{first}")).not_to_have_attribute("open", "")
+        adult(first).uncheck()
+        state.update(event=INTEREST, mode="pass")
         open_sample(first)
         inspect_report(first)
+        view_count = len(matching(VIEWED, first))
+        close_first.focus()
+        page.keyboard.press("Enter")
+        expect(opener(first)).to_be_focused()
+        opener(first).press("Enter")
+        expect(page.locator(f"#sp-report-{first} > summary")).to_be_focused()
+        page.keyboard.press("Space")
+        expect(opener(first)).to_have_attribute("aria-expanded", "false")
+        page.keyboard.press("Space")
+        expect(opener(first)).to_have_attribute("aria-expanded", "true")
+        assert len(matching(VIEWED, first)) == view_count
+        expect(opener(first)).to_have_accessible_name("내 사용설명서 · 샘플 닫기")
+        passed.append("View failure preserves readable body; keyboard open/close keeps focus and reopening adds no duplicate view")
         expect(button(first)).to_be_disabled()
         adult(first).check()
         expect(button(first)).to_be_enabled()
@@ -226,6 +273,54 @@ def main():
             expect(button(product)).to_be_disabled()
         passed.append("Confirmed deletion clears the anonymous session and pending UI without automatically recreating a cookie")
 
+        # Rapid collapse while bootstrap or the event receipt is pending must
+        # leave a usable keyboard target and must not issue another session GET.
+        pending_context = browser.new_context(viewport={"width": 390, "height": 844})
+        pending_context.route("**/*", only_local)
+        pending = pending_context.new_page()
+        pending.on("pageerror", lambda err: errors.append(str(err)))
+        bootstrap, pending_receipts, pending_events = [], [], []
+        pending.route("**/api/session", lambda route: bootstrap.append(route))
+        pending.route("**/api/events", lambda route: pending_receipts.append(route))
+        pending.on("request", lambda request: pending_events.append(request.post_data_json)
+                   if urlsplit(request.url).path == "/api/events" else None)
+        pending.goto(base + "/samples")
+        pending_open = pending.locator(f'[data-sample-open="{first}"]')
+        pending_close = pending.locator(f'[data-sample-close="{first}"]')
+        pending_summary = pending.locator(f"#sp-report-{first} > summary")
+        pending_open.focus()
+        pending.keyboard.press("Enter")
+        expect(pending_open).to_be_disabled()
+        assert len(bootstrap) == 1
+
+        def collapse_while_pending():
+            pending_close.focus()
+            pending.keyboard.press("Enter")
+            expect(pending_summary).to_be_focused()
+            expect(pending_summary).to_be_visible()
+            pending.keyboard.press("Shift+Tab")
+            assert pending.evaluate("document.activeElement.tagName !== 'BODY' && !document.activeElement.disabled")
+            pending_summary.focus()
+            pending.keyboard.press("Enter")
+            expect(pending_summary).to_be_focused()
+            assert len(bootstrap) == 1
+
+        collapse_while_pending()
+        with pending.expect_request(lambda request: urlsplit(request.url).path == "/api/events"):
+            bootstrap[0].continue_()
+        expect(pending_open).to_be_disabled()
+        assert len(pending_receipts) == 1
+        collapse_while_pending()
+        pending_receipts[0].fulfill(status=503, json={"ok": False})
+        expect(pending_open).to_be_enabled()
+        expect(pending.locator(f'[data-sample-status="{first}"]')).to_contain_text("본문은 읽을 수 있어요")
+        pending_close.focus()
+        pending.keyboard.press("Enter")
+        expect(pending_open).to_be_focused()
+        assert len(pending_events) == 1 and len(bootstrap) == 1
+        pending_context.close()
+        passed.append("Rapid close and Shift+Tab keep usable focus during bootstrap, pending view and failed acknowledgement without duplicate requests")
+
         # Two opens share one cookie-creating GET. Deletion must drain that GET
         # before deleting, or its Set-Cookie could replace the deleted session.
         race_context = browser.new_context(viewport={"width": 390, "height": 844})
@@ -260,6 +355,24 @@ def main():
         passed.append("Concurrent opens share bootstrap; deletion drains the pending cookie request and prevents late event writes")
         race_context.close()
 
+        # The full editorial examples remain usable when JavaScript is disabled.
+        # Native details do not create a session or quietly collect a view.
+        plain_context = browser.new_context(java_script_enabled=False, viewport={"width": 320, "height": 640})
+        plain_context.route("**/*", only_local)
+        plain = plain_context.new_page()
+        plain_requests = []
+        plain.on("request", lambda r: plain_requests.append(urlsplit(r.url).path))
+        plain.goto(base + "/samples")
+        for product in PRODUCTS:
+            report = plain.locator(f"#sp-report-{product}")
+            report.locator("summary").click()
+            expect(report.locator(".report-review")).to_be_visible()
+            expect(report.locator("[data-sample-close]")).to_be_hidden()
+        assert not plain_context.cookies()
+        assert not [path for path in plain_requests if path.startswith("/api/")]
+        plain_context.close()
+        passed.append("All complete examples and review prompts remain readable without JavaScript, API calls or cookies")
+
         assert all(set(e) == {"event", "view"} and e["event"] in {VIEWED, INTEREST}
                    and e["view"] in PRODUCTS for e in events)
         assert not [path for method, path in requests if method == "PUT"]
@@ -267,6 +380,7 @@ def main():
         assert page.evaluate("localStorage.length === 0 && sessionStorage.length === 0")
         assert not errors and not external
         passed.append("Only fixed event labels sent; no profile writes, calculations, browser persistence, external requests, or JS errors")
+        passed.append("All three reports fit 320/390/1280px; mobile comparison rows retain full-width sentences and table semantics")
         browser.close()
 
     result = {"passed": passed, "page_errors": errors, "external_requests": external,
