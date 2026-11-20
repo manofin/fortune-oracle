@@ -417,7 +417,17 @@ function drawMonth(data) {
     container.replaceChildren(svg);
   }
   render();
-  monthResizeObserver = new ResizeObserver(render);
+  // Changing the SVG can resize its container. Write in the next frame rather
+  // than during ResizeObserver delivery, which causes loop errors in WebKit.
+  let resizeFrame = 0;
+  const observer = new ResizeObserver(() => {
+    if (resizeFrame) return;
+    resizeFrame = requestAnimationFrame(() => {
+      resizeFrame = 0;
+      if (monthResizeObserver === observer) render();
+    });
+  });
+  monthResizeObserver = observer;
   monthResizeObserver.observe(container);
 }
 

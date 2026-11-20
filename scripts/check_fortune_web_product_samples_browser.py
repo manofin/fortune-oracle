@@ -1,4 +1,4 @@
-"""Local Chromium checks for public samples, anonymous interest, and deletion.
+"""Local browser checks for public samples, anonymous interest, and deletion.
 
 Use only the temporary preview. Captures fixed event labels; never supplies a
 birth profile, contacts, payment information, or an external network request.
@@ -20,6 +20,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--url", default="http://127.0.0.1:8765")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--browser", choices=("chromium", "firefox", "webkit"), default="chromium")
     args = parser.parse_args()
     base = args.url.rstrip("/")
     origin = urlsplit(base)
@@ -30,8 +31,9 @@ def main():
     state = {"event": INTEREST, "mode": "pass", "held": []}
 
     with sync_playwright() as p:
-        browser = p.chromium.launch()
-        context = browser.new_context(viewport={"width": 390, "height": 844})
+        browser = getattr(p, args.browser).launch()
+        browser_version = browser.version
+        context = browser.new_context(viewport={"width": 390, "height": 844}, reduced_motion="reduce")
 
         def only_local(route):
             if urlsplit(route.request.url).netloc != origin.netloc:
@@ -253,6 +255,7 @@ def main():
         expect(button(third)).to_be_disabled()
         page.locator("#sp-delete-button").click()
         expect(page.locator("#sp-delete-dialog")).to_be_visible()
+        assert page.locator("#sp-delete-dialog").evaluate("el => getComputedStyle(el).animationName") == "none"
         expect(page.locator("#sp-delete-dialog")).to_contain_text("출생정보")
         with page.expect_response(lambda r: urlsplit(r.url).path == "/api/profile"
                                   and r.request.method == "DELETE") as deletion:
@@ -272,6 +275,7 @@ def main():
             expect(adult(product)).not_to_be_checked()
             expect(button(product)).to_be_disabled()
         passed.append("Confirmed deletion clears the anonymous session and pending UI without automatically recreating a cookie")
+        passed.append("Reduced motion removes deletion dialog animation")
 
         # Rapid collapse while bootstrap or the event receipt is pending must
         # leave a usable keyboard target and must not issue another session GET.
@@ -384,7 +388,9 @@ def main():
         browser.close()
 
     result = {"passed": passed, "page_errors": errors, "external_requests": external,
-              "events": events, "source": "actual local Chromium; anonymous temporary sessions; not public deployment"}
+              "events": events, "browser": args.browser, "browser_version": browser_version,
+              "source": f"actual local {args.browser}; anonymous temporary sessions; not public deployment",
+              "device_scope": "Linux browser resized to phone/desktop viewports; not physical iPhone or Safari"}
     (args.output / "result.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(result, ensure_ascii=False))
 

@@ -48,6 +48,8 @@ runner는 임시 `HERMES_HOME`과 store를 만들고 종료 시 지운다. 상�
 .venv/bin/python scripts/check_fortune_web_browser.py --output /tmp/fortune-web-browser
 ```
 
+기본 브라우저는 Chromium이다. 홈·상품 샘플·공유·성장 경로 검사 스크립트에는 `--browser chromium|firefox|webkit`을 지정할 수 있다. 추가 엔진은 `.venv/bin/python -m playwright install firefox webkit`으로 준비하고, 호스트의 브라우저 실행 의존성도 충족해야 한다. 각 실행은 별도 출력 디렉터리를 사용하며, 실제 운영 주소가 아닌 `local-preview` 버전의 loopback 미리보기에만 연결한다. 결과에는 실제 엔진 버전을 기록한다. Linux WebKit의 휴대폰 화면 검사는 실제 iPhone Safari 검증이 아니며, Firefox는 화면 크기·터치만 모사한다. OS 공유와 클립보드는 자동 검사에서 제어한 대역을 사용한다.
+
 이 절차의 안내가 모든 테스트를 실행했다는 증거는 아니며, 테스트 결과는 실행한 환경에서 확인한다.
 
 ## 선택적 계산과 라이선스 경계
