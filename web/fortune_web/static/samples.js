@@ -26,7 +26,23 @@
     let csrf = "", generation = 0, day = dayKey(), deleting = false, deletionComplete = false;
     // A session GET may set a cookie. Always drain it before replacing a session
     // or deleting one; merely ignoring its JSON would not prevent a cookie race.
-    let sessionFlight = null;
+    let sessionFlight = null, browserStateChannel = null;
+
+    function connectBrowserState() {
+      if (browserStateChannel || !window.BroadcastChannel) return;
+      try {
+        browserStateChannel = new BroadcastChannel("fortune-browser-state");
+        browserStateChannel.onmessage = event => {
+          if (event.data === "profile-invalidated") {
+            invalidate("다른 탭에서 정보가 바뀌었어요. 샘플 다시 읽기로 이용 기록을 확인해 주세요.");
+          }
+        };
+      } catch (_) { /* Restored pages also invalidate below when channels are blocked. */ }
+    }
+    function notifyBrowserState() {
+      // A fixed, transient signal carries no identity, personal data or URL.
+      try { browserStateChannel?.postMessage("profile-invalidated"); } catch (_) { /* optional coordination */ }
+    }
 
     const isOpen = p => p.report.tagName === "DETAILS" ? p.report.open : !p.report.hidden;
     function setOpen(p, value) {
@@ -257,6 +273,7 @@
         if (deleting || deletionComplete) return;
         const knownToken = csrf, existingFlight = sessionFlight;
         deleting = true;
+        notifyBrowserState();
         invalidate("삭제를 확인하고 있어요…");
         const mine = generation;
         deleteStatus.textContent = "삭제를 확인하고 있어요. 완료될 때까지 기다려 주세요.";
@@ -274,12 +291,14 @@
           const {status, data} = await requestJSON("/api/profile", {
             method: "DELETE", headers: {"X-CSRF-Token": token}
           });
+          notifyBrowserState();
           if (mine !== generation) throw new Error("stale");
           if (status !== 401 && (status !== 200 || data?.ok !== true)) throw new Error("delete_unconfirmed");
           invalidate("이 브라우저의 정보를 삭제했어요. 샘플은 계속 읽을 수 있어요.");
           deletionComplete = true;
           deleteStatus.textContent = "이 브라우저의 출생정보와 이용 기록을 삭제했어요. 익명 일별 집계는 남습니다.";
         } catch (_) {
+          notifyBrowserState();
           invalidate("삭제 완료를 확인하지 못했어요. 삭제 창에서 다시 시도해 주세요.");
           deleteStatus.textContent = "삭제 완료를 확인하지 못했어요. 연결을 확인하고 삭제하기를 다시 눌러 주세요.";
         } finally {
@@ -288,7 +307,12 @@
         }
       });
     }
+    window.addEventListener("pagehide", () => {
+      invalidate("화면을 나갔어요. 돌아온 뒤 샘플 다시 읽기를 눌러 주세요.");
+      browserStateChannel?.close(); browserStateChannel = null;
+    });
     window.addEventListener("pageshow", event => {
+      connectBrowserState();
       if (event.persisted) {
         day = dayKey();
         invalidate("화면으로 돌아왔어요. 샘플 다시 읽기를 눌러 이용 기록을 다시 확인해 주세요.");
@@ -297,6 +321,7 @@
     document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshDay(); });
     window.addEventListener("focus", refreshDay);
     // No API request, cookie access, or storage access on page load.
+    connectBrowserState();
     render();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, {once: true});
