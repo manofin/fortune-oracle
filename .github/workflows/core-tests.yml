@@ -1,0 +1,68 @@
+name: Core and guard tests
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+          cache: pip
+          cache-dependency-path: web/requirements*.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: plugins/hermes_ext/fortune_oracle/scripts/package-lock.json
+      - name: Install pinned Python test dependencies
+        run: python -m pip install -r web/requirements-test.txt
+      - name: Install locked calculation bridges
+        run: npm ci --prefix plugins/hermes_ext/fortune_oracle/scripts --ignore-scripts --no-audit --no-fund
+      - name: Install local audio test tools
+        run: sudo apt-get update && sudo apt-get install --yes --no-install-recommends ffmpeg
+      - name: Run offline core and web contracts
+        run: python -B scripts/run_fortune_tests.py --profile core
+      - name: Run public source guard regressions
+        run: python -B scripts/run_fortune_tests.py --profile guard
+
+  astronomy-tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: |
+            web/requirements-astronomy-test.txt
+            plugins/hermes_ext/fortune_oracle/vedic-requirements.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: plugins/hermes_ext/fortune_oracle/scripts/package-lock.json
+      - name: Install pinned astronomy wheels in the separate Python environment
+        run: python -m pip install --only-binary=:all: -r web/requirements-astronomy-test.txt
+      - name: Install locked calculation bridges
+        run: npm ci --prefix plugins/hermes_ext/fortune_oracle/scripts --ignore-scripts --no-audit --no-fund
+      - name: Provision hash-verified public NASA kernel outside the checkout
+        env:
+          PYTHONPATH: plugins
+        run: python -B -m hermes_ext.fortune_oracle.ephemeris_setup --output "$RUNNER_TEMP/fortune-ephemeris/de440s.bsp"
+      - name: Run offline astronomy numeric and provenance regressions
+        run: python -B scripts/run_fortune_tests.py --profile astronomy --ephemeris "$RUNNER_TEMP/fortune-ephemeris/de440s.bsp"
