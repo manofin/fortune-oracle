@@ -96,7 +96,10 @@ def main():
         for private in ("가상<친구>", "1990-05-17", "12:30", "Asia/Seoul", "壬午"):
             assert private not in "\n".join(drawn)
         assert "예측 확률이 아닙니다" in "\n".join(drawn)
-        assert page.locator("#keywords").inner_text().split(" · ")[0] in drawn
+        rendered_keywords = page.locator("#keywords .kw").all_text_contents()
+        assert rendered_keywords and all(keyword in drawn for keyword in rendered_keywords), {
+            "displayed_keywords": rendered_keywords, "canvas_text": drawn,
+        }
         with page.expect_download() as pending:
             page.locator("#download-share").click()
         download = pending.value
