@@ -11,14 +11,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--url", default="http://127.0.0.1:8765")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--browser", choices=("chromium", "firefox", "webkit"), default="chromium")
     args = parser.parse_args()
     origin = urlsplit(args.url)
     assert origin.hostname in {"127.0.0.1", "localhost"}
     args.output.mkdir(parents=True, exist_ok=True)
     passed, errors, outside = [], [], []
     with sync_playwright() as p:
-        browser = p.chromium.launch()
-        context = browser.new_context(viewport={"width":390, "height":844}, is_mobile=True)
+        browser = getattr(p, args.browser).launch()
+        browser_version = browser.version
+        context = browser.new_context(viewport={"width":390, "height":844}, is_mobile=args.browser != "firefox")
         def only_local(route):
             if urlsplit(route.request.url).netloc == origin.netloc:
                 route.continue_()
@@ -68,7 +70,9 @@ def main():
         passed.append("zero JS errors/third-party requests; synthetic session deleted")
         crawler.close(); context.close(); browser.close()
     result = {"passed":passed, "page_errors":errors, "external_requests":outside,
-              "scope":"local Chromium; no real Kakao/Instagram preview observation"}
+              "browser": args.browser, "browser_version": browser_version,
+              "scope":f"local {args.browser}; no real Kakao/Instagram preview observation",
+              "device_scope":"Linux browser with phone viewport; not physical iPhone or Safari"}
     (args.output / "result.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(result, ensure_ascii=False))
 

@@ -10,6 +10,7 @@ from playwright.sync_api import sync_playwright, expect
 parser = argparse.ArgumentParser(description=__doc__)
 parser.add_argument("--url", default="http://127.0.0.1:8765")
 parser.add_argument("--output", type=Path, required=True)
+parser.add_argument("--browser", choices=("chromium", "firefox", "webkit"), default="chromium")
 args = parser.parse_args()
 origin = urlparse(args.url)
 assert origin.hostname in {"127.0.0.1", "localhost"}, "Use an isolated local preview, never a production store"
@@ -17,9 +18,14 @@ args.output.mkdir(parents=True, exist_ok=True)
 errors, external, passed = [], [], []
 
 with sync_playwright() as p:
-    browser = p.chromium.launch()
-    mobile = browser.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, device_scale_factor=1, has_touch=True)
+    browser = getattr(p, args.browser).launch()
+    browser_version = browser.version
+    # Firefox supports a touch/phone viewport but not Playwright's is_mobile emulation.
+    mobile = browser.new_context(viewport={"width": 390, "height": 844},
+                                 is_mobile=args.browser != "firefox", device_scale_factor=1,
+                                 has_touch=True, reduced_motion="reduce")
     desktop = browser.new_context(viewport={"width": 1280, "height": 960})
+    assert desktop.request.get(args.url + "/healthz").json()["version"] == "local-preview"
     for context in (mobile, desktop):
         def allow_local(route):
             parsed = urlparse(route.request.url)
@@ -41,6 +47,15 @@ with sync_playwright() as p:
     b.screenshot(path=str(args.output / "desktop-entry.png"), full_page=True)
     passed.append("mobile and desktop layout without horizontal overflow")
 
+    expect(a.locator("#unknown-time")).to_be_checked()
+    expect(a.locator("#birth-time")).to_be_disabled()
+    expect(a.locator("#birth-date")).to_have_accessible_name("생년월일 양력")
+    for invalid_date in ("", "1799-12-31", (date.today() + timedelta(days=1)).isoformat()):
+        a.locator("#birth-date").fill(invalid_date)
+        assert not a.locator("#birth-date").evaluate("input => input.checkValidity()")
+    a.locator("#birth-date").fill("")
+    passed.append("birth date has an accessible label and native required/min/max validation; unknown time disables its input")
+
     def register(page, name, birthday, clock="12:30"):
         page.locator("#display-name").fill(name)
         page.locator("#birth-date").fill(birthday)
@@ -48,7 +63,7 @@ with sync_playwright() as p:
         if clock:
             page.locator("#birth-time").fill(clock)
         page.locator("#gender").select_option("male")
-        page.locator("#save-button").click()
+        page.locator("#save-button").press("Enter")
 
     register(a, "가상가", "1990-05-17")
     expect(a.locator("#daily-result")).to_be_visible(timeout=15000)
@@ -114,21 +129,28 @@ with sync_playwright() as p:
     def hold_delete(route):
         if route.request.method == "DELETE":
             held.append((route, route.fetch()))
+            a.evaluate("window.__fortuneDeletionCaptured = true")
         else:
             route.continue_()
     a.route("**/api/profile", hold_delete)
-    a.expose_function("__fortuneDeletionCaptured", lambda: bool(held))
+    a.evaluate("window.__fortuneDeletionCaptured = false")
     a.locator("#delete-button").click()
+    expect(a.locator("#cancel-delete")).to_be_focused()
+    assert a.locator("#delete-dialog").evaluate("el => getComputedStyle(el).animationName") == "none"
+    a.keyboard.press("Escape")
+    expect(a.locator("#delete-dialog")).to_be_hidden()
+    expect(a.locator("#delete-button")).to_be_focused()
+    a.locator("#delete-button").press("Enter")
     a.locator("#confirm-delete").click()
     # Client controls lock before route.fetch() has captured the server reply.
     # Keep that real reply held before exercising cancellation of committed deletion.
-    a.wait_for_function("() => window.__fortuneDeletionCaptured()", timeout=15000)
+    a.wait_for_function("() => window.__fortuneDeletionCaptured === true", timeout=15000)
     expect(a.locator("#cancel-delete")).to_be_disabled()
     expect(a.locator("#save-button")).to_be_disabled()
     expect(a.locator('[data-view="tomorrow"]')).to_be_disabled()
     a.keyboard.press("Escape")
     expect(a.locator("#delete-dialog")).to_be_visible()
-    assert len(held) == 1
+    assert len(held) == 1, {"held_deletion_responses": len(held)}
     held[0][0].fulfill(response=held[0][1])
     expect(a.locator("#empty-state")).to_be_visible()
     expect(a.locator("#birth-date")).to_have_value("")
@@ -138,6 +160,7 @@ with sync_playwright() as p:
     expect(b.locator("#daily-result")).to_be_visible()
     passed.append("deleting one browser revokes its profile without affecting the other")
     passed.append("committed deletion cannot be interrupted by Escape, navigation or another save")
+    passed.append("keyboard save and deletion dialog cancellation preserve focus; reduced motion removes dialog animation")
     def lose_delete_reply(route):
         if route.request.method == "DELETE":
             route.fetch(); route.abort()
@@ -153,7 +176,10 @@ with sync_playwright() as p:
     browser.close()
 
 result = {"passed": passed, "page_errors": errors, "external_requests": external,
-          "source": "actual local Chromium pages; synthetic profiles; not public deployment",
+          "browser": args.browser, "browser_version": browser_version,
+          "source": f"actual local {args.browser} pages; synthetic profiles; not public deployment",
+          "device_scope": "Linux browser with phone viewport/touch; not physical iPhone or Safari",
+          "mobile_emulation": args.browser != "firefox", "reduced_motion": "mobile context",
           "mobile_viewport": [390, 844], "desktop_viewport": [1280, 960]}
 (args.output / "browser-result.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
 print(json.dumps(result, ensure_ascii=False))

@@ -12,6 +12,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--url", default="http://127.0.0.1:8765")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--browser", choices=("chromium", "firefox", "webkit"), default="chromium")
     args = parser.parse_args()
     origin = urlparse(args.url)
     assert origin.hostname in {"127.0.0.1", "localhost"}, "Use a temporary loopback preview"
@@ -19,8 +20,10 @@ def main():
     errors, external, events, passed = [], [], [], []
 
     with sync_playwright() as p:
-        browser = p.chromium.launch()
-        context = browser.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+        browser = getattr(p, args.browser).launch()
+        browser_version = browser.version
+        context = browser.new_context(viewport={"width": 390, "height": 844},
+                                      is_mobile=args.browser != "firefox", has_touch=True)
         # Native OS handoff is simulated; no third-party sharing or clipboard access occurs.
         context.add_init_script("""
             window.cardText = []; window.copied = []; window.handoffs = []; window.nativeMode = 'cancel';
@@ -259,7 +262,9 @@ def main():
         browser.close()
 
     result = {"passed":passed, "events":events, "page_errors":errors, "external_requests":external,
-              "scope":"local Chromium + real API; synthetic data; OS sharing/clipboard simulated; no deployment"}
+              "browser": args.browser, "browser_version": browser_version,
+              "scope":f"local {args.browser} + real API; synthetic data; OS sharing/clipboard simulated; no deployment",
+              "device_scope":"Linux browser with phone viewport/touch; not physical iPhone or Safari"}
     (args.output / "growth-browser-result.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(result, ensure_ascii=False))
 
