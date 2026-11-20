@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+repo_root=$(git rev-parse --show-toplevel)
+cd "$repo_root"
+exec python3 -B scripts/check_public_release.py --pre-push --root "$repo_root"

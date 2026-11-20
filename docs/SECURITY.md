@@ -4,7 +4,13 @@
 
 ## 개발·검증
 
-처음 clone한 뒤 `git config core.hooksPath .githooks`로 로컬 commit 검사를 켠다. `python3 -B scripts/check_public_release.py --staged`는 index 전체에서 환경·인증·DB·백업·로그 파일과 자격증명 패턴을 검사한다. GitHub Actions에서도 같은 검사를 실행한다. 로컬 hook은 clone 시 자동 활성화되지 않으며, Actions는 업로드 뒤에 실행되므로 업로드 전 검사를 대신하지 않는다.
+처음 clone한 뒤 `git config core.hooksPath .githooks`로 로컬 commit·push 검사를 켠다. `python3 -B scripts/check_public_release.py --staged`는 index 전체에서 환경·인증·DB·백업·로그 파일과 자격증명 패턴을 검사한다. pre-commit은 실제 commit에 들어갈 임시 index도 검사한다. 로컬 hook은 clone 시 자동 활성화되지 않으며, Actions는 업로드 뒤에 실행되므로 업로드 전 검사를 대신하지 않는다.
+
+pre-push는 Git이 표준 입력으로 제공한 각 ref의 정확한 객체 ID를 사용해 새로 공개할 commit의 파일을 검사한다. 중간 commit에 비밀값을 넣고 마지막 commit에서 지워도 차단한다. 여러 branch·tag를 함께 push할 수 있으며, commit을 가리키는 lightweight·annotated tag와 commit·tag의 메타데이터·메시지도 검사한다. ref 삭제는 공개할 객체가 없으므로 허용한다. tree·blob을 직접 가리키는 tag와 branch·tag 외의 ref는 지원하지 않는다. index나 작업 파일의 내용은 push할 객체를 대신하지 않는다.
+
+검사 중에는 네트워크에 접속하지 않는다. 기존 원격 ref의 객체가 로컬에 없으면 검사를 실패시킨다. 이 경우 원격 변경을 먼저 fetch한 뒤 다시 push한다. shallow·partial clone, 외부 객체 저장소와 연결된 checkout도 실패시키므로 완전한 독립 clone을 사용한다. 객체 대체 ref는 검사에 적용하지 않는다. 새 ref에서는 전체 도달 이력을 검사 범위로 삼고, 같은 push에서 확인한 기존 원격 ref에 이미 도달하는 이력은 제외한다. GitHub Actions는 전체 이력을 checkout한 뒤 `python3 -B scripts/check_public_release.py --history "$(git rev-parse --verify HEAD)" --root .`로 현재 commit에서 도달하는 모든 이력을 검사한다. PR에서는 merge commit의 양쪽 이력도 포함하며, tag 실행에서는 tag 객체 자체를 검사해 annotation도 확인한다.
+
+`--history`와 선택적인 `--exclude`에는 축약·ref 이름·revision 표현식 대신 완전한 commit/tag 객체 ID만 전달한다. `--pre-push`는 Git의 네 필드 입력 형식 전용이다. 잘못된 입력, 누락된 객체와 검사 한도 초과는 성공으로 처리하지 않는다. 한 번에 최대 256개 ref, 4,096개 신규 commit, 200만 개 tree 항목, 총 512 MiB의 검사 내용, 파일 하나당 32 MiB를 허용하며 이력 검사 시간은 120초로 제한한다. 한도를 넘으면 공개 후보 이력을 검토하고 push 범위를 줄인다. 검사 결과에는 규칙·경로·행과 건수만 표시하며 비밀값·해시·원문 행을 출력하지 않는다.
 
 새 공개본의 최초 준비에는 `python3 -B scripts/check_public_release.py --root .`를 사용한다. 이 모드는 ignored·untracked 파일까지 검사하고, Git이 있으면 기존 이력을 물려받지 않은 단일 root commit인지 확인한다. 후속 개발에는 `--staged`를 사용한다. 어떤 자동 검사도 임의의 문장 속 개인정보를 전부 식별하지는 못하므로 fixture와 문서에는 가상 자료만 사용한다.
 
