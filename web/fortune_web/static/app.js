@@ -270,7 +270,6 @@ function drawDaily(result, view) {
   } else $("day-pillar").replaceChildren();
   drawDailySections(result);
   $("score").textContent = String(Math.round(reading.score));
-  $("score").closest(".interpretation-index").style.setProperty("--score", String(Math.max(0, Math.min(100, Math.round(reading.score)))));
   $("daily-result").hidden = false;
   shareSource = {date:result.date, keywords, score:reading.score, view};
   measure("reading_viewed", view); showPremiumInterest();
@@ -542,7 +541,7 @@ $("birth-form").addEventListener("submit", async event => {
     setReadingWindow(result.reading_window);
     $("status").textContent = "출생정보를 저장했습니다.";
     await loadView("today"); $("reading-title").focus({preventScroll:true});
-    if (window.matchMedia("(max-width: 620px)").matches) $("reading-panel").scrollIntoView({block:"start", behavior:"auto"});
+    if (window.matchMedia("(max-width: 48rem)").matches) $("reading-panel").scrollIntoView({block:"start", behavior:"auto"});
   } catch (err) { if (err.name !== "AbortError" && (mine === null || mine === generation)) showError("form-error", err.message); }
   finally {
     if (mine === null || mine === generation) busy(false);
@@ -596,7 +595,13 @@ $("open-share").addEventListener("click", async () => {
   } catch (err) { if (version === shareVersion) $("share-status").textContent = err.message; }
 });
 $("close-share").addEventListener("click", () => $("share-dialog").close());
-$("share-dialog").addEventListener("close", () => { ++shareVersion; shareFile = null; $("share-canvas").width = 0; });
+$("share-dialog").addEventListener("close", event => {
+  // The browser may deliver the previous close event after the next preview opens.
+  if (event.currentTarget.open) return;
+  ++shareVersion;
+  shareFile = null;
+  $("share-canvas").width = 0;
+});
 $("download-share").addEventListener("click", () => {
   if (!shareFile || !shareSource) return;
   const url = URL.createObjectURL(shareFile), link = document.createElement("a");
@@ -727,28 +732,3 @@ const today = new Date(); $("birth-date").max = `${today.getFullYear()}-${String
 $("partner-date").max = $("birth-date").max;
 bootstrap().catch(err => showError("form-error", err.name === "TimeoutError"
   ? err.message : "서비스에 연결하지 못했습니다. 잠시 후 저장을 다시 눌러 주세요."));
-// Typography rule: text that wraps to two or more lines gets 150% leading; single-line text keeps auto.
-// CSS cannot see line counts, so measure each text block at auto leading and tag the wrapped ones.
-const LEADING_SELECTOR = "p, li, h1, h2, h3, label, legend, summary, figcaption, button, .preserve-lines, .kw";
-let leadingFrame = 0;
-function lineCount(el) {
-  const range = document.createRange(); range.selectNodeContents(el);
-  // Boxes that overlap vertically share a line (chips, separators and inline emphasis sit at different tops).
-  let lines = 0, bottom = -Infinity;
-  [...range.getClientRects()].filter(r => r.height).sort((a, b) => a.top - b.top).forEach(r => {
-    if (r.top >= bottom - 1) { lines++; bottom = r.bottom; } else bottom = Math.max(bottom, r.bottom);
-  });
-  return lines;
-}
-function applyLeading() {
-  leadingFrame = 0;
-  const blocks = [...document.querySelectorAll(LEADING_SELECTOR)].filter(el => el.offsetParent || el.getClientRects().length);
-  blocks.forEach(el => el.classList.remove("lh-multi"));          // measure everything at auto leading first
-  const wrapped = blocks.filter(el => lineCount(el) >= 2);
-  wrapped.forEach(el => el.classList.add("lh-multi"));            // leading never changes where lines break
-}
-function scheduleLeading() { if (!leadingFrame) leadingFrame = requestAnimationFrame(applyLeading); }
-new MutationObserver(scheduleLeading).observe(document.body, {subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:["hidden", "open"]});
-addEventListener("resize", scheduleLeading);
-document.fonts.ready.then(scheduleLeading);
-scheduleLeading();
