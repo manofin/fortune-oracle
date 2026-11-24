@@ -37,6 +37,14 @@ LEGACY_DISCLAIMER = (
     "해석의 한계: 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. "
     "이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다."
 )
+# Only the three reviewed Korean paragraphs change in the everyday-copy pilot.
+# Retain the original fixture so the calculation/evidence fallback stays audited.
+REVIEWED_LINES = [*LEGACY_LINES]
+REVIEWED_LINES[1:4] = [
+    "이날의 해석: 돈이나 시간을 쓸 때 확인할 조건을 살펴봅니다.",
+    "해볼 일: 돈을 쓰거나 약속을 정할 일이 있다면, 금액이나 날짜 같은 조건 하나를 확인해 보세요.",
+    "주의할 점: 좋은 점수여도 이익을 보장하지 않습니다. 중요한 결정은 실제 조건을 보고 정하세요.",
+]
 
 
 def chart(stem="甲", *, basis=None, dayun=None):
@@ -47,16 +55,17 @@ def chart(stem="甲", *, basis=None, dayun=None):
     )
 
 
-def test_sections_do_not_change_legacy_lines_disclaimer_or_web_text():
+def test_reviewed_copy_preserves_legacy_calculation_evidence_and_web_contract():
     reading = engine._daily_from_chart(PROFILE, chart(), TARGET, "종합")
-    assert reading["lines"] == LEGACY_LINES
+    assert reading["lines"] == REVIEWED_LINES
+    assert reading["lines"][:1] + reading["lines"][4:] == LEGACY_LINES[:1] + LEGACY_LINES[4:]
     assert reading["disclaimer"] == LEGACY_DISCLAIMER
     assert reading["score"] == 66.2
     with patch("hermes_ext.fortune_oracle.bazi_bridge.calculate_bazi_from_profile", return_value=chart()):
         result = service.daily(PROFILE, "today", now=NOW)
     assert result["text"] == "\n".join([
         "계산된 사주·일진을 바탕으로 한 해석입니다.", "2026-10-03 · Asia/Seoul",
-        *LEGACY_LINES, LEGACY_DISCLAIMER,
+        *REVIEWED_LINES, LEGACY_DISCLAIMER,
     ])
     assert result["sections"] == result["reading"]["sections"]
     assert result["sections"] is not result["reading"]["sections"]
@@ -123,7 +132,7 @@ def test_dated_display_sections_match_text_and_leave_raw_reading_unchanged(scena
         daily = service.daily(PROFILE, "today", now=NOW)
         dated = service.dated_reading(PROFILE, {"date": TARGET.isoformat(), "scenario": scenario}, now=NOW)
     assert dated["reading"] == daily["reading"]
-    assert dated["reading"]["lines"] == LEGACY_LINES
+    assert dated["reading"]["lines"] == REVIEWED_LINES
     display = dated["sections"]
     assert display["theme"] == dated["reading"]["sections"]["theme"]
     assert display["evidence"] == dated["reading"]["sections"]["evidence"]
@@ -142,6 +151,21 @@ def test_dated_display_sections_match_text_and_leave_raw_reading_unchanged(scena
         assert display["caution"]["qualifier"] == "선택한 상황에 맞춘 제안"
         assert dated["reading"]["sections"]["action"]["qualifier"] == ""
         assert dated["reading"]["sections"]["caution"]["qualifier"] == ""
+
+
+@pytest.mark.parametrize("stem", list("甲丙戊庚壬"))
+@pytest.mark.parametrize("scenario", ["exam", "meeting"])
+def test_scenario_replacement_cannot_leave_the_base_instruction_in_the_theme(stem, scenario):
+    with patch("hermes_ext.fortune_oracle.bazi_bridge.calculate_bazi_from_profile", return_value=chart(stem)):
+        result = service.dated_reading(PROFILE, {"date": TARGET.isoformat(), "scenario": scenario}, now=NOW)
+    base = result["reading"]["sections"]
+    display = result["sections"]
+    for key in ("action", "caution"):
+        assert base[key]["text"] not in result["text"]
+        assert base[key]["text"] not in display["theme"]["text"]
+        assert result["text"].count(display[key]["text"]) == 1
+    assert "보세요" not in display["theme"]["text"] and "하세요" not in display["theme"]["text"]
+    assert display["evidence"] == base["evidence"]
 
 
 def test_english_retains_exact_existing_copy_and_omits_korean_sections():

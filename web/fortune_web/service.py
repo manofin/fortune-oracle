@@ -10,6 +10,7 @@ from hermes_ext.fortune_oracle.daily_fortune_engine import (
 )
 from hermes_ext.fortune_oracle.compatibility import build_compatibility
 from hermes_ext.fortune_oracle.localization import local_today, reading_zone
+from hermes_ext.fortune_oracle.natal_markers import evaluate_natal_markers
 
 
 ZONE_LABELS = {"Asia/Seoul": "한국 시간", "Asia/Tokyo": "일본 시간",
@@ -111,6 +112,7 @@ def chart(profile):
         return {"ok": False, "computed": False, "text": "계산 결과가 아님\n팔자 계산을 완료하지 못했습니다. 출생정보를 확인해 주세요."}
     return {"ok": True, "computed": True, "pillars": result.eight_char,
             "elements": result.elements, "warnings": result.warnings,
+            "natal_markers": evaluate_natal_markers(result.eight_char),
             "text": "간지는 출생정보로 계산했습니다. 성향과 조언은 전통적 해석입니다."}
 
 

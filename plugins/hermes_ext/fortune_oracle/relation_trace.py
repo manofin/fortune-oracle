@@ -15,7 +15,9 @@ This result is for self-reflection and option-checking reference only.
 """
 from __future__ import annotations
 
-from typing import Dict, List, Optional
+from collections.abc import Mapping
+from typing import Dict, List
+from .natal_pillars import confirmed_pillars
 
 from hermes_ext.fortune_oracle.bazi_relations import (
     BaziRelationReport,
@@ -26,11 +28,24 @@ from hermes_ext.fortune_oracle.bazi_trace import (
     RelationSummary,
 )
 
-# 천간 합 (六合天干) — tiangan_he 추적용
+# 천간 오합의 문자 쌍만 대조한다. 합화 조건은 평가하지 않는다.
 _TIANGAN_HE_PAIRS = {
     "甲": "己", "乙": "庚", "丙": "辛",
     "丁": "壬", "戊": "癸",
 }
+_PILLAR_LABELS = {"year": "년간", "month": "월간", "day": "일간", "time": "시간"}
+
+
+def valid_trace_pillars(eight_char):
+    """Return confirmed sexagenary pillars without guessing missing values."""
+    if eight_char is None:
+        return {}, []
+    if not isinstance(eight_char, Mapping):
+        return {}, ["팔자 입력 형식을 확인할 수 없어 근거 계산을 생략했습니다."]
+    pillars, _, invalid = confirmed_pillars(eight_char)
+    warnings = [f"{_PILLAR_LABELS[key]}의 간지 형식이 유효하지 않아 해당 기둥을 제외했습니다."
+                for key in invalid]
+    return pillars, warnings
 
 
 # ---------------------------------------------------------------------------
@@ -38,33 +53,15 @@ _TIANGAN_HE_PAIRS = {
 # ---------------------------------------------------------------------------
 
 def _detect_tiangan_he(eight_char: Dict[str, str]) -> List[str]:
-    """천간 간의 합(天干合)을 탐지.
-
-    Returns:
-        [("甲己合", "토"), ("乙庚合", "금"), ...]
-    """
+    """Match stem pairs, retaining positions; no transformation inference."""
     result: List[str] = []
-    if not eight_char:
-        return result
-
-    stems = []
-    for pillar_key in ("year", "month", "day", "time"):
-        gz = eight_char.get(pillar_key, "")
-        if gz:
-            stems.append(gz[0])
-
-    # 천간 합화 오행 매핑
-    he_element = {
-        "甲己": "토", "乙庚": "금", "丙辛": "물",
-        "丁壬": "목", "戊癸": "화",
-    }
-
-    for i, s1 in enumerate(stems):
-        for s2 in stems[i + 1:]:
-            pair = "".join(sorted([s1, s2], key=lambda x: "甲乙丙丁戊己庚辛壬癸".index(x) if x in "甲乙丙丁戊己庚辛壬癸" else 99))
-            elem = he_element.get(pair, "")
-            if elem:
-                result.append(f"{pair}合({elem})")
+    pillars, _ = valid_trace_pillars(eight_char)
+    stems = [(key, value[0]) for key, value in pillars.items()]
+    for i, (key1, stem1) in enumerate(stems):
+        for key2, stem2 in stems[i + 1:]:
+            for first, second in _TIANGAN_HE_PAIRS.items():
+                if (stem1, stem2) in ((first, second), (second, first)):
+                    result.append(f"{_PILLAR_LABELS[key1]} {stem1} ↔ {_PILLAR_LABELS[key2]} {stem2} ({first}{second}合)")
 
     return result
 
@@ -142,6 +139,7 @@ def trace_to_relation_summary(trace: BaziRelationTrace) -> RelationSummary:
         hai=trace.hai,
         po=trace.po,
         repeated_branches=trace.repeated_branches,
+        tiangan_he=list(trace.tiangan_he),
     )
 
 
@@ -158,13 +156,17 @@ def detect_relation_trace(eight_char: Dict[str, str]) -> BaziRelationTrace:
     Returns:
         BaziRelationTrace
     """
-    if not eight_char:
-        return BaziRelationTrace()
+    pillars, warnings = valid_trace_pillars(eight_char)
+    if not pillars:
+        return BaziRelationTrace(warnings=warnings)
 
     try:
-        report = detect_relations(eight_char)
+        report = detect_relations(pillars)
         if not report.ok:
             return BaziRelationTrace(warnings=["관계 탐지 실패"])
-        return relation_report_to_trace(report)
+        trace = relation_report_to_trace(report)
+        trace.tiangan_he = _detect_tiangan_he(pillars)
+        trace.warnings = [*warnings, *trace.warnings]
+        return trace
     except Exception:
         return BaziRelationTrace(warnings=["관계 탐지 중 예외 발생"])

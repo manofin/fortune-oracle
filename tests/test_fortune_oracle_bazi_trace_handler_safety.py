@@ -36,6 +36,24 @@ def plugin():
     return _load_plugin()
 
 
+def test_real_bridge_stem_pairs_reach_actual_trace_handler(plugin, monkeypatch):
+    """Synthetic adult; real Node calculation and actual consumer, no stored identity."""
+    profile = {"birth_date": "1987-02-15", "birth_time": "12:30",
+               "timezone": "Asia/Seoul", "gender": "female"}
+    chart = plugin._bazi_bridge.calculate_bazi_from_profile(profile)
+    if chart.error_code == "DEPENDENCY_MISSING":
+        pytest.skip("Node/lunar-javascript not installed")
+    assert chart.ok
+    assert chart.eight_char == {"year": "丁卯", "month": "壬寅", "day": "乙未", "time": "壬午"}
+    monkeypatch.setattr(plugin, "_resolve_profile", lambda: profile)
+    text = plugin._handle_bazi_trace("")
+    assert "년간 丁 ↔ 월간 壬 (丁壬合)" in text
+    assert "년간 丁 ↔ 시간 壬 (丁壬合)" in text
+    assert "합화 성립·관계 의미는 판정하지 않았습니다" in text
+    assert "끌림" not in text
+    assert profile["birth_date"] not in text
+
+
 # ---------------------------------------------------------------------------
 # _handle_bazi_trace: no-profile path
 # ---------------------------------------------------------------------------

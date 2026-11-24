@@ -58,6 +58,8 @@ class RelationSummary:
     hai: List[str] = field(default_factory=list)
     po: List[str] = field(default_factory=list)
     repeated_branches: List[str] = field(default_factory=list)
+    # Append for compatibility with existing positional constructors.
+    tiangan_he: List[str] = field(default_factory=list)
 
 
 @dataclass
@@ -128,7 +130,7 @@ class BaziTrace:
     def has_any_relation(self) -> bool:
         """관계 trace 중 하나라도 있는가."""
         rs = self.relation_summary
-        return bool(rs.liuhe or rs.sanhe or rs.chong or rs.xing or rs.hai or rs.po)
+        return bool(rs.tiangan_he or rs.liuhe or rs.sanhe or rs.chong or rs.xing or rs.hai or rs.po)
 
     def get_warnings_text(self) -> List[str]:
         """TraceWarning → plain text 리스트."""
@@ -178,23 +180,29 @@ def build_trace_summary(
 
     raw dataclass repr을 출력하지 않는다.
     """
-    if not trace.day_master:
+    if not trace.day_master and not trace.warnings and not trace.pillars_summary:
         return ""
 
     lines: List[str] = []
-    lines.append(f"일간: {trace.day_master}")
+    if trace.day_master:
+        lines.append(f"일간: {trace.day_master}")
+    if trace.warnings:
+        lines.append("입력 범위: " + " ".join(trace.get_warnings_text()))
 
     elem_text = _element_distribution_text(trace.element_distribution)
     if elem_text:
         lines.append(f"오행 분포: {elem_text}")
 
+    # Keep all matched positions on one line even in the compact command output.
+    if trace.relation_summary.tiangan_he:
+        lines.append("관계 참고: 천간합: " + " · ".join(trace.relation_summary.tiangan_he)
+                     + " — 문자 쌍 대조이며 합화 성립·관계 의미는 판정하지 않았습니다.")
+
     # 장간 참고 (최대 2개)
     for note in trace.hidden_stem_summary.summaries[:2]:
         lines.append(f"장간 참고: {note}")
 
-    # 관계 참고 (최대 2개)
-    rel_lines = _relation_summary_text(trace.relation_summary)
-    for entry in rel_lines[:2]:
+    for entry in _relation_summary_text(trace.relation_summary)[:2]:
         lines.append(f"관계 참고: {entry}")
 
     # 용신 참고 (1줄)
@@ -283,18 +291,18 @@ def build_bazi_trace(
         BaziTrace
     """
     from hermes_ext.fortune_oracle.yongshen import count_elements_from_eight_char
+    from hermes_ext.fortune_oracle.relation_trace import valid_trace_pillars
 
     trace = BaziTrace()
+    eight_char, input_warnings = valid_trace_pillars(eight_char)
+    trace.warnings = [TraceWarning(message, "warning") for message in input_warnings]
     if not eight_char:
         return trace
 
     # 일간 추출
-    if day_master_stem:
-        trace.day_master = day_master_stem
-    else:
-        day_pillar = eight_char.get("day", "")
-        if day_pillar:
-            trace.day_master = day_pillar[0] if len(day_pillar) >= 1 else ""
+    trace.day_master = eight_char.get("day", "")[:1]
+    if day_master_stem and day_master_stem != trace.day_master:
+        trace.warnings.append(TraceWarning("별도 일간 값이 확인된 일주와 일치하지 않아 사용하지 않았습니다.", "warning"))
 
     # 네 기둥 요약
     pillar_labels = {"year": "年", "month": "月", "day": "日", "time": "時"}

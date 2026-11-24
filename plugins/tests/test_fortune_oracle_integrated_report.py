@@ -224,3 +224,44 @@ def test_bazi_unknown_time_keeps_only_calculated_natal_parts():
     assert [m["method"] for m in used] == ["bazi"]
     assert used[0]["status"] == "partial"
     assert all(not t["agreements"] for t in result["themes"])
+
+
+@pytest.mark.parametrize("day,element,pole,opening", [
+    ("丁卯", "목", "adaptation", "의견이 다르다면,"),
+    ("甲午", "화", "initiative", "마음을 전할 일이 있다면,"),
+    ("甲辰", "토", "structure", "함께 약속을 정한다면,"),
+    ("甲申", "금", "structure", "서로 원하는 것이 다르다면,"),
+    ("甲子", "수", "reflection", "바로 답하기 어렵다면,"),
+])
+def test_relationship_practice_uses_the_calculated_day_branch_without_a_trait_claim(monkeypatch, day, element, pole, opening):
+    bazi = four_cards()[0]
+    bazi.facts["eight_char"]["day"] = day
+    monkeypatch.setattr(report, "adapt_all", lambda *_a, **_kw: [bazi])
+    result = report.build_integrated_report(PROFILE)
+    theme = next(item for item in result["themes"] if item["id"] == "relationships")
+    assert len(theme["claims"]) == 1
+    claim = theme["claims"][0]
+    assert claim["text"].startswith(opening)
+    assert f"계산된 일지 {day[1]}({element})" in claim["text"]
+    assert "실제 관계나 성격을 확인한 결과는 아닙니다" in claim["text"]
+    assert claim["pole"] == pole
+    assert claim["rule_id"] == f"natal-reflection-1/bazi/day_1/{pole}/relationships"
+    assert claim["evidence_ids"] == ["bazi.day_1"]
+    evidence = next(item for item in result["evidence"] if item["id"] == "bazi.day_1")
+    assert evidence["value"] == f"{day[1]} · {element}"
+    if element == "목":
+        assert "상대가 중요하게 보는 점을 하나 물어보세요" in claim["text"]
+    assert result["text"].count(claim["text"]) == 1
+    assert not theme["agreements"] and not theme["differences"]
+
+
+@pytest.mark.parametrize("day", [None, "", "甲", "甲?", []])
+def test_missing_day_branch_does_not_receive_a_relationship_practice(monkeypatch, day):
+    bazi = four_cards()[0]
+    bazi.facts["eight_char"]["day"] = day
+    monkeypatch.setattr(report, "adapt_all", lambda *_a, **_kw: [bazi])
+    result = report.build_integrated_report(PROFILE)
+    theme = next(item for item in result["themes"] if item["id"] == "relationships")
+    assert not theme["claims"] and not theme["reflection"]
+    assert not any(item["id"] == "bazi.day_1" for item in result["evidence"])
+    assert all(text not in result["text"] for text in report.BAZI_RELATIONSHIP_PRACTICE.values())

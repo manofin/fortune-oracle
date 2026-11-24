@@ -44,6 +44,15 @@ REFLECTIONS = {
 STEMS = dict(zip("甲乙丙丁戊己庚辛壬癸", "목목화화토토금금수수"))
 BRANCHES = dict(zip("子丑寅卯辰巳午未申酉戌亥", "수토목목토화화토금금토수"))
 ELEMENT_POLES = {"목": "adaptation", "화": "initiative", "토": "structure", "금": "structure", "수": "reflection"}
+# Everyday suggestions keep the existing day-branch -> element -> pole rule.
+# These are conditional examples, not newly inferred personality traits.
+BAZI_RELATIONSHIP_PRACTICE = {
+    "목": "의견이 다르다면, 내 설명을 보태기 전에 상대가 중요하게 보는 점을 하나 물어보세요.",
+    "화": "마음을 전할 일이 있다면, 바라는 점 하나를 짧게 말하고 상대의 답을 들어보세요.",
+    "토": "함께 약속을 정한다면, 서로 가능한 시간과 맡을 일을 하나씩 확인해 보세요.",
+    "금": "서로 원하는 것이 다르다면, 꼭 필요한 것과 양보할 수 있는 것을 하나씩 나눠 보세요.",
+    "수": "바로 답하기 어렵다면, 잠시 생각할 시간을 요청한 뒤 내 뜻을 한 문장으로 전해 보세요.",
+}
 WESTERN_SIGNS = ("양자리", "황소자리", "쌍둥이자리", "게자리", "사자자리", "처녀자리", "천칭자리", "전갈자리", "사수자리", "염소자리", "물병자리", "물고기자리")
 RASHIS = ("Mesha", "Vrishabha", "Mithuna", "Karka", "Simha", "Kanya", "Tula", "Vrishchika", "Dhanu", "Makara", "Kumbha", "Meena")
 SIGN_POLES = ("initiative", "structure", "adaptation", "connection", "initiative", "structure", "connection", "reflection", "adaptation", "structure", "adaptation", "reflection")
@@ -107,14 +116,15 @@ class _Findings:
         self.evidence = {}
         self.claims = {key: [] for key in THEMES}
 
-    def add(self, method, theme, anchor, label, value, pole):
+    def add(self, method, theme, anchor, label, value, pole, *, text=None):
         evidence_id = f"{method}.{anchor}"
         self.evidence[evidence_id] = {"id": evidence_id, "method": method, "label": label, "value": value}
         self.claims[theme].append({
             "id": f"{method}.{anchor}.{theme}", "method": method, "time_scope": "natal",
             "rule_id": f"{RULE_VERSION}/{method}/{anchor}/{pole}/{theme}",
             "evidence_ids": [evidence_id], "axis": "approach", "pole": pole,
-            "text": f"{METHODS[method]}의 {label} 계산값에 연결된 {THEMES[theme]}의 성찰 주제는 ‘{POLES[pole]}’입니다.",
+            "text": text if text is not None else
+                    f"{METHODS[method]}의 {label} 계산값에 연결된 {THEMES[theme]}의 성찰 주제는 ‘{POLES[pole]}’입니다.",
         })
 
 
@@ -130,7 +140,13 @@ def _bazi(facts, out):
         pillar = pillars.get(key)
         if isinstance(pillar, str) and len(pillar) == 2 and pillar[part] in mapping:
             element = mapping[pillar[part]]
-            out.add("bazi", theme, f"{key}_{part}", label, f"{pillar[part]} · {element}", ELEMENT_POLES[element])
+            text = None
+            if theme == "relationships":
+                text = (
+                    f"{BAZI_RELATIONSHIP_PRACTICE[element]} "
+                    f"계산된 일지 {pillar[part]}({element})에서 ‘{POLES[ELEMENT_POLES[element]]}’ 주제를 읽은 제안입니다. "
+                    "실제 관계나 성격을 확인한 결과는 아닙니다.")
+            out.add("bazi", theme, f"{key}_{part}", label, f"{pillar[part]} · {element}", ELEMENT_POLES[element], text=text)
     elements = facts.get("elements")
     if isinstance(elements, dict):
         counts = {e: elements.get(e, elements.get(f"{e}({ch})", 0)) for e, ch in zip("목화토금수", "木火土金水")}

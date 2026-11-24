@@ -50,6 +50,52 @@ SAMPLE_EC = {
 }
 
 
+def test_positional_stem_matches_survive_compact_consumer():
+    chart = {"year": "丁卯", "month": "壬寅", "day": "丁未", "time": "壬午"}
+    trace = build_bazi_trace(chart)
+    assert trace.has_any_relation()
+    rendered = build_trace_summary(trace, max_lines=6)
+    for match in trace.relation_summary.tiangan_he:
+        assert match in rendered
+    assert len(trace.relation_summary.tiangan_he) == 4
+    assert "합화 성립·관계 의미는 판정하지 않았습니다" in rendered
+    assert "(목)" not in rendered and "끌림" not in rendered
+
+
+def test_legacy_relation_summary_positional_fields_unchanged():
+    summary = RelationSummary(["子·丑"], [], [], [], [], [], ["子"])
+    assert summary.liuhe == ["子·丑"]
+    assert summary.repeated_branches == ["子"]
+    assert summary.tiangan_he == []
+
+
+@pytest.mark.parametrize("chart", [None, [], "丁壬", True, {"day": 9}, {"day": "壬卯"}])
+def test_invalid_trace_input_does_not_fabricate_day_master(chart):
+    trace = build_bazi_trace(chart)
+    assert not trace.day_master and not trace.has_any_relation()
+    assert "丁壬合" not in build_trace_summary(trace)
+
+
+def test_partial_trace_retains_confirmed_pairs_without_inventing_a_day():
+    trace = build_bazi_trace({"year": "丁卯", "month": "壬寅", "day": "", "time": None})
+    assert trace.day_master == ""
+    assert trace.relation_summary.tiangan_he == ["년간 丁 ↔ 월간 壬 (丁壬合)"]
+    assert "천간합" in build_trace_summary(trace)
+
+
+def test_invalid_pillar_exclusion_reaches_display_without_raw_value():
+    trace = build_bazi_trace({"year": "丁卯", "month": "壬寅", "day": "乙未", "time": "private-invalid"})
+    rendered = build_trace_summary(trace)
+    assert "해당 기둥을 제외" in rendered and "천간합" in rendered
+    assert "private-invalid" not in rendered
+
+
+def test_conflicting_explicit_day_master_is_not_used():
+    trace = build_bazi_trace({"day": "乙未"}, day_master_stem="丁")
+    assert trace.day_master == "乙"
+    assert "별도 일간" in build_trace_summary(trace)
+
+
 # ── Schema structure tests ────────────────────────────────────────────────
 
 class TestBaziTraceSchema:

@@ -188,6 +188,17 @@ summary::marker { color: var(--green); }
 #open-share { margin-top: .35rem; }
 .birth-chart { padding: 1.5rem 0; border-block: 1px solid var(--line); }
 .birth-chart .section-top { margin-bottom: 1rem; }
+.natal-markers { border-top: 1px solid var(--line); margin-top: 1rem; }
+.natal-markers > p { font-size: .875rem; color: var(--muted); }
+.natal-marker { padding-block: 1rem; border-bottom: 1px solid var(--line); }
+.natal-marker h4 { color: var(--green); margin: 0 0 .35rem; font: 700 1.25rem/1.2 FortuneKorean, serif; }
+.natal-marker dl { margin: .6rem 0 0; font-size: .875rem; }
+.natal-marker dt { font-weight: 650; }
+.natal-marker dd { margin: .15rem 0 .65rem; line-height: 1.5; }
+.natal-marker dd:last-child { margin-bottom: 0; }
+.marker-hit { color: var(--green); font-weight: 650; }
+.marker-criterion { display: block; font-size: var(--small); color: var(--muted); }
+.natal-marker .marker-reflection { margin-top: .7rem; padding: .55rem .8rem; border-inline-start: 2px solid var(--green); background: var(--soft); }
 .element-bars { display: grid; gap: .4rem; margin-top: 1rem; }
 .element-bars .bar { display: grid; grid-template-columns: 1.5rem 1fr 1.5rem; gap: .5rem; align-items: center; font-size: var(--small); }
 .track { background: var(--soft); }

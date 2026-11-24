@@ -370,7 +370,7 @@ def main():
                 inspect_reading(page, result, "dday", sample, context_observations)
                 context_observations[-1].update({
                     "case": "meeting_with_wealth_relation", "datesInspected": inspected_dates,
-                    "baseFinancialCautionAbsent": "금전적 이익이나 손실" not in result["text"],
+                    "baseFinancialCautionAbsent": result["reading"]["sections"]["caution"]["text"] not in result["text"],
                 })
                 assert context_observations[-1]["baseFinancialCautionAbsent"]
                 inspect_scenario_layouts(page, result, sample, scenario_layouts)

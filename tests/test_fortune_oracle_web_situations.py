@@ -103,8 +103,9 @@ def test_wealth_date_situation_keeps_action_and_caution_on_the_same_topic(app, s
                          headers=headers).json
     assert result["computed"] and result["reading"]["relation"] == "wealth"
     assert result["reading"] == general["reading"]
-    assert "금전적 이익이나 손실" in general["text"]
-    assert "금전적 이익이나 손실" not in result["text"]
+    general_caution = general["sections"]["caution"]["text"]
+    assert "이익" in general_caution and general_caution in general["text"]
+    assert general_caution not in result["text"]
     assert expected_action in result["text"] and expected_caution in result["text"]
     assert len([line for line in result["text"].splitlines() if line.startswith("해볼 일")]) == 1
     assert len([line for line in result["text"].splitlines() if line.startswith("주의할 점")]) == 1

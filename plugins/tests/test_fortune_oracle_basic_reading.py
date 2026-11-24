@@ -36,11 +36,11 @@ def test_basic_reading_links_calculation_to_action_without_prediction(stem):
 
 
 @pytest.mark.parametrize("stem,relation,meaning,action,score", [
-    ("甲", "wealth", "내 오행이 날짜의 오행을 제어", "지출이나 약속", 66.2),
+    ("甲", "wealth", "내 오행이 날짜의 오행을 제어", "금액이나 날짜", 66.2),
     ("丙", "output", "내 오행이 날짜의 오행을 돕는", "전할 말", 75.2),
-    ("戊", "same", "같은 오행", "우선순위", 78.2),
-    ("庚", "input", "날짜의 오행이 내 오행을 돕는", "필요한 자료", 73.2),
-    ("壬", "pressure", "날짜의 오행이 내 오행을 제어", "마감과 범위", 63.2),
+    ("戊", "same", "같은 오행", "기준 하나", 78.2),
+    ("庚", "input", "날짜의 오행이 내 오행을 돕는", "자료 하나", 73.2),
+    ("壬", "pressure", "날짜의 오행이 내 오행을 제어", "언제까지 어디까지", 63.2),
 ])
 def test_relation_meaning_and_practice_follow_actual_calculation(stem, relation, meaning, action, score):
     reading = engine._daily_from_chart(PROFILE, chart(stem), TARGET, "종합")
@@ -55,6 +55,9 @@ def test_relation_meaning_and_practice_follow_actual_calculation(stem, relation,
     assert positions == sorted(set(positions))
     assert action in lines[positions[1]] and meaning in lines[positions[3]]
     assert "주의할 점:" not in lines[positions[1]]
+    assert "있다면" in lines[positions[1]]
+    assert action not in lines[positions[0]]
+    assert "보세요" not in lines[positions[0]] and "하세요" not in lines[positions[0]]
     assert reading["disclaimer"].startswith("해석의 한계:")
 
 

@@ -98,7 +98,19 @@
           <button id="open-integrated-share" class="secondary" type="button">결과 원문을 이미지로 저장 ↗</button>
           <p class="field-note">결과 문구를 그대로 여러 장에 나눕니다. 이름·출생정보는 넣지 않지만, 명식에서 파생된 계산 근거와 해석은 포함됩니다.</p>
         </article>
-        <section id="chart-section" class="birth-chart" hidden><div class="section-top"><h3>나의 팔자</h3><span class="small-label">계산값</span></div><div id="pillars" class="pillars"></div><div id="element-bars" class="element-bars" aria-label="사주표 여덟 글자의 오행 개수"></div><p id="chart-warning" class="field-note"></p></section>
+        <section id="chart-section" class="birth-chart" hidden>
+          <div class="section-top"><h3>나의 팔자</h3><span class="small-label">계산값</span></div>
+          <div id="pillars" class="pillars"></div>
+          <div id="element-bars" class="element-bars" aria-label="계산된 사주 글자의 오행 개수"></div>
+          <p id="chart-warning" class="field-note"></p>
+          <details id="natal-markers" class="natal-markers" hidden>
+            <summary>내 사주에서 보는 원진과 도화</summary>
+            <p>출생 사주의 각 기둥에서 두 번째 글자(지지)를 살펴봅니다. 아래에는 이 글의 판정 기준과 그 기준에 맞은 자리를 표시합니다.</p>
+            <p id="natal-coverage" class="field-note"></p>
+            <div id="natal-marker-results"></div>
+            <p class="field-note">여기서 다루는 신살은 원진과 도화 두 가지입니다. 전통적 해석은 성격이나 관계의 결과를 예측하는 척도가 아닙니다.</p>
+          </details>
+        </section>
         <section class="special-readings" aria-labelledby="more-title">
           <h3 id="more-title" class="more-title">더 살펴보기</h3>
           <details data-icon="日"><summary>중요한 날을 앞두고 있다면 <span>D-day</span></summary>

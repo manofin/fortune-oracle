@@ -201,6 +201,7 @@ function empty() {
   monthResizeObserver?.disconnect(); monthResizeObserver = null;
   clearShare(); clearIntegrated(); hidePremiumInterest(true);
   clearDailySections();
+  clearNatalMarkers();
   $("reading-panel").hidden = true; $("empty-state").hidden = false; document.body.dataset.state = "empty";
   $("reading-title").textContent = "나의 하루"; $("reading-date").textContent = ""; $("reading-date").removeAttribute("datetime");
   ["full-text", "month-text", "keywords", "day-relation", "score", "pillars", "element-bars", "day-pillar", "reading-date-label", "reading-timezone", "chart-warning", "kline-chart", "compat-text", "status"].forEach(id => $(id).replaceChildren());
@@ -338,6 +339,7 @@ let monthResizeObserver = null;
 function clearResults() {
   clearShare(); clearIntegrated(); hidePremiumInterest();
   clearDailySections();
+  clearNatalMarkers();
   monthResizeObserver?.disconnect(); monthResizeObserver = null;
   ["daily-result", "month-result", "chart-section", "compat-result"].forEach(id => $(id).hidden = true);
   ["pillars", "element-bars", "day-pillar", "chart-warning", "compat-text", "full-text", "month-text", "reading-timezone"].forEach(id => $(id).replaceChildren());
@@ -422,11 +424,100 @@ function drawIntegrated(result) {
   $("integrated-text").textContent = result.text; integratedReport = result.text;
   $("integrated-result").hidden = false; measure("reading_viewed", "integrated"); showPremiumInterest();
 }
+const PILLAR_LABELS = {year:"년주", month:"월주", day:"일주", time:"시주"};
+const MARKER_LABELS = {
+  wonjin_all_pairs:"두 기둥의 지지 조합",
+  dohwa_year_triad:"년지 기준",
+  dohwa_day_triad:"일지 기준",
+  dohwa_broad_branches:"간이 기준 · 자·오·묘·유",
+};
+const MARKER_STATUS = {
+  detected:"조건에 맞음", not_detected:"조건에 맞는 자리 없음",
+  insufficient_input:"입력 부족", unsupported:"미지원",
+};
+function clearNatalMarkers() {
+  $("natal-markers").open = false;
+  $("natal-markers").hidden = true;
+  $("natal-marker-results").replaceChildren();
+  $("natal-coverage").textContent = "";
+}
+function branchName(branch) {
+  const value = glyph(branch, BRANCHES);
+  return value ? `${value.ko}(${value.han})` : "";
+}
+function validMarkerRule(rule) {
+  if (!rule || !Object.hasOwn(MARKER_LABELS, rule.id) ||
+      !Object.hasOwn(MARKER_STATUS, rule.status) || !Array.isArray(rule.evidence) ||
+      (rule.status === "detected") !== (rule.evidence.length > 0)) return false;
+  const validPlace = (position, branch) => Object.hasOwn(PILLAR_LABELS, position) && !!branchName(branch);
+  if (rule.id === "wonjin_all_pairs") {
+    return rule.evidence.every(match => Array.isArray(match?.positions) && match.positions.length === 2 &&
+      Array.isArray(match.branches) && match.branches.length === 2 &&
+      match.positions.every((position, i) => validPlace(position, match.branches[i])));
+  }
+  return rule.evidence.every(match => match && validPlace(match.position, match.branch));
+}
+function markerBasis(rule) {
+  const place = (position, branch) => `${PILLAR_LABELS[position]} ${branchName(branch)}`;
+  const matches = rule.evidence.map(match => {
+    if (rule.id === "wonjin_all_pairs") {
+      return match.positions.map((position, i) => place(position, match.branches[i])).join(" ↔ ");
+    }
+    return place(match.position, match.branch);
+  });
+  let criterion = "";
+  if (rule.reference_position) {
+    criterion = rule.target_branch
+      ? `${place(rule.reference_position, rule.reference_branch)} 기준으로 ${branchName(rule.target_branch)} 자리를 찾습니다.`
+      : `${PILLAR_LABELS[rule.reference_position]}가 정해져야 기준 글자를 고를 수 있습니다.`;
+  }
+  return {matches:matches.join(" / "), criterion};
+}
+function drawNatalMarkers(data) {
+  clearNatalMarkers();
+  if (data?.schema_version !== 1 || data.rule_version !== "natal-markers-v1" ||
+      !Array.isArray(data.coverage?.available_positions) || !Array.isArray(data.rules) ||
+      !data.rules.every(validMarkerRule)) return;
+  const rules = new Map(data.rules.map(rule => [rule.id, rule]));
+  if (!Object.keys(MARKER_LABELS).every(id => rules.has(id))) return;
+
+  const sections = [
+    {title:"원진", ids:["wonjin_all_pairs"],
+      description:"네 기둥에서 두 지지를 짝지어 자·미, 축·오, 인·유, 묘·신, 진·해, 사·술 중 하나인지 봅니다.",
+      reflection:"전통 풀이에서 원진은 관계에서 서운함이 생기는 순간을 돌아보는 소재입니다. 마음에 걸리는 말이 있다면, 상대에게 그 뜻을 물어보세요."},
+    {title:"도화", ids:["dohwa_year_triad", "dohwa_day_triad", "dohwa_broad_branches"],
+      description:"년지와 일지를 출발점으로 삼는 기준을 각각 살펴봅니다. 자·오·묘·유가 한 자리라도 있는지 보는 간이 기준도 따로 표시합니다.",
+      reflection:"전통 풀이에서 도화는 자신을 표현하고 사람과 어울리는 일을 돌아보는 소재입니다. 모임을 앞두고 있다면 나누고 싶은 이야기 하나를 떠올려 보세요."},
+  ];
+  const nodes = sections.map(section => {
+    const box = reportElement("section", "natal-marker");
+    const list = reportElement("dl");
+    box.append(reportElement("h4", "", section.title), reportElement("p", "", section.description), list);
+    for (const id of section.ids) {
+      const rule = rules.get(id);
+      const {matches, criterion} = markerBasis(rule);
+      const value = reportElement("dd");
+      value.append(reportElement("span", rule.status === "detected" ? "marker-hit" : "", MARKER_STATUS[rule.status]));
+      if (matches) value.append(" · ", matches);
+      if (criterion) value.append(reportElement("small", "marker-criterion", criterion));
+      list.append(reportElement("dt", "", MARKER_LABELS[id]), value);
+    }
+    if (section.ids.some(id => rules.get(id).status === "detected")) {
+      box.append(reportElement("p", "marker-reflection", section.reflection));
+    }
+    return box;
+  });
+  const available = data.coverage.available_positions.map(key => PILLAR_LABELS[key]).join("·");
+  $("natal-coverage").textContent = `판정 규칙 v1 · 확인한 자리 ${available || "없음"}. ` +
+    (data.coverage.complete ? "" : "빠진 자리를 알게 되면 추가로 맞는 조합이 생길 수 있습니다.");
+  $("natal-marker-results").replaceChildren(...nodes);
+  $("natal-markers").hidden = false;
+}
 function drawChart(result) {
   $("pillars").replaceChildren(); $("element-bars").replaceChildren();
-  if (!result.ok) { $("chart-section").hidden = true; return; }
+  if (!result.ok) { clearNatalMarkers(); $("chart-section").hidden = true; return; }
   const counts = {목:0, 화:0, 토:0, 금:0, 수:0};
-  [["year", "년주"], ["month", "월주"], ["day", "일주"], ["time", "시주"]].forEach(([key, label]) => {
+  Object.entries(PILLAR_LABELS).forEach(([key, label]) => {
     const cell = document.createElement("div"); cell.className = "pillar";
     const title = document.createElement("span"); title.textContent = label;
     const value = document.createElement("strong");
@@ -448,6 +539,7 @@ function drawChart(result) {
     }));
   }
   $("chart-warning").textContent = result.warnings.join(" "); $("chart-section").hidden = false;
+  drawNatalMarkers(result.natal_markers);
 }
 function drawMonth(data) {
   monthResizeObserver?.disconnect();

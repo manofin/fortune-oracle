@@ -1,0 +1,1618 @@
+{
+  "version": "practical-copy-v1-20261124",
+  "status": "prepared_not_run",
+  "synthetic_only": true,
+  "baseline_commit": "e6978f45536c38dbb9583fbe3f4ec9fcc2c30fc1",
+  "candidate": "content snapshot based on e6978f45536c38dbb9583fbe3f4ec9fcc2c30fc1; identified by candidate_source_sha256",
+  "candidate_source_sha256": {
+    "plugins/hermes_ext/fortune_oracle/daily_fortune_engine.py": "f51264af4efd4d67766abe3d457c676d813ffd5968fb8ba23b414676c843f830",
+    "plugins/hermes_ext/fortune_oracle/integrated_report.py": "fc69e49e1df1ec10f31676627acad409e7c9d53cc493412930842bdf5f79ae1f"
+  },
+  "target_date": "2026-11-24",
+  "non_prose_and_english_comparisons": 300,
+  "channel_character_range": [
+    309,
+    384
+  ],
+  "pilot_mapping_operator_only": {
+    "S1": {
+      "R42": "after",
+      "R17": "before"
+    },
+    "S2": {
+      "R42": "before",
+      "R17": "after"
+    }
+  },
+  "samples": [
+    {
+      "case": "S1",
+      "synthetic_input": {
+        "birth_date": "1990-05-14",
+        "birth_time": "07:30",
+        "gender": "male",
+        "timezone": "Asia/Seoul"
+      },
+      "target_date": "2026-11-24",
+      "calculated_pillars": {
+        "year": "庚午",
+        "month": "辛巳",
+        "day": "己卯",
+        "time": "戊辰"
+      },
+      "calculated_elements": {
+        "목(木)": 1,
+        "화(火)": 2,
+        "토(土)": 3,
+        "금(金)": 2
+      },
+      "before": {
+        "daily": {
+          "ok": true,
+          "score": 63.2,
+          "grade": "순풍",
+          "aspect_scores": {
+            "종합": 63.2,
+            "활동": 65.2,
+            "관계": 68.2,
+            "재물": 65.2,
+            "건강": 57.2
+          },
+          "date": "2026-11-24",
+          "day_pillar": "임인",
+          "day_element": "목",
+          "day_master": "己",
+          "relation": "pressure",
+          "aspect": "종합",
+          "keywords": [
+            "시작",
+            "성장",
+            "안정"
+          ],
+          "dayun_theme": "甲申(목) · 연도 구간 2018–2027",
+          "dayun_pillar": "甲申",
+          "dayun_years": [
+            2018,
+            2027
+          ],
+          "dayun_adjustment": 0,
+          "dayun_basis": "lunar-javascript sect 2 / calendar_year",
+          "birth_time_basis": {
+            "solar_terms": "birth_instant_utc_plus_8",
+            "uncertain_pillars": [],
+            "pillar_candidates": {},
+            "day_hour": "local_civil_time",
+            "day_boundary": "midnight",
+            "true_solar_time": false,
+            "hour_convention": "lunar_javascript_LunarTime",
+            "dayun": "sect_2_calendar_year_local"
+          },
+          "lines": [
+            "종합 운세 · 63점 — 순풍",
+            "이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+            "해볼 일: 해야 할 일 하나의 마감과 범위를 확인하고 쉴 틈을 남겨 보세요.",
+            "주의할 점: 점수를 근거로 무리하거나 건강 상태를 판단하지 마세요.",
+            "해석 근거: 일간(나를 나타내는 기준) 토 · 일진 임인의 지지(날짜의 아래 글자) 목. 날짜의 오행이 내 오행을 제어하는 관계이므로, 요구와 여유를 점검하는 주제로 읽습니다.",
+            "점수 근거: 계산된 오행 수는 목 1 · 화 2 · 토 3 · 금 2 · 수 0입니다. 개수가 적은 순서로 두 오행을 선택하고, 같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.",
+            "이 점수 규칙에서 선택한 오행은 수·목입니다. 해당 날짜의 오행(목)이 포함되어 가점됩니다. 정밀한 용신 분석은 아닙니다.",
+            "2026-11-24의 키워드는 시작 · 성장 · 안정입니다.",
+            "절기 기반 대운 甲申(목) · 연도 구간 2018–2027 · 해석 보정 +0점 (예측 확률이 아님).",
+            "출생 일·시주는 현지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다."
+          ],
+          "sections": {
+            "schema_version": 1,
+            "theme": {
+              "title": "이날의 해석",
+              "text": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+              "qualifier": ""
+            },
+            "action": {
+              "title": "해볼 일",
+              "text": "해야 할 일 하나의 마감과 범위를 확인하고 쉴 틈을 남겨 보세요.",
+              "qualifier": ""
+            },
+            "caution": {
+              "title": "주의할 점",
+              "text": "점수를 근거로 무리하거나 건강 상태를 판단하지 마세요.",
+              "qualifier": ""
+            },
+            "evidence": [
+              {
+                "id": "relation",
+                "title": "해석 근거",
+                "paragraphs": [
+                  "일간(나를 나타내는 기준) 토 · 일진 임인의 지지(날짜의 아래 글자) 목. 날짜의 오행이 내 오행을 제어하는 관계이므로, 요구와 여유를 점검하는 주제로 읽습니다.",
+                  "2026-11-24의 키워드는 시작 · 성장 · 안정입니다."
+                ]
+              },
+              {
+                "id": "score",
+                "title": "점수 근거",
+                "paragraphs": [
+                  "종합 운세 · 63점 — 순풍",
+                  "계산된 오행 수는 목 1 · 화 2 · 토 3 · 금 2 · 수 0입니다. 개수가 적은 순서로 두 오행을 선택하고, 같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.",
+                  "이 점수 규칙에서 선택한 오행은 수·목입니다. 해당 날짜의 오행(목)이 포함되어 가점됩니다. 정밀한 용신 분석은 아닙니다."
+                ]
+              },
+              {
+                "id": "cycle",
+                "title": "대운 보정",
+                "paragraphs": [
+                  "절기 기반 대운 甲申(목) · 연도 구간 2018–2027 · 해석 보정 +0점 (예측 확률이 아님)."
+                ]
+              },
+              {
+                "id": "time",
+                "title": "출생시각 기준",
+                "paragraphs": [
+                  "출생 일·시주는 현지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다."
+                ]
+              },
+              {
+                "id": "limitations",
+                "title": "해석의 한계",
+                "paragraphs": [
+                  "점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. 이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다."
+                ]
+              }
+            ]
+          },
+          "favorable_elements": [
+            "목",
+            "수"
+          ],
+          "disclaimer": "해석의 한계: 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. 이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다."
+        },
+        "daily_text": "종합 운세 · 63점 — 순풍\n이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.\n해볼 일: 해야 할 일 하나의 마감과 범위를 확인하고 쉴 틈을 남겨 보세요.\n주의할 점: 점수를 근거로 무리하거나 건강 상태를 판단하지 마세요.\n해석 근거: 일간(나를 나타내는 기준) 토 · 일진 임인의 지지(날짜의 아래 글자) 목. 날짜의 오행이 내 오행을 제어하는 관계이므로, 요구와 여유를 점검하는 주제로 읽습니다.\n점수 근거: 계산된 오행 수는 목 1 · 화 2 · 토 3 · 금 2 · 수 0입니다. 개수가 적은 순서로 두 오행을 선택하고, 같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.\n이 점수 규칙에서 선택한 오행은 수·목입니다. 해당 날짜의 오행(목)이 포함되어 가점됩니다. 정밀한 용신 분석은 아닙니다.\n2026-11-24의 키워드는 시작 · 성장 · 안정입니다.\n절기 기반 대운 甲申(목) · 연도 구간 2018–2027 · 해석 보정 +0점 (예측 확률이 아님).\n출생 일·시주는 현지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다.\n해석의 한계: 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. 이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다.",
+        "channel_text": "계산된 사주·일진의 경험적 해석 · 2026-11-24 · 종합 운세 · 63점 — 순풍\n이날의 해석: 해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.\n해볼 일: 해야 할 일 하나의 마감과 범위를 확인하고 쉴 틈을 남겨 보세요.\n주의할 점: 점수를 근거로 무리하거나 건강 상태를 판단하지 마세요.\n계산 근거: 일간 토·일진 임인(목)의 관계와 오행 수를 반영했습니다. 대운 보정 +0점.\n2026-11-24의 키워드는 시작 · 성장 · 안정입니다.\n점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다.",
+        "natal_report": {
+          "ok": true,
+          "computed": true,
+          "kind": "integrated",
+          "schema_version": 1,
+          "rule_version": "natal-reflection-1",
+          "scope": "natal",
+          "title": "네 관점으로 읽는 나의 성향",
+          "summary": [
+            "네 체계 중 2개 체계의 계산 근거를 사용했습니다.",
+            "기질: 사주·자미두수에서 ‘일관성과 안정’ 주제가 반복됩니다."
+          ],
+          "methods": [
+            {
+              "method": "bazi",
+              "label": "사주",
+              "status": "ready",
+              "used_in_reading": true,
+              "engine_status": "runnable",
+              "calculation_mode": "computed",
+              "backend": "lunar-javascript",
+              "calculation_basis": "절기 기준 년·월주와 현지 민간시 일·시주. 미상 시주는 제외하며 진태양시 보정은 적용하지 않습니다.",
+              "reason": "계산된 출생 자료를 해석에 사용했습니다."
+            },
+            {
+              "method": "ziwei",
+              "label": "자미두수",
+              "status": "ready",
+              "used_in_reading": true,
+              "engine_status": "runnable",
+              "calculation_mode": "computed",
+              "backend": "ziwei-iztro-adapter",
+              "calculation_basis": "iztro 양력→음력 변환과 현지 민간 날짜·시각. 진태양시 보정은 적용하지 않습니다.",
+              "reason": "계산된 출생 자료를 해석에 사용했습니다."
+            },
+            {
+              "method": "western",
+              "label": "서양 점성술",
+              "status": "unavailable",
+              "used_in_reading": false,
+              "engine_status": "blocked",
+              "calculation_mode": "unknown",
+              "backend": "unavailable",
+              "calculation_basis": "해석에 사용하지 않았습니다.",
+              "reason": "계산 엔진·자료를 사용할 수 없거나 현재 해석 규칙에 필요한 계산값이 부족합니다."
+            },
+            {
+              "method": "vedic",
+              "label": "베딕 점성술",
+              "status": "unavailable",
+              "used_in_reading": false,
+              "engine_status": "blocked",
+              "calculation_mode": "unknown",
+              "backend": "unavailable",
+              "calculation_basis": "해석에 사용하지 않았습니다.",
+              "reason": "계산 엔진·자료를 사용할 수 없거나 현재 해석 규칙에 필요한 계산값이 부족합니다."
+            }
+          ],
+          "themes": [
+            {
+              "id": "temperament",
+              "title": "기질",
+              "summary": "사주·자미두수에서 ‘일관성과 안정’ 주제가 반복됩니다.",
+              "agreements": [
+                {
+                  "text": "사주·자미두수에서 ‘일관성과 안정’ 주제가 반복됩니다.",
+                  "methods": [
+                    "bazi",
+                    "ziwei"
+                  ],
+                  "claim_ids": [
+                    "bazi.day_0.temperament",
+                    "ziwei.ming_廉貞.temperament"
+                  ]
+                }
+              ],
+              "differences": [
+                {
+                  "text": "강조점이 다릅니다: 사주·자미두수는 ‘일관성과 안정’; 자미두수는 ‘표현과 새로운 시도’. 어느 한쪽이 정답이라는 뜻은 아닙니다.",
+                  "methods": [
+                    "bazi",
+                    "ziwei"
+                  ],
+                  "claim_ids": [
+                    "bazi.day_0.temperament",
+                    "ziwei.ming_廉貞.temperament",
+                    "ziwei.ming_七殺.temperament"
+                  ]
+                }
+              ],
+              "claims": [
+                {
+                  "id": "bazi.day_0.temperament",
+                  "method": "bazi",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/bazi/day_0/structure/temperament",
+                  "evidence_ids": [
+                    "bazi.day_0"
+                  ],
+                  "axis": "approach",
+                  "pole": "structure",
+                  "text": "사주의 일간 오행 계산값에 연결된 기질의 성찰 주제는 ‘일관성과 안정’입니다."
+                },
+                {
+                  "id": "ziwei.ming_廉貞.temperament",
+                  "method": "ziwei",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/ziwei/ming_廉貞/structure/temperament",
+                  "evidence_ids": [
+                    "ziwei.ming_廉貞"
+                  ],
+                  "axis": "approach",
+                  "pole": "structure",
+                  "text": "자미두수의 명궁에 배치된 별 계산값에 연결된 기질의 성찰 주제는 ‘일관성과 안정’입니다."
+                },
+                {
+                  "id": "ziwei.ming_七殺.temperament",
+                  "method": "ziwei",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/ziwei/ming_七殺/initiative/temperament",
+                  "evidence_ids": [
+                    "ziwei.ming_七殺"
+                  ],
+                  "axis": "approach",
+                  "pole": "initiative",
+                  "text": "자미두수의 명궁에 배치된 별 계산값에 연결된 기질의 성찰 주제는 ‘표현과 새로운 시도’입니다."
+                }
+              ],
+              "reflection": "어떤 환경에서 내 방식이 편안하게 드러나는지 돌아보세요."
+            },
+            {
+              "id": "relationships",
+              "title": "관계",
+              "summary": "체계별 관점을 함께 살펴보세요.",
+              "agreements": [],
+              "differences": [
+                {
+                  "text": "강조점이 다릅니다: 사주는 ‘학습과 유연한 전환’; 자미두수는 ‘일관성과 안정’; 자미두수는 ‘표현과 새로운 시도’. 어느 한쪽이 정답이라는 뜻은 아닙니다.",
+                  "methods": [
+                    "bazi",
+                    "ziwei"
+                  ],
+                  "claim_ids": [
+                    "bazi.day_1.relationships",
+                    "ziwei.ming_廉貞.relationships",
+                    "ziwei.ming_七殺.relationships"
+                  ]
+                }
+              ],
+              "claims": [
+                {
+                  "id": "bazi.day_1.relationships",
+                  "method": "bazi",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/bazi/day_1/adaptation/relationships",
+                  "evidence_ids": [
+                    "bazi.day_1"
+                  ],
+                  "axis": "approach",
+                  "pole": "adaptation",
+                  "text": "사주의 일지 오행 계산값에 연결된 관계의 성찰 주제는 ‘학습과 유연한 전환’입니다."
+                },
+                {
+                  "id": "ziwei.ming_廉貞.relationships",
+                  "method": "ziwei",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/ziwei/ming_廉貞/structure/relationships",
+                  "evidence_ids": [
+                    "ziwei.ming_廉貞"
+                  ],
+                  "axis": "approach",
+                  "pole": "structure",
+                  "text": "자미두수의 명궁에 배치된 별 계산값에 연결된 관계의 성찰 주제는 ‘일관성과 안정’입니다."
+                },
+                {
+                  "id": "ziwei.ming_七殺.relationships",
+                  "method": "ziwei",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/ziwei/ming_七殺/initiative/relationships",
+                  "evidence_ids": [
+                    "ziwei.ming_七殺"
+                  ],
+                  "axis": "approach",
+                  "pole": "initiative",
+                  "text": "자미두수의 명궁에 배치된 별 계산값에 연결된 관계의 성찰 주제는 ‘표현과 새로운 시도’입니다."
+                }
+              ],
+              "reflection": "내가 원하는 소통 방식과 상대가 원하는 방식을 구체적으로 나눠 보세요."
+            },
+            {
+              "id": "work",
+              "title": "일·학습",
+              "summary": "체계별 관점을 함께 살펴보세요.",
+              "agreements": [],
+              "differences": [
+                {
+                  "text": "강조점이 다릅니다: 사주는 ‘표현과 새로운 시도’; 자미두수는 ‘일관성과 안정’; 자미두수는 ‘내면 탐색과 숙고’. 어느 한쪽이 정답이라는 뜻은 아닙니다.",
+                  "methods": [
+                    "bazi",
+                    "ziwei"
+                  ],
+                  "claim_ids": [
+                    "bazi.month_1.work",
+                    "ziwei.sihua_權.work",
+                    "ziwei.sihua_科.work"
+                  ]
+                }
+              ],
+              "claims": [
+                {
+                  "id": "bazi.month_1.work",
+                  "method": "bazi",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/bazi/month_1/initiative/work",
+                  "evidence_ids": [
+                    "bazi.month_1"
+                  ],
+                  "axis": "approach",
+                  "pole": "initiative",
+                  "text": "사주의 월지 오행 계산값에 연결된 일·학습의 성찰 주제는 ‘표현과 새로운 시도’입니다."
+                },
+                {
+                  "id": "ziwei.sihua_權.work",
+                  "method": "ziwei",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/ziwei/sihua_權/structure/work",
+                  "evidence_ids": [
+                    "ziwei.sihua_權"
+                  ],
+                  "axis": "approach",
+                  "pole": "structure",
+                  "text": "자미두수의 화권의 별 계산값에 연결된 일·학습의 성찰 주제는 ‘일관성과 안정’입니다."
+                },
+                {
+                  "id": "ziwei.sihua_科.work",
+                  "method": "ziwei",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/ziwei/sihua_科/reflection/work",
+                  "evidence_ids": [
+                    "ziwei.sihua_科"
+                  ],
+                  "axis": "approach",
+                  "pole": "reflection",
+                  "text": "자미두수의 화과의 별 계산값에 연결된 일·학습의 성찰 주제는 ‘내면 탐색과 숙고’입니다."
+                }
+              ],
+              "reflection": "작은 과제 하나에서 나에게 맞는 일·학습 방식을 시험해 보세요."
+            },
+            {
+              "id": "resources",
+              "title": "자원 관리",
+              "summary": "체계별 관점을 함께 살펴보세요.",
+              "agreements": [],
+              "differences": [
+                {
+                  "text": "강조점이 다릅니다: 사주는 ‘일관성과 안정’; 자미두수는 ‘교류와 조율’. 어느 한쪽이 정답이라는 뜻은 아닙니다.",
+                  "methods": [
+                    "bazi",
+                    "ziwei"
+                  ],
+                  "claim_ids": [
+                    "bazi.elements_토.resources",
+                    "ziwei.sihua_祿.resources"
+                  ]
+                }
+              ],
+              "claims": [
+                {
+                  "id": "bazi.elements_토.resources",
+                  "method": "bazi",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/bazi/elements_토/structure/resources",
+                  "evidence_ids": [
+                    "bazi.elements_토"
+                  ],
+                  "axis": "approach",
+                  "pole": "structure",
+                  "text": "사주의 팔자 오행 개수의 최다 항목 계산값에 연결된 자원 관리의 성찰 주제는 ‘일관성과 안정’입니다."
+                },
+                {
+                  "id": "ziwei.sihua_祿.resources",
+                  "method": "ziwei",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/ziwei/sihua_祿/connection/resources",
+                  "evidence_ids": [
+                    "ziwei.sihua_祿"
+                  ],
+                  "axis": "approach",
+                  "pole": "connection",
+                  "text": "자미두수의 화록의 별 계산값에 연결된 자원 관리의 성찰 주제는 ‘교류와 조율’입니다."
+                }
+              ],
+              "reflection": "시간과 에너지를 어디에 쓰는지 기록하고 우선순위를 점검해 보세요."
+            }
+          ],
+          "evidence": [
+            {
+              "id": "bazi.day_0",
+              "method": "bazi",
+              "label": "일간 오행",
+              "value": "己 · 토"
+            },
+            {
+              "id": "bazi.day_1",
+              "method": "bazi",
+              "label": "일지 오행",
+              "value": "卯 · 목"
+            },
+            {
+              "id": "bazi.month_1",
+              "method": "bazi",
+              "label": "월지 오행",
+              "value": "巳 · 화"
+            },
+            {
+              "id": "bazi.elements_토",
+              "method": "bazi",
+              "label": "팔자 오행 개수의 최다 항목",
+              "value": "목 1개 · 화 2개 · 토 3개 · 금 2개 · 수 0개"
+            },
+            {
+              "id": "ziwei.ming_廉貞",
+              "method": "ziwei",
+              "label": "명궁에 배치된 별",
+              "value": "廉貞"
+            },
+            {
+              "id": "ziwei.ming_七殺",
+              "method": "ziwei",
+              "label": "명궁에 배치된 별",
+              "value": "七殺"
+            },
+            {
+              "id": "ziwei.sihua_權",
+              "method": "ziwei",
+              "label": "화권의 별",
+              "value": "武曲"
+            },
+            {
+              "id": "ziwei.sihua_科",
+              "method": "ziwei",
+              "label": "화과의 별",
+              "value": "太陰"
+            },
+            {
+              "id": "ziwei.sihua_祿",
+              "method": "ziwei",
+              "label": "화록의 별",
+              "value": "太陽"
+            }
+          ],
+          "limitations": [
+            "이 리포트는 출생 성향을 살펴보는 간략한 전통 해석입니다. 오늘·이번 달의 운세나 사건 발생 시기를 계산하지 않습니다.",
+            "계산된 간지·별 배치와 성향 해석은 구분됩니다. 해석 규칙은 서비스의 성찰용 분류이며 과학적 성격 진단이나 예측 확률이 아닙니다.",
+            "여러 체계의 공통점은 해석 주제의 반복입니다. 독립적인 증거가 늘거나 예측 정확도가 높아졌다는 뜻이 아닙니다.",
+            "체계별 황도·역법·해석 기준이 달라 강조점이 다를 수 있습니다. 서로 다른 관점을 하나의 점수로 합치지 않습니다.",
+            "이 결과는 출생정보의 파생 데이터이며 익명화된 정보가 아닙니다. 의학·투자·법률 결정을 지시하지 않습니다.",
+            "자미두수는 입력한 현지 민간 날짜·시각을 iztro의 양력→음력 변환에 사용합니다. 진태양시 보정이나 다른 시간대로의 날짜 이동을 적용하지 않습니다."
+          ],
+          "text": "네 관점으로 읽는 나의 성향\n출생 성향 · 계산 근거가 연결된 성찰용 해석\n\n네 체계 중 2개 체계의 계산 근거를 사용했습니다.\n기질: 사주·자미두수에서 ‘일관성과 안정’ 주제가 반복됩니다.\n\n계산 범위\n사주: 계산된 출생 자료를 해석에 사용했습니다.\n절기 기준 년·월주와 현지 민간시 일·시주. 미상 시주는 제외하며 진태양시 보정은 적용하지 않습니다.\n자미두수: 계산된 출생 자료를 해석에 사용했습니다.\niztro 양력→음력 변환과 현지 민간 날짜·시각. 진태양시 보정은 적용하지 않습니다.\n서양 점성술: 계산 엔진·자료를 사용할 수 없거나 현재 해석 규칙에 필요한 계산값이 부족합니다.\n베딕 점성술: 계산 엔진·자료를 사용할 수 없거나 현재 해석 규칙에 필요한 계산값이 부족합니다.\n\n기질\n사주·자미두수에서 ‘일관성과 안정’ 주제가 반복됩니다.\n강조점이 다릅니다: 사주·자미두수는 ‘일관성과 안정’; 자미두수는 ‘표현과 새로운 시도’. 어느 한쪽이 정답이라는 뜻은 아닙니다.\n사주의 일간 오행 계산값에 연결된 기질의 성찰 주제는 ‘일관성과 안정’입니다.\n자미두수의 명궁에 배치된 별 계산값에 연결된 기질의 성찰 주제는 ‘일관성과 안정’입니다.\n자미두수의 명궁에 배치된 별 계산값에 연결된 기질의 성찰 주제는 ‘표현과 새로운 시도’입니다.\n어떤 환경에서 내 방식이 편안하게 드러나는지 돌아보세요.\n\n관계\n체계별 관점을 함께 살펴보세요.\n강조점이 다릅니다: 사주는 ‘학습과 유연한 전환’; 자미두수는 ‘일관성과 안정’; 자미두수는 ‘표현과 새로운 시도’. 어느 한쪽이 정답이라는 뜻은 아닙니다.\n사주의 일지 오행 계산값에 연결된 관계의 성찰 주제는 ‘학습과 유연한 전환’입니다.\n자미두수의 명궁에 배치된 별 계산값에 연결된 관계의 성찰 주제는 ‘일관성과 안정’입니다.\n자미두수의 명궁에 배치된 별 계산값에 연결된 관계의 성찰 주제는 ‘표현과 새로운 시도’입니다.\n내가 원하는 소통 방식과 상대가 원하는 방식을 구체적으로 나눠 보세요.\n\n일·학습\n체계별 관점을 함께 살펴보세요.\n강조점이 다릅니다: 사주는 ‘표현과 새로운 시도’; 자미두수는 ‘일관성과 안정’; 자미두수는 ‘내면 탐색과 숙고’. 어느 한쪽이 정답이라는 뜻은 아닙니다.\n사주의 월지 오행 계산값에 연결된 일·학습의 성찰 주제는 ‘표현과 새로운 시도’입니다.\n자미두수의 화권의 별 계산값에 연결된 일·학습의 성찰 주제는 ‘일관성과 안정’입니다.\n자미두수의 화과의 별 계산값에 연결된 일·학습의 성찰 주제는 ‘내면 탐색과 숙고’입니다.\n작은 과제 하나에서 나에게 맞는 일·학습 방식을 시험해 보세요.\n\n자원 관리\n체계별 관점을 함께 살펴보세요.\n강조점이 다릅니다: 사주는 ‘일관성과 안정’; 자미두수는 ‘교류와 조율’. 어느 한쪽이 정답이라는 뜻은 아닙니다.\n사주의 팔자 오행 개수의 최다 항목 계산값에 연결된 자원 관리의 성찰 주제는 ‘일관성과 안정’입니다.\n자미두수의 화록의 별 계산값에 연결된 자원 관리의 성찰 주제는 ‘교류와 조율’입니다.\n시간과 에너지를 어디에 쓰는지 기록하고 우선순위를 점검해 보세요.\n\n해석의 계산 근거\n[bazi.day_0] 사주 · 일간 오행: 己 · 토\n[bazi.day_1] 사주 · 일지 오행: 卯 · 목\n[bazi.month_1] 사주 · 월지 오행: 巳 · 화\n[bazi.elements_토] 사주 · 팔자 오행 개수의 최다 항목: 목 1개 · 화 2개 · 토 3개 · 금 2개 · 수 0개\n[ziwei.ming_廉貞] 자미두수 · 명궁에 배치된 별: 廉貞\n[ziwei.ming_七殺] 자미두수 · 명궁에 배치된 별: 七殺\n[ziwei.sihua_權] 자미두수 · 화권의 별: 武曲\n[ziwei.sihua_科] 자미두수 · 화과의 별: 太陰\n[ziwei.sihua_祿] 자미두수 · 화록의 별: 太陽\n\n읽기 전에 알아둘 점\n이 리포트는 출생 성향을 살펴보는 간략한 전통 해석입니다. 오늘·이번 달의 운세나 사건 발생 시기를 계산하지 않습니다.\n계산된 간지·별 배치와 성향 해석은 구분됩니다. 해석 규칙은 서비스의 성찰용 분류이며 과학적 성격 진단이나 예측 확률이 아닙니다.\n여러 체계의 공통점은 해석 주제의 반복입니다. 독립적인 증거가 늘거나 예측 정확도가 높아졌다는 뜻이 아닙니다.\n체계별 황도·역법·해석 기준이 달라 강조점이 다를 수 있습니다. 서로 다른 관점을 하나의 점수로 합치지 않습니다.\n이 결과는 출생정보의 파생 데이터이며 익명화된 정보가 아닙니다. 의학·투자·법률 결정을 지시하지 않습니다.\n자미두수는 입력한 현지 민간 날짜·시각을 iztro의 양력→음력 변환에 사용합니다. 진태양시 보정이나 다른 시간대로의 날짜 이동을 적용하지 않습니다."
+        },
+        "bazi_relationship_excerpt": "사주의 일지 오행 계산값에 연결된 관계의 성찰 주제는 ‘학습과 유연한 전환’입니다."
+      },
+      "after": {
+        "daily": {
+          "ok": true,
+          "score": 63.2,
+          "grade": "순풍",
+          "aspect_scores": {
+            "종합": 63.2,
+            "활동": 65.2,
+            "관계": 68.2,
+            "재물": 65.2,
+            "건강": 57.2
+          },
+          "date": "2026-11-24",
+          "day_pillar": "임인",
+          "day_element": "목",
+          "day_master": "己",
+          "relation": "pressure",
+          "aspect": "종합",
+          "keywords": [
+            "시작",
+            "성장",
+            "안정"
+          ],
+          "dayun_theme": "甲申(목) · 연도 구간 2018–2027",
+          "dayun_pillar": "甲申",
+          "dayun_years": [
+            2018,
+            2027
+          ],
+          "dayun_adjustment": 0,
+          "dayun_basis": "lunar-javascript sect 2 / calendar_year",
+          "birth_time_basis": {
+            "solar_terms": "birth_instant_utc_plus_8",
+            "uncertain_pillars": [],
+            "pillar_candidates": {},
+            "day_hour": "local_civil_time",
+            "day_boundary": "midnight",
+            "true_solar_time": false,
+            "hour_convention": "lunar_javascript_LunarTime",
+            "dayun": "sect_2_calendar_year_local"
+          },
+          "lines": [
+            "종합 운세 · 63점 — 순풍",
+            "이날의 해석: 해야 할 일과 쉬는 시간을 함께 살펴봅니다.",
+            "해볼 일: 해야 할 일이 있다면, 언제까지 어디까지 할지 정하고 쉴 시간을 남겨 보세요.",
+            "주의할 점: 이 점수로 건강 상태를 판단하거나 쉬어야 할 때 무리하지 마세요.",
+            "해석 근거: 일간(나를 나타내는 기준) 토 · 일진 임인의 지지(날짜의 아래 글자) 목. 날짜의 오행이 내 오행을 제어하는 관계이므로, 요구와 여유를 점검하는 주제로 읽습니다.",
+            "점수 근거: 계산된 오행 수는 목 1 · 화 2 · 토 3 · 금 2 · 수 0입니다. 개수가 적은 순서로 두 오행을 선택하고, 같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.",
+            "이 점수 규칙에서 선택한 오행은 수·목입니다. 해당 날짜의 오행(목)이 포함되어 가점됩니다. 정밀한 용신 분석은 아닙니다.",
+            "2026-11-24의 키워드는 시작 · 성장 · 안정입니다.",
+            "절기 기반 대운 甲申(목) · 연도 구간 2018–2027 · 해석 보정 +0점 (예측 확률이 아님).",
+            "출생 일·시주는 현지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다."
+          ],
+          "sections": {
+            "schema_version": 1,
+            "theme": {
+              "title": "이날의 해석",
+              "text": "해야 할 일과 쉬는 시간을 함께 살펴봅니다.",
+              "qualifier": ""
+            },
+            "action": {
+              "title": "해볼 일",
+              "text": "해야 할 일이 있다면, 언제까지 어디까지 할지 정하고 쉴 시간을 남겨 보세요.",
+              "qualifier": ""
+            },
+            "caution": {
+              "title": "주의할 점",
+              "text": "이 점수로 건강 상태를 판단하거나 쉬어야 할 때 무리하지 마세요.",
+              "qualifier": ""
+            },
+            "evidence": [
+              {
+                "id": "relation",
+                "title": "해석 근거",
+                "paragraphs": [
+                  "일간(나를 나타내는 기준) 토 · 일진 임인의 지지(날짜의 아래 글자) 목. 날짜의 오행이 내 오행을 제어하는 관계이므로, 요구와 여유를 점검하는 주제로 읽습니다.",
+                  "2026-11-24의 키워드는 시작 · 성장 · 안정입니다."
+                ]
+              },
+              {
+                "id": "score",
+                "title": "점수 근거",
+                "paragraphs": [
+                  "종합 운세 · 63점 — 순풍",
+                  "계산된 오행 수는 목 1 · 화 2 · 토 3 · 금 2 · 수 0입니다. 개수가 적은 순서로 두 오행을 선택하고, 같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.",
+                  "이 점수 규칙에서 선택한 오행은 수·목입니다. 해당 날짜의 오행(목)이 포함되어 가점됩니다. 정밀한 용신 분석은 아닙니다."
+                ]
+              },
+              {
+                "id": "cycle",
+                "title": "대운 보정",
+                "paragraphs": [
+                  "절기 기반 대운 甲申(목) · 연도 구간 2018–2027 · 해석 보정 +0점 (예측 확률이 아님)."
+                ]
+              },
+              {
+                "id": "time",
+                "title": "출생시각 기준",
+                "paragraphs": [
+                  "출생 일·시주는 현지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다."
+                ]
+              },
+              {
+                "id": "limitations",
+                "title": "해석의 한계",
+                "paragraphs": [
+                  "점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. 이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다."
+                ]
+              }
+            ]
+          },
+          "favorable_elements": [
+            "목",
+            "수"
+          ],
+          "disclaimer": "해석의 한계: 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. 이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다."
+        },
+        "daily_text": "종합 운세 · 63점 — 순풍\n이날의 해석: 해야 할 일과 쉬는 시간을 함께 살펴봅니다.\n해볼 일: 해야 할 일이 있다면, 언제까지 어디까지 할지 정하고 쉴 시간을 남겨 보세요.\n주의할 점: 이 점수로 건강 상태를 판단하거나 쉬어야 할 때 무리하지 마세요.\n해석 근거: 일간(나를 나타내는 기준) 토 · 일진 임인의 지지(날짜의 아래 글자) 목. 날짜의 오행이 내 오행을 제어하는 관계이므로, 요구와 여유를 점검하는 주제로 읽습니다.\n점수 근거: 계산된 오행 수는 목 1 · 화 2 · 토 3 · 금 2 · 수 0입니다. 개수가 적은 순서로 두 오행을 선택하고, 같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.\n이 점수 규칙에서 선택한 오행은 수·목입니다. 해당 날짜의 오행(목)이 포함되어 가점됩니다. 정밀한 용신 분석은 아닙니다.\n2026-11-24의 키워드는 시작 · 성장 · 안정입니다.\n절기 기반 대운 甲申(목) · 연도 구간 2018–2027 · 해석 보정 +0점 (예측 확률이 아님).\n출생 일·시주는 현지 민간시 기준이며 진태양시 보정은 적용하지 않았습니다.\n해석의 한계: 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. 이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다.",
+        "channel_text": "계산된 사주·일진의 경험적 해석 · 2026-11-24 · 종합 운세 · 63점 — 순풍\n이날의 해석: 해야 할 일과 쉬는 시간을 함께 살펴봅니다.\n해볼 일: 해야 할 일이 있다면, 언제까지 어디까지 할지 정하고 쉴 시간을 남겨 보세요.\n주의할 점: 이 점수로 건강 상태를 판단하거나 쉬어야 할 때 무리하지 마세요.\n계산 근거: 일간 토·일진 임인(목)의 관계와 오행 수를 반영했습니다. 대운 보정 +0점.\n2026-11-24의 키워드는 시작 · 성장 · 안정입니다.\n점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다.",
+        "natal_report": {
+          "ok": true,
+          "computed": true,
+          "kind": "integrated",
+          "schema_version": 1,
+          "rule_version": "natal-reflection-1",
+          "scope": "natal",
+          "title": "네 관점으로 읽는 나의 성향",
+          "summary": [
+            "네 체계 중 2개 체계의 계산 근거를 사용했습니다.",
+            "기질: 사주·자미두수에서 ‘일관성과 안정’ 주제가 반복됩니다."
+          ],
+          "methods": [
+            {
+              "method": "bazi",
+              "label": "사주",
+              "status": "ready",
+              "used_in_reading": true,
+              "engine_status": "runnable",
+              "calculation_mode": "computed",
+              "backend": "lunar-javascript",
+              "calculation_basis": "절기 기준 년·월주와 현지 민간시 일·시주. 미상 시주는 제외하며 진태양시 보정은 적용하지 않습니다.",
+              "reason": "계산된 출생 자료를 해석에 사용했습니다."
+            },
+            {
+              "method": "ziwei",
+              "label": "자미두수",
+              "status": "ready",
+              "used_in_reading": true,
+              "engine_status": "runnable",
+              "calculation_mode": "computed",
+              "backend": "ziwei-iztro-adapter",
+              "calculation_basis": "iztro 양력→음력 변환과 현지 민간 날짜·시각. 진태양시 보정은 적용하지 않습니다.",
+              "reason": "계산된 출생 자료를 해석에 사용했습니다."
+            },
+            {
+              "method": "western",
+              "label": "서양 점성술",
+              "status": "unavailable",
+              "used_in_reading": false,
+              "engine_status": "blocked",
+              "calculation_mode": "unknown",
+              "backend": "unavailable",
+              "calculation_basis": "해석에 사용하지 않았습니다.",
+              "reason": "계산 엔진·자료를 사용할 수 없거나 현재 해석 규칙에 필요한 계산값이 부족합니다."
+            },
+            {
+              "method": "vedic",
+              "label": "베딕 점성술",
+              "status": "unavailable",
+              "used_in_reading": false,
+              "engine_status": "blocked",
+              "calculation_mode": "unknown",
+              "backend": "unavailable",
+              "calculation_basis": "해석에 사용하지 않았습니다.",
+              "reason": "계산 엔진·자료를 사용할 수 없거나 현재 해석 규칙에 필요한 계산값이 부족합니다."
+            }
+          ],
+          "themes": [
+            {
+              "id": "temperament",
+              "title": "기질",
+              "summary": "사주·자미두수에서 ‘일관성과 안정’ 주제가 반복됩니다.",
+              "agreements": [
+                {
+                  "text": "사주·자미두수에서 ‘일관성과 안정’ 주제가 반복됩니다.",
+                  "methods": [
+                    "bazi",
+                    "ziwei"
+                  ],
+                  "claim_ids": [
+                    "bazi.day_0.temperament",
+                    "ziwei.ming_廉貞.temperament"
+                  ]
+                }
+              ],
+              "differences": [
+                {
+                  "text": "강조점이 다릅니다: 사주·자미두수는 ‘일관성과 안정’; 자미두수는 ‘표현과 새로운 시도’. 어느 한쪽이 정답이라는 뜻은 아닙니다.",
+                  "methods": [
+                    "bazi",
+                    "ziwei"
+                  ],
+                  "claim_ids": [
+                    "bazi.day_0.temperament",
+                    "ziwei.ming_廉貞.temperament",
+                    "ziwei.ming_七殺.temperament"
+                  ]
+                }
+              ],
+              "claims": [
+                {
+                  "id": "bazi.day_0.temperament",
+                  "method": "bazi",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/bazi/day_0/structure/temperament",
+                  "evidence_ids": [
+                    "bazi.day_0"
+                  ],
+                  "axis": "approach",
+                  "pole": "structure",
+                  "text": "사주의 일간 오행 계산값에 연결된 기질의 성찰 주제는 ‘일관성과 안정’입니다."
+                },
+                {
+                  "id": "ziwei.ming_廉貞.temperament",
+                  "method": "ziwei",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/ziwei/ming_廉貞/structure/temperament",
+                  "evidence_ids": [
+                    "ziwei.ming_廉貞"
+                  ],
+                  "axis": "approach",
+                  "pole": "structure",
+                  "text": "자미두수의 명궁에 배치된 별 계산값에 연결된 기질의 성찰 주제는 ‘일관성과 안정’입니다."
+                },
+                {
+                  "id": "ziwei.ming_七殺.temperament",
+                  "method": "ziwei",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/ziwei/ming_七殺/initiative/temperament",
+                  "evidence_ids": [
+                    "ziwei.ming_七殺"
+                  ],
+                  "axis": "approach",
+                  "pole": "initiative",
+                  "text": "자미두수의 명궁에 배치된 별 계산값에 연결된 기질의 성찰 주제는 ‘표현과 새로운 시도’입니다."
+                }
+              ],
+              "reflection": "어떤 환경에서 내 방식이 편안하게 드러나는지 돌아보세요."
+            },
+            {
+              "id": "relationships",
+              "title": "관계",
+              "summary": "체계별 관점을 함께 살펴보세요.",
+              "agreements": [],
+              "differences": [
+                {
+                  "text": "강조점이 다릅니다: 사주는 ‘학습과 유연한 전환’; 자미두수는 ‘일관성과 안정’; 자미두수는 ‘표현과 새로운 시도’. 어느 한쪽이 정답이라는 뜻은 아닙니다.",
+                  "methods": [
+                    "bazi",
+                    "ziwei"
+                  ],
+                  "claim_ids": [
+                    "bazi.day_1.relationships",
+                    "ziwei.ming_廉貞.relationships",
+                    "ziwei.ming_七殺.relationships"
+                  ]
+                }
+              ],
+              "claims": [
+                {
+                  "id": "bazi.day_1.relationships",
+                  "method": "bazi",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/bazi/day_1/adaptation/relationships",
+                  "evidence_ids": [
+                    "bazi.day_1"
+                  ],
+                  "axis": "approach",
+                  "pole": "adaptation",
+                  "text": "의견이 다르다면, 내 설명을 보태기 전에 상대가 중요하게 보는 점을 하나 물어보세요. 계산된 일지 卯(목)에서 ‘학습과 유연한 전환’ 주제를 읽은 제안입니다. 실제 관계나 성격을 확인한 결과는 아닙니다."
+                },
+                {
+                  "id": "ziwei.ming_廉貞.relationships",
+                  "method": "ziwei",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/ziwei/ming_廉貞/structure/relationships",
+                  "evidence_ids": [
+                    "ziwei.ming_廉貞"
+                  ],
+                  "axis": "approach",
+                  "pole": "structure",
+                  "text": "자미두수의 명궁에 배치된 별 계산값에 연결된 관계의 성찰 주제는 ‘일관성과 안정’입니다."
+                },
+                {
+                  "id": "ziwei.ming_七殺.relationships",
+                  "method": "ziwei",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/ziwei/ming_七殺/initiative/relationships",
+                  "evidence_ids": [
+                    "ziwei.ming_七殺"
+                  ],
+                  "axis": "approach",
+                  "pole": "initiative",
+                  "text": "자미두수의 명궁에 배치된 별 계산값에 연결된 관계의 성찰 주제는 ‘표현과 새로운 시도’입니다."
+                }
+              ],
+              "reflection": "내가 원하는 소통 방식과 상대가 원하는 방식을 구체적으로 나눠 보세요."
+            },
+            {
+              "id": "work",
+              "title": "일·학습",
+              "summary": "체계별 관점을 함께 살펴보세요.",
+              "agreements": [],
+              "differences": [
+                {
+                  "text": "강조점이 다릅니다: 사주는 ‘표현과 새로운 시도’; 자미두수는 ‘일관성과 안정’; 자미두수는 ‘내면 탐색과 숙고’. 어느 한쪽이 정답이라는 뜻은 아닙니다.",
+                  "methods": [
+                    "bazi",
+                    "ziwei"
+                  ],
+                  "claim_ids": [
+                    "bazi.month_1.work",
+                    "ziwei.sihua_權.work",
+                    "ziwei.sihua_科.work"
+                  ]
+                }
+              ],
+              "claims": [
+                {
+                  "id": "bazi.month_1.work",
+                  "method": "bazi",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/bazi/month_1/initiative/work",
+                  "evidence_ids": [
+                    "bazi.month_1"
+                  ],
+                  "axis": "approach",
+                  "pole": "initiative",
+                  "text": "사주의 월지 오행 계산값에 연결된 일·학습의 성찰 주제는 ‘표현과 새로운 시도’입니다."
+                },
+                {
+                  "id": "ziwei.sihua_權.work",
+                  "method": "ziwei",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/ziwei/sihua_權/structure/work",
+                  "evidence_ids": [
+                    "ziwei.sihua_權"
+                  ],
+                  "axis": "approach",
+                  "pole": "structure",
+                  "text": "자미두수의 화권의 별 계산값에 연결된 일·학습의 성찰 주제는 ‘일관성과 안정’입니다."
+                },
+                {
+                  "id": "ziwei.sihua_科.work",
+                  "method": "ziwei",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/ziwei/sihua_科/reflection/work",
+                  "evidence_ids": [
+                    "ziwei.sihua_科"
+                  ],
+                  "axis": "approach",
+                  "pole": "reflection",
+                  "text": "자미두수의 화과의 별 계산값에 연결된 일·학습의 성찰 주제는 ‘내면 탐색과 숙고’입니다."
+                }
+              ],
+              "reflection": "작은 과제 하나에서 나에게 맞는 일·학습 방식을 시험해 보세요."
+            },
+            {
+              "id": "resources",
+              "title": "자원 관리",
+              "summary": "체계별 관점을 함께 살펴보세요.",
+              "agreements": [],
+              "differences": [
+                {
+                  "text": "강조점이 다릅니다: 사주는 ‘일관성과 안정’; 자미두수는 ‘교류와 조율’. 어느 한쪽이 정답이라는 뜻은 아닙니다.",
+                  "methods": [
+                    "bazi",
+                    "ziwei"
+                  ],
+                  "claim_ids": [
+                    "bazi.elements_토.resources",
+                    "ziwei.sihua_祿.resources"
+                  ]
+                }
+              ],
+              "claims": [
+                {
+                  "id": "bazi.elements_토.resources",
+                  "method": "bazi",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/bazi/elements_토/structure/resources",
+                  "evidence_ids": [
+                    "bazi.elements_토"
+                  ],
+                  "axis": "approach",
+                  "pole": "structure",
+                  "text": "사주의 팔자 오행 개수의 최다 항목 계산값에 연결된 자원 관리의 성찰 주제는 ‘일관성과 안정’입니다."
+                },
+                {
+                  "id": "ziwei.sihua_祿.resources",
+                  "method": "ziwei",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/ziwei/sihua_祿/connection/resources",
+                  "evidence_ids": [
+                    "ziwei.sihua_祿"
+                  ],
+                  "axis": "approach",
+                  "pole": "connection",
+                  "text": "자미두수의 화록의 별 계산값에 연결된 자원 관리의 성찰 주제는 ‘교류와 조율’입니다."
+                }
+              ],
+              "reflection": "시간과 에너지를 어디에 쓰는지 기록하고 우선순위를 점검해 보세요."
+            }
+          ],
+          "evidence": [
+            {
+              "id": "bazi.day_0",
+              "method": "bazi",
+              "label": "일간 오행",
+              "value": "己 · 토"
+            },
+            {
+              "id": "bazi.day_1",
+              "method": "bazi",
+              "label": "일지 오행",
+              "value": "卯 · 목"
+            },
+            {
+              "id": "bazi.month_1",
+              "method": "bazi",
+              "label": "월지 오행",
+              "value": "巳 · 화"
+            },
+            {
+              "id": "bazi.elements_토",
+              "method": "bazi",
+              "label": "팔자 오행 개수의 최다 항목",
+              "value": "목 1개 · 화 2개 · 토 3개 · 금 2개 · 수 0개"
+            },
+            {
+              "id": "ziwei.ming_廉貞",
+              "method": "ziwei",
+              "label": "명궁에 배치된 별",
+              "value": "廉貞"
+            },
+            {
+              "id": "ziwei.ming_七殺",
+              "method": "ziwei",
+              "label": "명궁에 배치된 별",
+              "value": "七殺"
+            },
+            {
+              "id": "ziwei.sihua_權",
+              "method": "ziwei",
+              "label": "화권의 별",
+              "value": "武曲"
+            },
+            {
+              "id": "ziwei.sihua_科",
+              "method": "ziwei",
+              "label": "화과의 별",
+              "value": "太陰"
+            },
+            {
+              "id": "ziwei.sihua_祿",
+              "method": "ziwei",
+              "label": "화록의 별",
+              "value": "太陽"
+            }
+          ],
+          "limitations": [
+            "이 리포트는 출생 성향을 살펴보는 간략한 전통 해석입니다. 오늘·이번 달의 운세나 사건 발생 시기를 계산하지 않습니다.",
+            "계산된 간지·별 배치와 성향 해석은 구분됩니다. 해석 규칙은 서비스의 성찰용 분류이며 과학적 성격 진단이나 예측 확률이 아닙니다.",
+            "여러 체계의 공통점은 해석 주제의 반복입니다. 독립적인 증거가 늘거나 예측 정확도가 높아졌다는 뜻이 아닙니다.",
+            "체계별 황도·역법·해석 기준이 달라 강조점이 다를 수 있습니다. 서로 다른 관점을 하나의 점수로 합치지 않습니다.",
+            "이 결과는 출생정보의 파생 데이터이며 익명화된 정보가 아닙니다. 의학·투자·법률 결정을 지시하지 않습니다.",
+            "자미두수는 입력한 현지 민간 날짜·시각을 iztro의 양력→음력 변환에 사용합니다. 진태양시 보정이나 다른 시간대로의 날짜 이동을 적용하지 않습니다."
+          ],
+          "text": "네 관점으로 읽는 나의 성향\n출생 성향 · 계산 근거가 연결된 성찰용 해석\n\n네 체계 중 2개 체계의 계산 근거를 사용했습니다.\n기질: 사주·자미두수에서 ‘일관성과 안정’ 주제가 반복됩니다.\n\n계산 범위\n사주: 계산된 출생 자료를 해석에 사용했습니다.\n절기 기준 년·월주와 현지 민간시 일·시주. 미상 시주는 제외하며 진태양시 보정은 적용하지 않습니다.\n자미두수: 계산된 출생 자료를 해석에 사용했습니다.\niztro 양력→음력 변환과 현지 민간 날짜·시각. 진태양시 보정은 적용하지 않습니다.\n서양 점성술: 계산 엔진·자료를 사용할 수 없거나 현재 해석 규칙에 필요한 계산값이 부족합니다.\n베딕 점성술: 계산 엔진·자료를 사용할 수 없거나 현재 해석 규칙에 필요한 계산값이 부족합니다.\n\n기질\n사주·자미두수에서 ‘일관성과 안정’ 주제가 반복됩니다.\n강조점이 다릅니다: 사주·자미두수는 ‘일관성과 안정’; 자미두수는 ‘표현과 새로운 시도’. 어느 한쪽이 정답이라는 뜻은 아닙니다.\n사주의 일간 오행 계산값에 연결된 기질의 성찰 주제는 ‘일관성과 안정’입니다.\n자미두수의 명궁에 배치된 별 계산값에 연결된 기질의 성찰 주제는 ‘일관성과 안정’입니다.\n자미두수의 명궁에 배치된 별 계산값에 연결된 기질의 성찰 주제는 ‘표현과 새로운 시도’입니다.\n어떤 환경에서 내 방식이 편안하게 드러나는지 돌아보세요.\n\n관계\n체계별 관점을 함께 살펴보세요.\n강조점이 다릅니다: 사주는 ‘학습과 유연한 전환’; 자미두수는 ‘일관성과 안정’; 자미두수는 ‘표현과 새로운 시도’. 어느 한쪽이 정답이라는 뜻은 아닙니다.\n의견이 다르다면, 내 설명을 보태기 전에 상대가 중요하게 보는 점을 하나 물어보세요. 계산된 일지 卯(목)에서 ‘학습과 유연한 전환’ 주제를 읽은 제안입니다. 실제 관계나 성격을 확인한 결과는 아닙니다.\n자미두수의 명궁에 배치된 별 계산값에 연결된 관계의 성찰 주제는 ‘일관성과 안정’입니다.\n자미두수의 명궁에 배치된 별 계산값에 연결된 관계의 성찰 주제는 ‘표현과 새로운 시도’입니다.\n내가 원하는 소통 방식과 상대가 원하는 방식을 구체적으로 나눠 보세요.\n\n일·학습\n체계별 관점을 함께 살펴보세요.\n강조점이 다릅니다: 사주는 ‘표현과 새로운 시도’; 자미두수는 ‘일관성과 안정’; 자미두수는 ‘내면 탐색과 숙고’. 어느 한쪽이 정답이라는 뜻은 아닙니다.\n사주의 월지 오행 계산값에 연결된 일·학습의 성찰 주제는 ‘표현과 새로운 시도’입니다.\n자미두수의 화권의 별 계산값에 연결된 일·학습의 성찰 주제는 ‘일관성과 안정’입니다.\n자미두수의 화과의 별 계산값에 연결된 일·학습의 성찰 주제는 ‘내면 탐색과 숙고’입니다.\n작은 과제 하나에서 나에게 맞는 일·학습 방식을 시험해 보세요.\n\n자원 관리\n체계별 관점을 함께 살펴보세요.\n강조점이 다릅니다: 사주는 ‘일관성과 안정’; 자미두수는 ‘교류와 조율’. 어느 한쪽이 정답이라는 뜻은 아닙니다.\n사주의 팔자 오행 개수의 최다 항목 계산값에 연결된 자원 관리의 성찰 주제는 ‘일관성과 안정’입니다.\n자미두수의 화록의 별 계산값에 연결된 자원 관리의 성찰 주제는 ‘교류와 조율’입니다.\n시간과 에너지를 어디에 쓰는지 기록하고 우선순위를 점검해 보세요.\n\n해석의 계산 근거\n[bazi.day_0] 사주 · 일간 오행: 己 · 토\n[bazi.day_1] 사주 · 일지 오행: 卯 · 목\n[bazi.month_1] 사주 · 월지 오행: 巳 · 화\n[bazi.elements_토] 사주 · 팔자 오행 개수의 최다 항목: 목 1개 · 화 2개 · 토 3개 · 금 2개 · 수 0개\n[ziwei.ming_廉貞] 자미두수 · 명궁에 배치된 별: 廉貞\n[ziwei.ming_七殺] 자미두수 · 명궁에 배치된 별: 七殺\n[ziwei.sihua_權] 자미두수 · 화권의 별: 武曲\n[ziwei.sihua_科] 자미두수 · 화과의 별: 太陰\n[ziwei.sihua_祿] 자미두수 · 화록의 별: 太陽\n\n읽기 전에 알아둘 점\n이 리포트는 출생 성향을 살펴보는 간략한 전통 해석입니다. 오늘·이번 달의 운세나 사건 발생 시기를 계산하지 않습니다.\n계산된 간지·별 배치와 성향 해석은 구분됩니다. 해석 규칙은 서비스의 성찰용 분류이며 과학적 성격 진단이나 예측 확률이 아닙니다.\n여러 체계의 공통점은 해석 주제의 반복입니다. 독립적인 증거가 늘거나 예측 정확도가 높아졌다는 뜻이 아닙니다.\n체계별 황도·역법·해석 기준이 달라 강조점이 다를 수 있습니다. 서로 다른 관점을 하나의 점수로 합치지 않습니다.\n이 결과는 출생정보의 파생 데이터이며 익명화된 정보가 아닙니다. 의학·투자·법률 결정을 지시하지 않습니다.\n자미두수는 입력한 현지 민간 날짜·시각을 iztro의 양력→음력 변환에 사용합니다. 진태양시 보정이나 다른 시간대로의 날짜 이동을 적용하지 않습니다."
+        },
+        "bazi_relationship_excerpt": "의견이 다르다면, 내 설명을 보태기 전에 상대가 중요하게 보는 점을 하나 물어보세요. 계산된 일지 卯(목)에서 ‘학습과 유연한 전환’ 주제를 읽은 제안입니다. 실제 관계나 성격을 확인한 결과는 아닙니다."
+      }
+    },
+    {
+      "case": "S2",
+      "synthetic_input": {
+        "birth_date": "1988-03-02",
+        "birth_time": "",
+        "gender": "unknown",
+        "timezone": "Asia/Seoul"
+      },
+      "target_date": "2026-11-24",
+      "calculated_pillars": {
+        "year": "戊辰",
+        "month": "甲寅",
+        "day": "丙辰",
+        "time": ""
+      },
+      "calculated_elements": {
+        "목(木)": 2,
+        "화(火)": 1,
+        "토(土)": 3
+      },
+      "before": {
+        "daily": {
+          "ok": true,
+          "score": 53.0,
+          "grade": "평온",
+          "aspect_scores": {
+            "종합": 53.0,
+            "활동": 51.7,
+            "관계": 66.3,
+            "재물": 47.0,
+            "건강": 47.0
+          },
+          "date": "2026-11-24",
+          "day_pillar": "임인",
+          "day_element": "목",
+          "day_master": "丙",
+          "relation": "input",
+          "aspect": "종합",
+          "keywords": [
+            "시작",
+            "성장",
+            "속도"
+          ],
+          "dayun_theme": "",
+          "dayun_pillar": "",
+          "dayun_years": null,
+          "dayun_adjustment": 0.0,
+          "dayun_basis": "unavailable",
+          "birth_time_basis": {
+            "solar_terms": "civil_day_interval_confirmed",
+            "uncertain_pillars": [],
+            "pillar_candidates": {
+              "year": [
+                "戊辰"
+              ],
+              "month": [
+                "甲寅"
+              ]
+            },
+            "day_hour": "local_civil_time",
+            "day_boundary": "midnight",
+            "true_solar_time": false,
+            "hour_convention": "lunar_javascript_LunarTime",
+            "dayun": "sect_2_calendar_year_local"
+          },
+          "lines": [
+            "종합 운세 · 53점 — 평온",
+            "이날의 해석: 필요한 것을 배우고 정리하는 주제로 읽습니다.",
+            "해볼 일: 필요한 자료 하나를 읽고 핵심을 한 줄로 정리해 보세요.",
+            "주의할 점: 준비만 늘리기보다 작은 실행 하나로 확인하세요.",
+            "해석 근거: 일간(나를 나타내는 기준) 화 · 일진 임인의 지지(날짜의 아래 글자) 목. 날짜의 오행이 내 오행을 돕는 관계이므로, 배우고 정리하는 주제로 읽습니다.",
+            "점수 근거: 시주를 제외한 년·월·일주 6글자의 오행 수는 목 2 · 화 1 · 토 3 · 금 0 · 수 0입니다. 개수가 적은 순서로 두 오행을 선택하고, 같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.",
+            "이 점수 규칙에서 선택한 오행은 금·수입니다. 해당 날짜의 오행(목)이 포함되지 않아 감점됩니다. 정밀한 용신 분석은 아닙니다.",
+            "2026-11-24의 키워드는 시작 · 성장 · 속도입니다.",
+            "대운 보정 미적용: 출생시각이 미상이라 대운을 계산하지 않았습니다.",
+            "출생 일주는 현지 민간 날짜 기준이며 진태양시 보정은 적용하지 않았습니다.",
+            "년·월주는 현지 출생일 하루 전체에서 동일함을 확인했습니다. 시주와 대운은 제외합니다."
+          ],
+          "sections": {
+            "schema_version": 1,
+            "theme": {
+              "title": "이날의 해석",
+              "text": "필요한 것을 배우고 정리하는 주제로 읽습니다.",
+              "qualifier": ""
+            },
+            "action": {
+              "title": "해볼 일",
+              "text": "필요한 자료 하나를 읽고 핵심을 한 줄로 정리해 보세요.",
+              "qualifier": ""
+            },
+            "caution": {
+              "title": "주의할 점",
+              "text": "준비만 늘리기보다 작은 실행 하나로 확인하세요.",
+              "qualifier": ""
+            },
+            "evidence": [
+              {
+                "id": "relation",
+                "title": "해석 근거",
+                "paragraphs": [
+                  "일간(나를 나타내는 기준) 화 · 일진 임인의 지지(날짜의 아래 글자) 목. 날짜의 오행이 내 오행을 돕는 관계이므로, 배우고 정리하는 주제로 읽습니다.",
+                  "2026-11-24의 키워드는 시작 · 성장 · 속도입니다."
+                ]
+              },
+              {
+                "id": "score",
+                "title": "점수 근거",
+                "paragraphs": [
+                  "종합 운세 · 53점 — 평온",
+                  "시주를 제외한 년·월·일주 6글자의 오행 수는 목 2 · 화 1 · 토 3 · 금 0 · 수 0입니다. 개수가 적은 순서로 두 오행을 선택하고, 같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.",
+                  "이 점수 규칙에서 선택한 오행은 금·수입니다. 해당 날짜의 오행(목)이 포함되지 않아 감점됩니다. 정밀한 용신 분석은 아닙니다."
+                ]
+              },
+              {
+                "id": "cycle",
+                "title": "대운 보정 미적용",
+                "paragraphs": [
+                  "출생시각이 미상이라 대운을 계산하지 않았습니다."
+                ]
+              },
+              {
+                "id": "time",
+                "title": "출생시각 기준",
+                "paragraphs": [
+                  "출생 일주는 현지 민간 날짜 기준이며 진태양시 보정은 적용하지 않았습니다.",
+                  "년·월주는 현지 출생일 하루 전체에서 동일함을 확인했습니다. 시주와 대운은 제외합니다."
+                ]
+              },
+              {
+                "id": "limitations",
+                "title": "해석의 한계",
+                "paragraphs": [
+                  "점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. 이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다."
+                ]
+              }
+            ]
+          },
+          "favorable_elements": [
+            "금",
+            "수"
+          ],
+          "disclaimer": "해석의 한계: 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. 이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다."
+        },
+        "daily_text": "종합 운세 · 53점 — 평온\n이날의 해석: 필요한 것을 배우고 정리하는 주제로 읽습니다.\n해볼 일: 필요한 자료 하나를 읽고 핵심을 한 줄로 정리해 보세요.\n주의할 점: 준비만 늘리기보다 작은 실행 하나로 확인하세요.\n해석 근거: 일간(나를 나타내는 기준) 화 · 일진 임인의 지지(날짜의 아래 글자) 목. 날짜의 오행이 내 오행을 돕는 관계이므로, 배우고 정리하는 주제로 읽습니다.\n점수 근거: 시주를 제외한 년·월·일주 6글자의 오행 수는 목 2 · 화 1 · 토 3 · 금 0 · 수 0입니다. 개수가 적은 순서로 두 오행을 선택하고, 같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.\n이 점수 규칙에서 선택한 오행은 금·수입니다. 해당 날짜의 오행(목)이 포함되지 않아 감점됩니다. 정밀한 용신 분석은 아닙니다.\n2026-11-24의 키워드는 시작 · 성장 · 속도입니다.\n대운 보정 미적용: 출생시각이 미상이라 대운을 계산하지 않았습니다.\n출생 일주는 현지 민간 날짜 기준이며 진태양시 보정은 적용하지 않았습니다.\n년·월주는 현지 출생일 하루 전체에서 동일함을 확인했습니다. 시주와 대운은 제외합니다.\n해석의 한계: 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. 이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다.",
+        "channel_text": "계산된 사주·일진의 경험적 해석 · 2026-11-24 · 종합 운세 · 53점 — 평온\n이날의 해석: 필요한 것을 배우고 정리하는 주제로 읽습니다.\n해볼 일: 필요한 자료 하나를 읽고 핵심을 한 줄로 정리해 보세요.\n주의할 점: 준비만 늘리기보다 작은 실행 하나로 확인하세요.\n계산 근거: 일간 화·일진 임인(목)의 관계와 오행 수를 반영했습니다. 출생시각 미상으로 대운 보정 미적용.\n2026-11-24의 키워드는 시작 · 성장 · 속도입니다.\n출생시각 미확정: 시주·대운은 제외했습니다.\n점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다.",
+        "natal_report": {
+          "ok": true,
+          "computed": true,
+          "kind": "integrated",
+          "schema_version": 1,
+          "rule_version": "natal-reflection-1",
+          "scope": "natal",
+          "title": "네 관점으로 읽는 나의 성향",
+          "summary": [
+            "네 체계 중 1개 체계의 계산 근거를 사용했습니다.",
+            "공통 해석을 억지로 만들지 않고, 확인된 관점과 제한사항을 함께 보여드립니다."
+          ],
+          "methods": [
+            {
+              "method": "bazi",
+              "label": "사주",
+              "status": "partial",
+              "used_in_reading": true,
+              "engine_status": "partial",
+              "calculation_mode": "computed",
+              "backend": "lunar-javascript",
+              "calculation_basis": "절기 기준 년·월주와 현지 민간시 일·시주. 미상 시주는 제외하며 진태양시 보정은 적용하지 않습니다.",
+              "reason": "계산 가능한 출생 자료만 사용했습니다. 시각·위치 또는 일부 계산 항목이 제한됩니다."
+            },
+            {
+              "method": "ziwei",
+              "label": "자미두수",
+              "status": "unavailable",
+              "used_in_reading": false,
+              "engine_status": "blocked",
+              "calculation_mode": "unknown",
+              "backend": "unavailable",
+              "calculation_basis": "해석에 사용하지 않았습니다.",
+              "reason": "출생시각 미상으로 시간에 의존하는 계산을 제외했습니다."
+            },
+            {
+              "method": "western",
+              "label": "서양 점성술",
+              "status": "unavailable",
+              "used_in_reading": false,
+              "engine_status": "blocked",
+              "calculation_mode": "unknown",
+              "backend": "unavailable",
+              "calculation_basis": "해석에 사용하지 않았습니다.",
+              "reason": "출생시각 미상으로 시간에 의존하는 계산을 제외했습니다."
+            },
+            {
+              "method": "vedic",
+              "label": "베딕 점성술",
+              "status": "unavailable",
+              "used_in_reading": false,
+              "engine_status": "blocked",
+              "calculation_mode": "unknown",
+              "backend": "unavailable",
+              "calculation_basis": "해석에 사용하지 않았습니다.",
+              "reason": "출생시각 미상으로 시간에 의존하는 계산을 제외했습니다."
+            }
+          ],
+          "themes": [
+            {
+              "id": "temperament",
+              "title": "기질",
+              "summary": "현재 한 체계의 근거만 있어 체계 간 공통점은 판단하지 않습니다.",
+              "agreements": [],
+              "differences": [],
+              "claims": [
+                {
+                  "id": "bazi.day_0.temperament",
+                  "method": "bazi",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/bazi/day_0/initiative/temperament",
+                  "evidence_ids": [
+                    "bazi.day_0"
+                  ],
+                  "axis": "approach",
+                  "pole": "initiative",
+                  "text": "사주의 일간 오행 계산값에 연결된 기질의 성찰 주제는 ‘표현과 새로운 시도’입니다."
+                }
+              ],
+              "reflection": "어떤 환경에서 내 방식이 편안하게 드러나는지 돌아보세요."
+            },
+            {
+              "id": "relationships",
+              "title": "관계",
+              "summary": "현재 한 체계의 근거만 있어 체계 간 공통점은 판단하지 않습니다.",
+              "agreements": [],
+              "differences": [],
+              "claims": [
+                {
+                  "id": "bazi.day_1.relationships",
+                  "method": "bazi",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/bazi/day_1/structure/relationships",
+                  "evidence_ids": [
+                    "bazi.day_1"
+                  ],
+                  "axis": "approach",
+                  "pole": "structure",
+                  "text": "사주의 일지 오행 계산값에 연결된 관계의 성찰 주제는 ‘일관성과 안정’입니다."
+                }
+              ],
+              "reflection": "내가 원하는 소통 방식과 상대가 원하는 방식을 구체적으로 나눠 보세요."
+            },
+            {
+              "id": "work",
+              "title": "일·학습",
+              "summary": "현재 한 체계의 근거만 있어 체계 간 공통점은 판단하지 않습니다.",
+              "agreements": [],
+              "differences": [],
+              "claims": [
+                {
+                  "id": "bazi.month_1.work",
+                  "method": "bazi",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/bazi/month_1/adaptation/work",
+                  "evidence_ids": [
+                    "bazi.month_1"
+                  ],
+                  "axis": "approach",
+                  "pole": "adaptation",
+                  "text": "사주의 월지 오행 계산값에 연결된 일·학습의 성찰 주제는 ‘학습과 유연한 전환’입니다."
+                }
+              ],
+              "reflection": "작은 과제 하나에서 나에게 맞는 일·학습 방식을 시험해 보세요."
+            },
+            {
+              "id": "resources",
+              "title": "자원 관리",
+              "summary": "현재 계산 자료로 이 주제를 해석하지 않습니다.",
+              "agreements": [],
+              "differences": [],
+              "claims": [],
+              "reflection": ""
+            }
+          ],
+          "evidence": [
+            {
+              "id": "bazi.day_0",
+              "method": "bazi",
+              "label": "일간 오행",
+              "value": "丙 · 화"
+            },
+            {
+              "id": "bazi.day_1",
+              "method": "bazi",
+              "label": "일지 오행",
+              "value": "辰 · 토"
+            },
+            {
+              "id": "bazi.month_1",
+              "method": "bazi",
+              "label": "월지 오행",
+              "value": "寅 · 목"
+            }
+          ],
+          "limitations": [
+            "이 리포트는 출생 성향을 살펴보는 간략한 전통 해석입니다. 오늘·이번 달의 운세나 사건 발생 시기를 계산하지 않습니다.",
+            "계산된 간지·별 배치와 성향 해석은 구분됩니다. 해석 규칙은 서비스의 성찰용 분류이며 과학적 성격 진단이나 예측 확률이 아닙니다.",
+            "여러 체계의 공통점은 해석 주제의 반복입니다. 독립적인 증거가 늘거나 예측 정확도가 높아졌다는 뜻이 아닙니다.",
+            "체계별 황도·역법·해석 기준이 달라 강조점이 다를 수 있습니다. 서로 다른 관점을 하나의 점수로 합치지 않습니다.",
+            "이 결과는 출생정보의 파생 데이터이며 익명화된 정보가 아닙니다. 의학·투자·법률 결정을 지시하지 않습니다."
+          ],
+          "text": "네 관점으로 읽는 나의 성향\n출생 성향 · 계산 근거가 연결된 성찰용 해석\n\n네 체계 중 1개 체계의 계산 근거를 사용했습니다.\n공통 해석을 억지로 만들지 않고, 확인된 관점과 제한사항을 함께 보여드립니다.\n\n계산 범위\n사주: 계산 가능한 출생 자료만 사용했습니다. 시각·위치 또는 일부 계산 항목이 제한됩니다.\n절기 기준 년·월주와 현지 민간시 일·시주. 미상 시주는 제외하며 진태양시 보정은 적용하지 않습니다.\n자미두수: 출생시각 미상으로 시간에 의존하는 계산을 제외했습니다.\n서양 점성술: 출생시각 미상으로 시간에 의존하는 계산을 제외했습니다.\n베딕 점성술: 출생시각 미상으로 시간에 의존하는 계산을 제외했습니다.\n\n기질\n현재 한 체계의 근거만 있어 체계 간 공통점은 판단하지 않습니다.\n사주의 일간 오행 계산값에 연결된 기질의 성찰 주제는 ‘표현과 새로운 시도’입니다.\n어떤 환경에서 내 방식이 편안하게 드러나는지 돌아보세요.\n\n관계\n현재 한 체계의 근거만 있어 체계 간 공통점은 판단하지 않습니다.\n사주의 일지 오행 계산값에 연결된 관계의 성찰 주제는 ‘일관성과 안정’입니다.\n내가 원하는 소통 방식과 상대가 원하는 방식을 구체적으로 나눠 보세요.\n\n일·학습\n현재 한 체계의 근거만 있어 체계 간 공통점은 판단하지 않습니다.\n사주의 월지 오행 계산값에 연결된 일·학습의 성찰 주제는 ‘학습과 유연한 전환’입니다.\n작은 과제 하나에서 나에게 맞는 일·학습 방식을 시험해 보세요.\n\n자원 관리\n현재 계산 자료로 이 주제를 해석하지 않습니다.\n\n\n해석의 계산 근거\n[bazi.day_0] 사주 · 일간 오행: 丙 · 화\n[bazi.day_1] 사주 · 일지 오행: 辰 · 토\n[bazi.month_1] 사주 · 월지 오행: 寅 · 목\n\n읽기 전에 알아둘 점\n이 리포트는 출생 성향을 살펴보는 간략한 전통 해석입니다. 오늘·이번 달의 운세나 사건 발생 시기를 계산하지 않습니다.\n계산된 간지·별 배치와 성향 해석은 구분됩니다. 해석 규칙은 서비스의 성찰용 분류이며 과학적 성격 진단이나 예측 확률이 아닙니다.\n여러 체계의 공통점은 해석 주제의 반복입니다. 독립적인 증거가 늘거나 예측 정확도가 높아졌다는 뜻이 아닙니다.\n체계별 황도·역법·해석 기준이 달라 강조점이 다를 수 있습니다. 서로 다른 관점을 하나의 점수로 합치지 않습니다.\n이 결과는 출생정보의 파생 데이터이며 익명화된 정보가 아닙니다. 의학·투자·법률 결정을 지시하지 않습니다."
+        },
+        "bazi_relationship_excerpt": "사주의 일지 오행 계산값에 연결된 관계의 성찰 주제는 ‘일관성과 안정’입니다."
+      },
+      "after": {
+        "daily": {
+          "ok": true,
+          "score": 53.0,
+          "grade": "평온",
+          "aspect_scores": {
+            "종합": 53.0,
+            "활동": 51.7,
+            "관계": 66.3,
+            "재물": 47.0,
+            "건강": 47.0
+          },
+          "date": "2026-11-24",
+          "day_pillar": "임인",
+          "day_element": "목",
+          "day_master": "丙",
+          "relation": "input",
+          "aspect": "종합",
+          "keywords": [
+            "시작",
+            "성장",
+            "속도"
+          ],
+          "dayun_theme": "",
+          "dayun_pillar": "",
+          "dayun_years": null,
+          "dayun_adjustment": 0.0,
+          "dayun_basis": "unavailable",
+          "birth_time_basis": {
+            "solar_terms": "civil_day_interval_confirmed",
+            "uncertain_pillars": [],
+            "pillar_candidates": {
+              "year": [
+                "戊辰"
+              ],
+              "month": [
+                "甲寅"
+              ]
+            },
+            "day_hour": "local_civil_time",
+            "day_boundary": "midnight",
+            "true_solar_time": false,
+            "hour_convention": "lunar_javascript_LunarTime",
+            "dayun": "sect_2_calendar_year_local"
+          },
+          "lines": [
+            "종합 운세 · 53점 — 평온",
+            "이날의 해석: 새로 배운 내용을 어떻게 써볼지 살펴봅니다.",
+            "해볼 일: 배울 일이 있다면, 자료 하나를 읽고 바로 써볼 내용을 한 줄로 적어 보세요.",
+            "주의할 점: 자료를 더 찾는 데만 시간을 쓰고 실행을 미루지 않도록 살펴보세요.",
+            "해석 근거: 일간(나를 나타내는 기준) 화 · 일진 임인의 지지(날짜의 아래 글자) 목. 날짜의 오행이 내 오행을 돕는 관계이므로, 배우고 정리하는 주제로 읽습니다.",
+            "점수 근거: 시주를 제외한 년·월·일주 6글자의 오행 수는 목 2 · 화 1 · 토 3 · 금 0 · 수 0입니다. 개수가 적은 순서로 두 오행을 선택하고, 같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.",
+            "이 점수 규칙에서 선택한 오행은 금·수입니다. 해당 날짜의 오행(목)이 포함되지 않아 감점됩니다. 정밀한 용신 분석은 아닙니다.",
+            "2026-11-24의 키워드는 시작 · 성장 · 속도입니다.",
+            "대운 보정 미적용: 출생시각이 미상이라 대운을 계산하지 않았습니다.",
+            "출생 일주는 현지 민간 날짜 기준이며 진태양시 보정은 적용하지 않았습니다.",
+            "년·월주는 현지 출생일 하루 전체에서 동일함을 확인했습니다. 시주와 대운은 제외합니다."
+          ],
+          "sections": {
+            "schema_version": 1,
+            "theme": {
+              "title": "이날의 해석",
+              "text": "새로 배운 내용을 어떻게 써볼지 살펴봅니다.",
+              "qualifier": ""
+            },
+            "action": {
+              "title": "해볼 일",
+              "text": "배울 일이 있다면, 자료 하나를 읽고 바로 써볼 내용을 한 줄로 적어 보세요.",
+              "qualifier": ""
+            },
+            "caution": {
+              "title": "주의할 점",
+              "text": "자료를 더 찾는 데만 시간을 쓰고 실행을 미루지 않도록 살펴보세요.",
+              "qualifier": ""
+            },
+            "evidence": [
+              {
+                "id": "relation",
+                "title": "해석 근거",
+                "paragraphs": [
+                  "일간(나를 나타내는 기준) 화 · 일진 임인의 지지(날짜의 아래 글자) 목. 날짜의 오행이 내 오행을 돕는 관계이므로, 배우고 정리하는 주제로 읽습니다.",
+                  "2026-11-24의 키워드는 시작 · 성장 · 속도입니다."
+                ]
+              },
+              {
+                "id": "score",
+                "title": "점수 근거",
+                "paragraphs": [
+                  "종합 운세 · 53점 — 평온",
+                  "시주를 제외한 년·월·일주 6글자의 오행 수는 목 2 · 화 1 · 토 3 · 금 0 · 수 0입니다. 개수가 적은 순서로 두 오행을 선택하고, 같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.",
+                  "이 점수 규칙에서 선택한 오행은 금·수입니다. 해당 날짜의 오행(목)이 포함되지 않아 감점됩니다. 정밀한 용신 분석은 아닙니다."
+                ]
+              },
+              {
+                "id": "cycle",
+                "title": "대운 보정 미적용",
+                "paragraphs": [
+                  "출생시각이 미상이라 대운을 계산하지 않았습니다."
+                ]
+              },
+              {
+                "id": "time",
+                "title": "출생시각 기준",
+                "paragraphs": [
+                  "출생 일주는 현지 민간 날짜 기준이며 진태양시 보정은 적용하지 않았습니다.",
+                  "년·월주는 현지 출생일 하루 전체에서 동일함을 확인했습니다. 시주와 대운은 제외합니다."
+                ]
+              },
+              {
+                "id": "limitations",
+                "title": "해석의 한계",
+                "paragraphs": [
+                  "점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. 이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다."
+                ]
+              }
+            ]
+          },
+          "favorable_elements": [
+            "금",
+            "수"
+          ],
+          "disclaimer": "해석의 한계: 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. 이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다."
+        },
+        "daily_text": "종합 운세 · 53점 — 평온\n이날의 해석: 새로 배운 내용을 어떻게 써볼지 살펴봅니다.\n해볼 일: 배울 일이 있다면, 자료 하나를 읽고 바로 써볼 내용을 한 줄로 적어 보세요.\n주의할 점: 자료를 더 찾는 데만 시간을 쓰고 실행을 미루지 않도록 살펴보세요.\n해석 근거: 일간(나를 나타내는 기준) 화 · 일진 임인의 지지(날짜의 아래 글자) 목. 날짜의 오행이 내 오행을 돕는 관계이므로, 배우고 정리하는 주제로 읽습니다.\n점수 근거: 시주를 제외한 년·월·일주 6글자의 오행 수는 목 2 · 화 1 · 토 3 · 금 0 · 수 0입니다. 개수가 적은 순서로 두 오행을 선택하고, 같은 개수일 때는 목·화·토·금·수 순서를 따릅니다.\n이 점수 규칙에서 선택한 오행은 금·수입니다. 해당 날짜의 오행(목)이 포함되지 않아 감점됩니다. 정밀한 용신 분석은 아닙니다.\n2026-11-24의 키워드는 시작 · 성장 · 속도입니다.\n대운 보정 미적용: 출생시각이 미상이라 대운을 계산하지 않았습니다.\n출생 일주는 현지 민간 날짜 기준이며 진태양시 보정은 적용하지 않았습니다.\n년·월주는 현지 출생일 하루 전체에서 동일함을 확인했습니다. 시주와 대운은 제외합니다.\n해석의 한계: 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 실제 성격·상황이나 미래를 확인한 결과가 아닙니다. 이 운세는 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다.",
+        "channel_text": "계산된 사주·일진의 경험적 해석 · 2026-11-24 · 종합 운세 · 53점 — 평온\n이날의 해석: 새로 배운 내용을 어떻게 써볼지 살펴봅니다.\n해볼 일: 배울 일이 있다면, 자료 하나를 읽고 바로 써볼 내용을 한 줄로 적어 보세요.\n주의할 점: 자료를 더 찾는 데만 시간을 쓰고 실행을 미루지 않도록 살펴보세요.\n계산 근거: 일간 화·일진 임인(목)의 관계와 오행 수를 반영했습니다. 출생시각 미상으로 대운 보정 미적용.\n2026-11-24의 키워드는 시작 · 성장 · 속도입니다.\n출생시각 미확정: 시주·대운은 제외했습니다.\n점수와 조언은 경험적 해석이며 예측 확률이 아닙니다. 오락과 자기성찰용이며 의학, 투자, 법률 결정을 지시하지 않습니다.",
+        "natal_report": {
+          "ok": true,
+          "computed": true,
+          "kind": "integrated",
+          "schema_version": 1,
+          "rule_version": "natal-reflection-1",
+          "scope": "natal",
+          "title": "네 관점으로 읽는 나의 성향",
+          "summary": [
+            "네 체계 중 1개 체계의 계산 근거를 사용했습니다.",
+            "공통 해석을 억지로 만들지 않고, 확인된 관점과 제한사항을 함께 보여드립니다."
+          ],
+          "methods": [
+            {
+              "method": "bazi",
+              "label": "사주",
+              "status": "partial",
+              "used_in_reading": true,
+              "engine_status": "partial",
+              "calculation_mode": "computed",
+              "backend": "lunar-javascript",
+              "calculation_basis": "절기 기준 년·월주와 현지 민간시 일·시주. 미상 시주는 제외하며 진태양시 보정은 적용하지 않습니다.",
+              "reason": "계산 가능한 출생 자료만 사용했습니다. 시각·위치 또는 일부 계산 항목이 제한됩니다."
+            },
+            {
+              "method": "ziwei",
+              "label": "자미두수",
+              "status": "unavailable",
+              "used_in_reading": false,
+              "engine_status": "blocked",
+              "calculation_mode": "unknown",
+              "backend": "unavailable",
+              "calculation_basis": "해석에 사용하지 않았습니다.",
+              "reason": "출생시각 미상으로 시간에 의존하는 계산을 제외했습니다."
+            },
+            {
+              "method": "western",
+              "label": "서양 점성술",
+              "status": "unavailable",
+              "used_in_reading": false,
+              "engine_status": "blocked",
+              "calculation_mode": "unknown",
+              "backend": "unavailable",
+              "calculation_basis": "해석에 사용하지 않았습니다.",
+              "reason": "출생시각 미상으로 시간에 의존하는 계산을 제외했습니다."
+            },
+            {
+              "method": "vedic",
+              "label": "베딕 점성술",
+              "status": "unavailable",
+              "used_in_reading": false,
+              "engine_status": "blocked",
+              "calculation_mode": "unknown",
+              "backend": "unavailable",
+              "calculation_basis": "해석에 사용하지 않았습니다.",
+              "reason": "출생시각 미상으로 시간에 의존하는 계산을 제외했습니다."
+            }
+          ],
+          "themes": [
+            {
+              "id": "temperament",
+              "title": "기질",
+              "summary": "현재 한 체계의 근거만 있어 체계 간 공통점은 판단하지 않습니다.",
+              "agreements": [],
+              "differences": [],
+              "claims": [
+                {
+                  "id": "bazi.day_0.temperament",
+                  "method": "bazi",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/bazi/day_0/initiative/temperament",
+                  "evidence_ids": [
+                    "bazi.day_0"
+                  ],
+                  "axis": "approach",
+                  "pole": "initiative",
+                  "text": "사주의 일간 오행 계산값에 연결된 기질의 성찰 주제는 ‘표현과 새로운 시도’입니다."
+                }
+              ],
+              "reflection": "어떤 환경에서 내 방식이 편안하게 드러나는지 돌아보세요."
+            },
+            {
+              "id": "relationships",
+              "title": "관계",
+              "summary": "현재 한 체계의 근거만 있어 체계 간 공통점은 판단하지 않습니다.",
+              "agreements": [],
+              "differences": [],
+              "claims": [
+                {
+                  "id": "bazi.day_1.relationships",
+                  "method": "bazi",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/bazi/day_1/structure/relationships",
+                  "evidence_ids": [
+                    "bazi.day_1"
+                  ],
+                  "axis": "approach",
+                  "pole": "structure",
+                  "text": "함께 약속을 정한다면, 서로 가능한 시간과 맡을 일을 하나씩 확인해 보세요. 계산된 일지 辰(토)에서 ‘일관성과 안정’ 주제를 읽은 제안입니다. 실제 관계나 성격을 확인한 결과는 아닙니다."
+                }
+              ],
+              "reflection": "내가 원하는 소통 방식과 상대가 원하는 방식을 구체적으로 나눠 보세요."
+            },
+            {
+              "id": "work",
+              "title": "일·학습",
+              "summary": "현재 한 체계의 근거만 있어 체계 간 공통점은 판단하지 않습니다.",
+              "agreements": [],
+              "differences": [],
+              "claims": [
+                {
+                  "id": "bazi.month_1.work",
+                  "method": "bazi",
+                  "time_scope": "natal",
+                  "rule_id": "natal-reflection-1/bazi/month_1/adaptation/work",
+                  "evidence_ids": [
+                    "bazi.month_1"
+                  ],
+                  "axis": "approach",
+                  "pole": "adaptation",
+                  "text": "사주의 월지 오행 계산값에 연결된 일·학습의 성찰 주제는 ‘학습과 유연한 전환’입니다."
+                }
+              ],
+              "reflection": "작은 과제 하나에서 나에게 맞는 일·학습 방식을 시험해 보세요."
+            },
+            {
+              "id": "resources",
+              "title": "자원 관리",
+              "summary": "현재 계산 자료로 이 주제를 해석하지 않습니다.",
+              "agreements": [],
+              "differences": [],
+              "claims": [],
+              "reflection": ""
+            }
+          ],
+          "evidence": [
+            {
+              "id": "bazi.day_0",
+              "method": "bazi",
+              "label": "일간 오행",
+              "value": "丙 · 화"
+            },
+            {
+              "id": "bazi.day_1",
+              "method": "bazi",
+              "label": "일지 오행",
+              "value": "辰 · 토"
+            },
+            {
+              "id": "bazi.month_1",
+              "method": "bazi",
+              "label": "월지 오행",
+              "value": "寅 · 목"
+            }
+          ],
+          "limitations": [
+            "이 리포트는 출생 성향을 살펴보는 간략한 전통 해석입니다. 오늘·이번 달의 운세나 사건 발생 시기를 계산하지 않습니다.",
+            "계산된 간지·별 배치와 성향 해석은 구분됩니다. 해석 규칙은 서비스의 성찰용 분류이며 과학적 성격 진단이나 예측 확률이 아닙니다.",
+            "여러 체계의 공통점은 해석 주제의 반복입니다. 독립적인 증거가 늘거나 예측 정확도가 높아졌다는 뜻이 아닙니다.",
+            "체계별 황도·역법·해석 기준이 달라 강조점이 다를 수 있습니다. 서로 다른 관점을 하나의 점수로 합치지 않습니다.",
+            "이 결과는 출생정보의 파생 데이터이며 익명화된 정보가 아닙니다. 의학·투자·법률 결정을 지시하지 않습니다."
+          ],
+          "text": "네 관점으로 읽는 나의 성향\n출생 성향 · 계산 근거가 연결된 성찰용 해석\n\n네 체계 중 1개 체계의 계산 근거를 사용했습니다.\n공통 해석을 억지로 만들지 않고, 확인된 관점과 제한사항을 함께 보여드립니다.\n\n계산 범위\n사주: 계산 가능한 출생 자료만 사용했습니다. 시각·위치 또는 일부 계산 항목이 제한됩니다.\n절기 기준 년·월주와 현지 민간시 일·시주. 미상 시주는 제외하며 진태양시 보정은 적용하지 않습니다.\n자미두수: 출생시각 미상으로 시간에 의존하는 계산을 제외했습니다.\n서양 점성술: 출생시각 미상으로 시간에 의존하는 계산을 제외했습니다.\n베딕 점성술: 출생시각 미상으로 시간에 의존하는 계산을 제외했습니다.\n\n기질\n현재 한 체계의 근거만 있어 체계 간 공통점은 판단하지 않습니다.\n사주의 일간 오행 계산값에 연결된 기질의 성찰 주제는 ‘표현과 새로운 시도’입니다.\n어떤 환경에서 내 방식이 편안하게 드러나는지 돌아보세요.\n\n관계\n현재 한 체계의 근거만 있어 체계 간 공통점은 판단하지 않습니다.\n함께 약속을 정한다면, 서로 가능한 시간과 맡을 일을 하나씩 확인해 보세요. 계산된 일지 辰(토)에서 ‘일관성과 안정’ 주제를 읽은 제안입니다. 실제 관계나 성격을 확인한 결과는 아닙니다.\n내가 원하는 소통 방식과 상대가 원하는 방식을 구체적으로 나눠 보세요.\n\n일·학습\n현재 한 체계의 근거만 있어 체계 간 공통점은 판단하지 않습니다.\n사주의 월지 오행 계산값에 연결된 일·학습의 성찰 주제는 ‘학습과 유연한 전환’입니다.\n작은 과제 하나에서 나에게 맞는 일·학습 방식을 시험해 보세요.\n\n자원 관리\n현재 계산 자료로 이 주제를 해석하지 않습니다.\n\n\n해석의 계산 근거\n[bazi.day_0] 사주 · 일간 오행: 丙 · 화\n[bazi.day_1] 사주 · 일지 오행: 辰 · 토\n[bazi.month_1] 사주 · 월지 오행: 寅 · 목\n\n읽기 전에 알아둘 점\n이 리포트는 출생 성향을 살펴보는 간략한 전통 해석입니다. 오늘·이번 달의 운세나 사건 발생 시기를 계산하지 않습니다.\n계산된 간지·별 배치와 성향 해석은 구분됩니다. 해석 규칙은 서비스의 성찰용 분류이며 과학적 성격 진단이나 예측 확률이 아닙니다.\n여러 체계의 공통점은 해석 주제의 반복입니다. 독립적인 증거가 늘거나 예측 정확도가 높아졌다는 뜻이 아닙니다.\n체계별 황도·역법·해석 기준이 달라 강조점이 다를 수 있습니다. 서로 다른 관점을 하나의 점수로 합치지 않습니다.\n이 결과는 출생정보의 파생 데이터이며 익명화된 정보가 아닙니다. 의학·투자·법률 결정을 지시하지 않습니다."
+        },
+        "bazi_relationship_excerpt": "함께 약속을 정한다면, 서로 가능한 시간과 맡을 일을 하나씩 확인해 보세요. 계산된 일지 辰(토)에서 ‘일관성과 안정’ 주제를 읽은 제안입니다. 실제 관계나 성격을 확인한 결과는 아닙니다."
+      }
+    }
+  ]
+}
