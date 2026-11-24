@@ -34,7 +34,8 @@ def preview(tmp_path):
 def test_lunar_register_reload_edit_partner_and_solar_reset(tmp_path, width):
     with preview(tmp_path) as url, sync_playwright() as p:
         browser = p.chromium.launch()
-        page = browser.new_page(viewport={"width": width, "height": 844})
+        context = browser.new_context(viewport={"width": width, "height": 844})
+        page = context.new_page()
         errors, external = [], []
         page.on("pageerror", lambda error: errors.append(str(error)))
         def route(request):
@@ -43,7 +44,7 @@ def test_lunar_register_reload_edit_partner_and_solar_reset(tmp_path, width):
                 request.abort()
             else:
                 request.continue_()
-        page.route("**/*", route)
+        context.route("**/*", route)
         page.goto(url)
         expect(page.locator("#birth-calendar")).to_be_visible()
         page.locator("#birth-calendar").select_option("lunar")
@@ -79,6 +80,13 @@ def test_lunar_register_reload_edit_partner_and_solar_reset(tmp_path, width):
         assert response.value.json()["computed"]
         expect(page.locator("#partner-calendar")).to_have_value("solar")
         assert page.locator("#partner-date").get_attribute("type") == "date"
+        sibling = context.new_page()
+        sibling.on("pageerror", lambda error: errors.append(str(error)))
+        sibling.goto(url)
+        expect(sibling.locator("#birth-date")).to_have_value("2023-02-01")
+        expect(sibling.locator("#birth-leap-month")).to_be_checked()
+        sibling.locator("#natal-markers > summary").click()
+        expect(sibling.locator("#natal-marker-results h4")).to_have_text(["원진", "도화"])
         page.locator("#birth-calendar").select_option("solar")
         expect(page.locator("#birth-leap-month")).not_to_be_checked()
         page.locator("#birth-date").fill("2023-03-22")
@@ -86,5 +94,11 @@ def test_lunar_register_reload_edit_partner_and_solar_reset(tmp_path, width):
             page.locator('#birth-form button[type="submit"]').click()
         result = page.request.get(url + "/api/session").json()["profile"]
         assert result["birth_calendar"] == "solar" and not result["birth_leap_month"]
+        expect(sibling.locator("#birth-calendar")).to_have_value("solar")
+        expect(sibling.locator("#birth-leap-month")).not_to_be_checked()
+        expect(sibling.locator("#birth-date")).to_have_value("")
+        expect(sibling.locator("#natal-marker-results")).to_be_empty()
+        expect(sibling.locator("#daily-action")).to_be_empty()
+        expect(sibling.locator("#reading-panel")).to_be_hidden()
         assert not errors and not external
         browser.close()

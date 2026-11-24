@@ -22,7 +22,7 @@ def card(method, facts, mode="computed", status="runnable"):
 def four_cards():
     return [
         card("bazi", {"eight_char": {"year": "甲子", "month": "甲寅", "day": "甲寅", "time": "己巳"},
-                      "elements": {"목(木)": 4, "화(火)": 1, "토(土)": 2, "수(水)": 1}}),
+                      "elements": {"목(木)": 5, "화(火)": 1, "토(土)": 1, "수(水)": 1}}),
         card("ziwei", {"ming_gong": {"index": 0, "branch": "子"}, "stars": {"0": ["天機", "破軍"]},
                        "sihua": {"權": {"star": "天機"}, "科": {"star": "文昌"}, "祿": {"star": "天機"}}}),
         card("western", {"planet_positions": [{"name": n, "longitude": 65.0} for n in ("Sun", "Venus", "Mercury", "Saturn")]}),

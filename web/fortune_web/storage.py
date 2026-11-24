@@ -57,10 +57,18 @@ class WebStore:
     def find(self, token):
         if not token or len(token) != 64:
             return None
+        key = self.key(token)
         with self.connect() as db:
-            db.execute("DELETE FROM web_sessions WHERE expires <= ?", (int(time.time()),))
-            row = db.execute("SELECT profile FROM web_sessions WHERE id = ? AND expires > ?",
-                             (self.key(token), int(time.time()))).fetchone()
+            row = db.execute("SELECT expires, profile FROM web_sessions WHERE id = ?", (key,)).fetchone()
+            # An exclusive writer can delay the SELECT across session expiry.
+            now = int(time.time())
+            if row is not None and row["expires"] <= now:
+                # An expired cookie still removes its profile and linked receipts
+                # immediately. Live/unknown cookies only read, so a concurrent
+                # writer cannot stall all authenticated requests on a no-op DELETE.
+                # Startup, creation and periodic cleanup sweep other expired rows.
+                db.execute("DELETE FROM web_sessions WHERE id = ? AND expires <= ?", (key, now))
+                return None
         return None if row is None else {"profile": json.loads(row["profile"]) if row["profile"] else None}
 
     def save(self, token, profile):

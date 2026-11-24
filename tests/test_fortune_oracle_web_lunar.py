@@ -133,4 +133,3 @@ def test_lunar_lower_limit_and_unknown_time():
     p = service.validate_birth({"birth_calendar": "lunar", "birth_date": "1900-01-01"})
     assert p["birth_date_input"] == "1900-01-01" and p["birth_time"] == ""
     assert service.chart(p)["computed"]
-

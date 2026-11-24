@@ -17,7 +17,7 @@ button,a,summary{touch-action:manipulation}
 button{cursor:pointer}
 button:disabled{cursor:not-allowed}
 a{color:inherit}
-h1,h2,h3,p,ul,blockquote{margin-top:0}
+h1,h2,h3,p,ul,ol,blockquote{margin-top:0}
 button:focus-visible,a:focus-visible,input:focus-visible,summary:focus-visible,.table-scroll:focus-visible{outline:3px solid var(--accent);outline-offset:4px}
 [hidden]{display:none!important}
 .lh-multi{line-height:1.7}
@@ -71,12 +71,12 @@ main{max-width:1120px;margin:auto;padding:0 40px}
 
 /* The full text gets the entire row, with a bounded, comfortable reading measure. */
 .sample-report{grid-column:1 / -1;min-width:0;background:var(--white);border:1px solid var(--line);border-radius:6px}
-.sample-report>summary{list-style:none;cursor:pointer;min-height:48px;display:flex;align-items:center;gap:20px;padding:16px 24px;font-size:14px;font-weight:600;color:var(--green);border-radius:5px}
+.sample-report>summary{list-style:none;cursor:pointer;min-height:48px;display:flex;align-items:center;gap:20px;padding:16px 24px;font-size:14px;font-weight:600;color:var(--green);border-radius:5px;scroll-margin-top:24px}
 .sample-report>summary::-webkit-details-marker{display:none}
 .sample-report>summary::after{content:"+";margin-left:auto;font-size:22px;font-weight:400;color:var(--muted);line-height:1;flex:none}
 .sample-report[open]>summary{border-bottom:1px solid var(--line)}
 .sample-report[open]>summary::after{content:"−"}
-.report-body{max-width:76ch;margin:0 auto;padding:28px 32px 36px;font-size:15px;line-height:1.75}
+.report-body{max-width:76ch;margin:0 auto;padding:28px 32px 36px;font-size:16px;line-height:1.75}
 .report-kicker{font-size:12px;color:var(--muted);margin:0 0 28px}
 .report-body h3{font-size:18px;line-height:1.5;margin:32px 0 12px;font-weight:650;color:var(--green);letter-spacing:-.025em}
 .report-body h3:first-of-type{margin-top:0}
@@ -87,16 +87,24 @@ main{max-width:1120px;margin:auto;padding:0 40px}
 .phrase-list li::marker{color:var(--accent)}
 .one-page-summary{padding:24px;background:var(--soft);border-top:2px solid var(--green)}
 .one-page-summary p:last-child{margin-bottom:0}
-.one-page-summary blockquote{font-size:15px}
-.table-hint{display:none;font-size:12px;color:var(--muted)}
-.table-scroll{max-width:100%;overflow-x:auto;margin:0 0 20px;overscroll-behavior-inline:contain;scrollbar-color:var(--muted) var(--soft)}
-.perspective-table{width:100%;min-width:540px;table-layout:fixed;border-collapse:collapse;font-size:14px;line-height:1.65}
+.one-page-summary blockquote{font-size:16px}
+.perspective-table{width:100%;table-layout:fixed;border-collapse:collapse;font-size:16px;line-height:1.75;margin-bottom:20px}
 .perspective-table th,.perspective-table td{padding:14px 16px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
 .perspective-table thead th{background:var(--soft);font-size:12px;color:var(--green);font-weight:650}
 .perspective-table th:first-child{width:18%}
 .perspective-table tbody th{font-weight:650;color:var(--green)}
+.mobile-cell-label{display:none}
+.report-review{margin-top:36px;padding:28px 0 0;border-top:1px solid var(--line)}
+.report-review h3:first-of-type{margin:0 0 12px}
+.report-review p{color:var(--muted)}
+.report-review ol{margin:0 0 24px;padding-left:24px}
+.report-review li+li{margin-top:12px}
+.report-review li::marker{color:var(--accent);font-weight:650}
 .report-note{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:20px;margin:28px 0 0}
+.sample-close-button{min-height:44px;margin-top:4px;padding:10px 16px;border:1px solid var(--line);border-radius:6px;background:var(--white);color:var(--green);font-size:14px;line-height:1.6;font-weight:650}
+.sample-close-button:hover{background:var(--soft)}
 .interest-row{grid-column:1 / -1;display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:16px}
+.sample-interest-help{grid-column:1 / -1;font-size:13px;line-height:1.6;color:var(--muted);margin:0}
 .check{display:flex;align-items:center;gap:10px;min-height:44px;font-size:13px;color:var(--muted);line-height:1.6;cursor:pointer}
 .check input{accent-color:var(--green);width:18px;height:18px;margin:0;flex:none}
 .sample-interest-button{min-height:46px;min-width:190px;padding:11px 20px;border:1px solid var(--green);border-radius:6px;background:transparent;color:var(--green);font-size:14px;font-weight:650}
@@ -143,9 +151,15 @@ dialog p{font-size:14px;color:var(--muted);line-height:1.7}
   .sample-tagline{max-width:none}.sample-outline{padding-top:20px;border-top:1px solid var(--line)}
   .toc-preview{gap:9px;margin-bottom:20px}.price-line{margin-bottom:14px}
   .sample-report>summary{padding:14px 16px;gap:12px;font-size:13px}
-  .report-body{padding:22px 18px 26px;font-size:15px}.report-body h3{font-size:17px;margin-top:28px}
-  .report-body blockquote{font-size:15px;padding-left:14px}.one-page-summary{padding:18px}
-  .table-hint{display:block}.perspective-table th,.perspective-table td{padding:12px}
+  .report-body{padding:22px 18px 26px;font-size:16px}.report-body h3{font-size:17px;margin-top:28px}
+  .report-body blockquote{font-size:16px;padding-left:14px}.one-page-summary{padding:18px}
+  .perspective-table,.perspective-table tbody{display:block;width:100%}
+  .perspective-table thead{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .perspective-table tbody{display:grid;gap:24px}
+  .perspective-table tr{display:grid;border-top:1px solid var(--line)}
+  .perspective-table th,.perspective-table td{display:block;width:100%;border:0;padding:12px 0 0;word-break:keep-all;overflow-wrap:break-word}
+  .perspective-table th:first-child{width:100%;font-size:18px}
+  .mobile-cell-label{display:block;margin-bottom:4px;color:var(--muted);font-size:14px;font-weight:650;line-height:1.6}
   .interest-row{grid-template-columns:minmax(0,1fr);gap:12px}.sample-interest-button{width:100%}
   .sample-footer-notes{grid-template-columns:minmax(0,1fr);padding-top:26px;gap:16px}
   footer{margin:32px 20px 0;padding:24px 0 32px;display:block}footer p{margin-top:10px}
