@@ -210,7 +210,11 @@ function empty() {
   showError("reading-error", "");
 }
 function fillForm(value) {
-  $("display-name").value = value.display_name || ""; $("birth-date").value = value.birth_date;
+  $("display-name").value = value.display_name || "";
+  $("birth-calendar").value = value.birth_calendar || "solar";
+  syncBirthCalendar("birth");
+  $("birth-leap-month").checked = value.birth_leap_month === true;
+  $("birth-date").value = value.birth_date_input || value.birth_date;
   $("birth-time").value = value.birth_time || ""; $("unknown-time").checked = !value.birth_time;
   $("birth-time").disabled = !value.birth_time; $("birth-zone").value = TZ_LABEL[value.timezone] || value.timezone;
   $("gender").value = value.gender;
@@ -608,7 +612,9 @@ $("birth-form").addEventListener("input", () => {
 });
 $("birth-form").addEventListener("submit", async event => {
   event.preventDefault(); if (deleting || saving) return;
-  const data = Object.fromEntries(new FormData(event.currentTarget)); data.birth_time = $("unknown-time").checked ? "" : $("birth-time").value;
+  const data = Object.fromEntries(new FormData(event.currentTarget));
+  data.birth_leap_month = $("birth-calendar").value === "lunar" && $("birth-leap-month").checked;
+  data.birth_time = $("unknown-time").checked ? "" : $("birth-time").value;
   saving = true; syncSaveButton(); showError("form-error", "");
   let mine = null;
   try {
@@ -816,11 +822,37 @@ $("partner-unknown-time").addEventListener("change", () => {
 $("compat-form").addEventListener("submit", event => {
   event.preventDefault(); if (deleting) return;
   const partner = Object.fromEntries(new FormData(event.currentTarget));
+  partner.birth_leap_month = $("partner-calendar").value === "lunar" && $("partner-leap-month").checked;
   partner.birth_time = $("partner-unknown-time").checked ? "" : $("partner-time").value;
   loadSpecial("compat", {partner});
   event.currentTarget.reset(); $("partner-time").disabled = true;
 });
-const today = new Date(); $("birth-date").max = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
-$("partner-date").max = $("birth-date").max;
+function syncBirthCalendar(prefix) {
+  const lunar = $(prefix + "-calendar").value === "lunar", input = $(prefix + "-date");
+  // Gregorian date controls reject valid lunar dates such as February 30.
+  const entered = input.value;
+  input.type = lunar ? "text" : "date";
+  input.value = entered;
+  if (lunar) {
+    input.removeAttribute("min"); input.removeAttribute("max");
+    input.pattern = "[0-9]{4}-[0-9]{2}-[0-9]{2}"; input.maxLength = 10;
+    input.placeholder = "YYYY-MM-DD";
+  } else {
+    input.removeAttribute("pattern"); input.removeAttribute("maxlength");
+    input.min = "1800-01-01";
+    const today = new Date();
+    input.max = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+    $(prefix + "-leap-month").checked = false;
+  }
+  $(prefix + "-leap-label").hidden = !lunar;
+  $(prefix + "-leap-month").disabled = !lunar;
+  $(prefix + "-calendar-note").hidden = !lunar;
+}
+for (const [prefix, form] of [["birth", "birth-form"], ["partner", "compat-form"]]) {
+  $(prefix + "-calendar").addEventListener("change", () => syncBirthCalendar(prefix));
+  // reset fires before the browser restores default values.
+  $(form).addEventListener("reset", () => queueMicrotask(() => syncBirthCalendar(prefix)));
+  syncBirthCalendar(prefix);
+}
 bootstrap().catch(err => showError("form-error", err.name === "TimeoutError"
   ? err.message : "서비스에 연결하지 못했습니다. 잠시 후 저장을 다시 눌러 주세요."));

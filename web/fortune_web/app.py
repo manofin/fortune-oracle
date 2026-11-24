@@ -180,6 +180,10 @@ def create_app(config=None):
     def bootstrap():
         token = g.token if g.record is not None else store.create(app.config["SESSION_LIFETIME"])
         profile = g.record["profile"] if g.record else None
+        if profile:
+            # Older stored profiles were solar-only; do not mutate storage on read.
+            profile = {"birth_calendar": "solar", "birth_leap_month": False,
+                       "birth_date_input": profile["birth_date"], **profile}
         measure(token, "visit", "entry")
         response = jsonify(ok=True, profile=profile, csrf=csrf(token), storage="this_browser", retention_days=90,
                            reading_window=service.reading_window(profile, app.config["NOW"]))
