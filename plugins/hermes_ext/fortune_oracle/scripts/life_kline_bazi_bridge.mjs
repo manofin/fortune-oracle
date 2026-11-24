@@ -195,7 +195,9 @@ async function main() {
   const uncertainPillars = [];
   if (yearCandidates.length > 1) uncertainPillars.push("year");
   if (monthCandidates.length > 1) uncertainPillars.push("month");
-  warnings.push("일·시주는 출생지 민간시 기준이며 경도·진태양시 보정은 적용하지 않았습니다.");
+  warnings.push(parsed.birth_time_known === false
+    ? "일주는 출생지 민간 날짜 기준이며 경도·진태양시 보정은 적용하지 않았습니다."
+    : "일·시주는 출생지 민간시 기준이며 경도·진태양시 보정은 적용하지 않았습니다.");
   if (!parsed.term_reference && (!parsed.term_interval || uncertainPillars.length)) {
     warnings.push("절기 비교의 출생 순간이 미확정 — 절기 경계의 년·월주와 대운은 불확실합니다.");
   }

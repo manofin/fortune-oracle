@@ -38,13 +38,22 @@ def commit(root: Path) -> None:
     git(root, "commit", "-q", "-m", "synthetic fixture")
 
 
-def scan(root: Path, *, staged: bool = False, index_file: Path | None = None) -> subprocess.CompletedProcess[str]:
+def scan(
+    root: Path, *, staged: bool = False, index_file: Path | None = None,
+    history: str | None = None, excludes: tuple[str, ...] = (),
+    push_input: str | None = None,
+) -> subprocess.CompletedProcess[str]:
     environment = {key: value for key, value in os.environ.items() if not key.startswith("GIT_")}
     if index_file is not None:
         environment["GIT_INDEX_FILE"] = str(index_file)
+    mode = ["--staged"] if staged else []
+    if history is not None:
+        mode = ["--history", history, *[part for oid in excludes for part in ("--exclude", oid)]]
+    elif push_input is not None:
+        mode = ["--pre-push"]
     return subprocess.run(
-        [sys.executable, str(SCRIPT), "--root", str(root), *(["--staged"] if staged else [])],
-        cwd=root, env=environment, capture_output=True, text=True, check=False,
+        [sys.executable, str(SCRIPT), "--root", str(root), *mode],
+        input=push_input, cwd=root, env=environment, capture_output=True, text=True, check=False,
     )
 
 
@@ -57,6 +66,17 @@ def write(root: Path, relative: str, data: str | bytes) -> Path:
 
 def token() -> str:
     return "123456789:" + "B" * 35
+
+
+def oid(root: Path, revision: str = "HEAD") -> str:
+    return git(root, "rev-parse", "--verify", revision).stdout.decode().strip()
+
+
+def push_record(
+    target: str, base: str | None = None, *,
+    remote_ref: str = "refs/heads/main", local_ref: str = "refs/heads/main",
+) -> str:
+    return f"{local_ref} {target} {remote_ref} {base or '0' * len(target)}\n"
 
 
 @pytest.fixture
@@ -368,3 +388,491 @@ def test_ignore_blocks_new_runtime_paths_but_keeps_env_templates(snapshot: Path)
         write(snapshot, relative, "")
         result = subprocess.run(["git", "-C", str(snapshot), "check-ignore", "--", relative], capture_output=True, check=False)
         assert result.returncode == 1
+
+
+@pytest.mark.parametrize("new_ref", [False, True])
+def test_history_catches_secret_removed_before_pushed_tip(snapshot: Path, new_ref: bool) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    base = oid(snapshot)
+    write(snapshot, "settings.txt", token())
+    commit(snapshot)
+    (snapshot / "settings.txt").unlink()
+    commit(snapshot)
+    assert scan(snapshot, staged=True).returncode == 0
+    target = oid(snapshot)
+    results = [
+        scan(snapshot, history=target, excludes=() if new_ref else (base,)),
+        scan(snapshot, push_input=push_record(target, None if new_ref else base)),
+    ]
+    for result in results:
+        assert result.returncode == 1, result.stdout + result.stderr
+        assert 'rule=telegram-token path="settings.txt" line=1' in result.stdout
+        assert token() not in result.stdout + result.stderr
+        assert hashlib.sha256(token().encode()).hexdigest() not in result.stdout + result.stderr
+        assert target not in result.stdout + result.stderr
+
+
+def test_push_reads_committed_objects_independently_of_index_and_worktree(snapshot: Path) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    base = oid(snapshot)
+    write(snapshot, "settings.txt", token())
+    commit(snapshot)
+    write(snapshot, "settings.txt", "placeholder\n")
+    git(snapshot, "add", "settings.txt")
+    assert scan(snapshot, staged=True).returncode == 0
+    result = scan(snapshot, push_input=push_record(oid(snapshot), base))
+    assert result.returncode == 1
+    assert 'rule=telegram-token path="settings.txt" line=1' in result.stdout
+
+
+def test_clean_push_ignores_unpushed_index_worktree_and_unrelated_branch(snapshot: Path) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    base = oid(snapshot)
+    git(snapshot, "checkout", "-q", "-b", "unpublished")
+    write(snapshot, "settings.txt", token())
+    commit(snapshot)
+    git(snapshot, "checkout", "-q", "main")
+    write(snapshot, "README.md", "second clean revision\n")
+    commit(snapshot)
+    target = oid(snapshot)
+    write(snapshot, "settings.txt", token())
+    git(snapshot, "add", "settings.txt")
+    write(snapshot, ".env", token())
+    assert scan(snapshot, staged=True).returncode == 1
+    for result in [scan(snapshot, history=target), scan(snapshot, push_input=push_record(target, base))]:
+        assert result.returncode == 0, result.stdout + result.stderr
+
+
+def test_existing_ref_exclusion_does_not_reinspect_removed_remote_content(snapshot: Path) -> None:
+    initialize(snapshot)
+    write(snapshot, "settings.txt", token())
+    commit(snapshot)
+    base = oid(snapshot)
+    (snapshot / "settings.txt").unlink()
+    commit(snapshot)
+    target = oid(snapshot)
+    assert scan(snapshot, history=target).returncode == 1
+    assert scan(snapshot, history=target, excludes=(base,)).returncode == 0
+    assert scan(snapshot, push_input=push_record(target, base)).returncode == 0
+    assert scan(snapshot, push_input=push_record(target)).returncode == 1
+
+
+def test_push_checks_every_outgoing_ref(snapshot: Path) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    base = oid(snapshot)
+    write(snapshot, "README.md", "clean main revision\n")
+    commit(snapshot)
+    clean = oid(snapshot)
+    git(snapshot, "checkout", "-q", "-b", "feature", base)
+    write(snapshot, "settings.txt", token())
+    commit(snapshot)
+    secret_commit = oid(snapshot)
+    result = scan(snapshot, push_input=(
+        push_record(clean, base)
+        + push_record(secret_commit, remote_ref="refs/heads/feature", local_ref="refs/heads/feature")
+    ))
+    assert result.returncode == 1
+    assert 'rule=telegram-token path="settings.txt" line=1' in result.stdout
+
+
+def test_empty_push_and_deleting_an_unfetched_remote_ref_publish_no_objects(snapshot: Path) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    for data in ["", push_record("0" * 40, "1" * 40, local_ref="(delete)")]:
+        result = scan(snapshot, push_input=data)
+        assert result.returncode == 0, result.stdout + result.stderr
+        assert "scanned_files=0 blocking=0" in result.stdout
+
+
+def test_clean_multiple_ref_push_includes_new_branch_tag_and_deletion(snapshot: Path) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    base = oid(snapshot)
+    write(snapshot, "README.md", "second clean revision\n")
+    commit(snapshot)
+    target = oid(snapshot)
+    git(snapshot, "tag", "-a", "release", "-m", "Synthetic public release")
+    result = scan(snapshot, push_input=(
+        push_record(target, base)
+        + push_record(target, remote_ref="refs/heads/new-feature", local_ref="HEAD")
+        + push_record(oid(snapshot, "refs/tags/release"), remote_ref="refs/tags/release", local_ref="refs/tags/release")
+        + push_record("0" * 40, "1" * 40, remote_ref="refs/heads/removed", local_ref="(delete)")
+    ))
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+@pytest.mark.parametrize("tag_kind", ["lightweight", "annotated", "nested"])
+def test_commit_tags_cannot_hide_intermediate_secret(snapshot: Path, tag_kind: str) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    write(snapshot, "settings.txt", token())
+    commit(snapshot)
+    (snapshot / "settings.txt").unlink()
+    commit(snapshot)
+    if tag_kind == "lightweight":
+        git(snapshot, "tag", "release")
+    else:
+        git(snapshot, "tag", "-a", "release", "-m", "Synthetic release")
+        if tag_kind == "nested":
+            git(snapshot, "tag", "-a", "outer", "-m", "Synthetic outer tag", "release")
+    ref = "refs/tags/outer" if tag_kind == "nested" else "refs/tags/release"
+    target = oid(snapshot, ref)
+    for result in [scan(snapshot, history=target), scan(snapshot, push_input=push_record(target, remote_ref=ref, local_ref=ref))]:
+        assert result.returncode == 1
+        assert 'rule=telegram-token path="settings.txt" line=1' in result.stdout
+
+
+@pytest.mark.parametrize("kind", ["commit", "tag"])
+def test_history_checks_commit_and_annotated_tag_messages(snapshot: Path, kind: str) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    base = oid(snapshot)
+    if kind == "commit":
+        git(snapshot, "commit", "-q", "--allow-empty", "-m", token())
+        record = push_record(oid(snapshot), base)
+    else:
+        git(snapshot, "tag", "-a", "release", "-m", token())
+        record = push_record(oid(snapshot, "refs/tags/release"), remote_ref="refs/tags/release", local_ref="refs/tags/release")
+    result = scan(snapshot, push_input=record)
+    assert result.returncode == 1
+    assert f'rule=telegram-token path=".git/{kind}-message" line=1' in result.stdout
+    assert token() not in result.stdout + result.stderr
+
+
+@pytest.mark.parametrize("kind", ["commit", "tag"])
+def test_history_checks_credentials_in_commit_and_tag_headers(snapshot: Path, kind: str) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    if kind == "commit":
+        data = (
+            f"tree {oid(snapshot, 'HEAD^{tree}')}\nparent {oid(snapshot)}\n"
+            f"author {token()} <test@example.invalid> 1000000000 +0000\n"
+            "committer Synthetic Test <test@example.invalid> 1000000000 +0000\n\n"
+            "Synthetic metadata fixture\n"
+        )
+        target = git(snapshot, "hash-object", "-t", "commit", "-w", "--stdin", data=data.encode()).stdout.decode().strip()
+        rule = "telegram-token"
+    else:
+        tag_name = "ghp_" + "B" * 32
+        git(snapshot, "tag", "-a", tag_name, "-m", "Synthetic metadata fixture")
+        target = oid(snapshot, "refs/tags/" + tag_name)
+        rule = "github-token"
+    result = scan(snapshot, history=target)
+    assert result.returncode == 1
+    assert f'rule={rule} path=".git/{kind}-metadata" line=3' in result.stdout
+    assert token() not in result.stdout + result.stderr
+
+
+@pytest.mark.parametrize("kind", ["blob", "tree"])
+def test_history_rejects_noncommit_tag_targets(snapshot: Path, kind: str) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    target = oid(snapshot, "HEAD:README.md" if kind == "blob" else "HEAD^{tree}")
+    git(snapshot, "tag", "-a", "release", "-m", "Synthetic tag", target)
+    target = oid(snapshot, "refs/tags/release")
+    result = scan(snapshot, push_input=push_record(target, remote_ref="refs/tags/release", local_ref="refs/tags/release"))
+    assert result.returncode == 2
+    assert result.stderr.strip() == "ERROR public-release-inspection-failed"
+    assert target not in result.stdout + result.stderr
+
+
+@pytest.mark.parametrize("missing", ["target", "base", "blob", "parent", "tree"])
+def test_push_fails_closed_on_missing_objects(snapshot: Path, missing: str) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    base = oid(snapshot)
+    write(snapshot, "README.md", "second clean revision\n")
+    commit(snapshot)
+    target = oid(snapshot)
+    if missing == "target":
+        target = "1" * 40
+    elif missing == "base":
+        base = "1" * 40
+    else:
+        missing_oid = {"blob": oid(snapshot, "HEAD:README.md"), "parent": base, "tree": oid(snapshot, "HEAD^{tree}")}[missing]
+        (snapshot / ".git" / "objects" / missing_oid[:2] / missing_oid[2:]).unlink()
+    result = scan(snapshot, push_input=push_record(target, base))
+    assert result.returncode == 2
+    assert result.stderr.strip() == "ERROR public-release-inspection-failed"
+    assert target not in result.stdout + result.stderr
+
+
+@pytest.mark.parametrize("mutation", [
+    "short-id", "upper-id", "revision-expression", "local-ref-expression", "extra-field", "blank-record",
+    "duplicate-ref", "unsupported-ref", "invalid-ref", "bad-delete", "delete-missing-ref", "crlf", "nul",
+])
+def test_push_fails_closed_on_malformed_protocol(snapshot: Path, mutation: str) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    target = oid(snapshot)
+    record = push_record(target)
+    if mutation == "short-id":
+        record = push_record(target[:8])
+    elif mutation == "upper-id":
+        record = push_record(target.upper())
+    elif mutation == "revision-expression":
+        record = push_record("HEAD~1")
+    elif mutation == "local-ref-expression":
+        record = push_record(target, local_ref="main~1")
+    elif mutation == "extra-field":
+        record = record.rstrip() + " extra\n"
+    elif mutation == "blank-record":
+        record += "\n"
+    elif mutation == "duplicate-ref":
+        record *= 2
+    elif mutation == "unsupported-ref":
+        record = push_record(target, remote_ref="refs/notes/synthetic")
+    elif mutation == "invalid-ref":
+        record = push_record(target, remote_ref="refs/heads/../synthetic")
+    elif mutation == "bad-delete":
+        record = push_record("0" * 40, target)
+    elif mutation == "delete-missing-ref":
+        record = push_record("0" * 40, local_ref="(delete)")
+    elif mutation == "crlf":
+        record = record.replace("\n", "\r\n")
+    elif mutation == "nul":
+        record = record.replace("refs/heads/main", "refs/heads/ma\0in")
+    result = scan(snapshot, push_input=record)
+    assert result.returncode == 2
+    assert result.stderr.strip() == "ERROR public-release-inspection-failed"
+
+
+@pytest.mark.parametrize("limit", ["bytes", "refs"])
+def test_push_protocol_work_limits_fail_closed(snapshot: Path, limit: str) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    target = oid(snapshot)
+    if limit == "bytes":
+        data = "A" * (128 * 1024 + 1)
+    else:
+        data = "".join(push_record(target, remote_ref=f"refs/heads/synthetic-{number}") for number in range(257))
+    result = scan(snapshot, push_input=data)
+    assert result.returncode == 2
+    assert result.stderr.strip() == "ERROR public-release-inspection-failed"
+
+
+@pytest.mark.parametrize("target", ["HEAD", "HEAD~1", "main", "--all", "0" * 40, "1" * 8])
+def test_history_cli_requires_complete_nonzero_object_ids(snapshot: Path, target: str) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    result = scan(snapshot, history=target)
+    assert result.returncode == 2
+
+
+def test_push_ignores_object_replacements_that_hide_secret(snapshot: Path) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    base = oid(snapshot)
+    write(snapshot, "settings.txt", token())
+    commit(snapshot)
+    target = oid(snapshot)
+    git(snapshot, "checkout", "-q", "-b", "replacement", base)
+    write(snapshot, "README.md", "clean replacement revision\n")
+    commit(snapshot)
+    replacement = oid(snapshot)
+    git(snapshot, "replace", target, replacement)
+    result = scan(snapshot, push_input=push_record(target, base))
+    assert result.returncode == 1
+    assert 'rule=telegram-token path="settings.txt" line=1' in result.stdout
+
+
+@pytest.mark.parametrize("metadata", ["shallow", "objects/info/alternates", "objects/info/http-alternates", "info/grafts"])
+def test_history_rejects_incomplete_or_external_object_storage(snapshot: Path, metadata: str) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    target = oid(snapshot)
+    write(snapshot, ".git/" + metadata, "synthetic metadata\n")
+    result = scan(snapshot, push_input=push_record(target))
+    assert result.returncode == 2
+    assert "synthetic metadata" not in result.stdout + result.stderr
+
+
+def test_history_rejects_partial_clones_without_lazy_fetch(snapshot: Path) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    git(snapshot, "config", "remote.synthetic.promisor", "true")
+    result = scan(snapshot, push_input=push_record(oid(snapshot)))
+    assert result.returncode == 2
+    assert result.stderr.strip() == "ERROR public-release-inspection-failed"
+
+
+def test_history_rejects_symlinked_object_storage(snapshot: Path) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    target = oid(snapshot)
+    objects = snapshot / ".git" / "objects"
+    elsewhere = snapshot / "synthetic-objects"
+    objects.rename(elsewhere)
+    objects.symlink_to(elsewhere, target_is_directory=True)
+    result = scan(snapshot, push_input=push_record(target))
+    assert result.returncode == 2
+    assert result.stderr.strip() == "ERROR public-release-inspection-failed"
+
+
+def test_history_rejects_mistyped_tag_object(snapshot: Path) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    data = f"object {oid(snapshot)}\ntype blob\ntag synthetic\n\nSynthetic mistyped tag\n"
+    target = git(snapshot, "hash-object", "-t", "tag", "--literally", "-w", "--stdin", data=data.encode()).stdout.decode().strip()
+    result = scan(snapshot, history=target)
+    assert result.returncode == 2
+    assert result.stderr.strip() == "ERROR public-release-inspection-failed"
+
+
+def test_history_deduplication_preserves_path_specific_synthetic_policy(snapshot: Path) -> None:
+    initialize(snapshot)
+    data = token() + " # public-release: allow-synthetic\n"
+    write(snapshot, "tests/test_fixture.py", data)
+    commit(snapshot)
+    base = oid(snapshot)
+    write(snapshot, "settings.txt", data)
+    commit(snapshot)
+    result = scan(snapshot, push_input=push_record(oid(snapshot), base))
+    assert result.returncode == 1
+    assert 'rule=telegram-token path="settings.txt" line=1' in result.stdout
+    assert 'path="tests/test_fixture.py"' not in result.stdout
+
+
+def test_history_checks_paths_even_when_the_blob_was_previously_clean(snapshot: Path) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    base = oid(snapshot)
+    git(snapshot, "mv", "README.md", "auth.json")
+    commit(snapshot)
+    git(snapshot, "mv", "auth.json", "README.md")
+    commit(snapshot)
+    result = scan(snapshot, push_input=push_record(oid(snapshot), base))
+    assert result.returncode == 1
+    assert 'rule=auth-store path="auth.json" line=0' in result.stdout
+
+
+@pytest.mark.parametrize("kind", ["symlink", "submodule"])
+def test_history_rejects_nonfile_entries_even_if_removed_at_tip(snapshot: Path, kind: str) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    base = oid(snapshot)
+    if kind == "symlink":
+        (snapshot / "nested").symlink_to("README.md")
+        commit(snapshot)
+    else:
+        git(snapshot, "update-index", "--add", "--cacheinfo", "160000," + base + ",nested")
+        git(snapshot, "commit", "-q", "-m", "Synthetic submodule fixture")
+    git(snapshot, "rm", "--cached", "nested")
+    if kind == "symlink":
+        (snapshot / "nested").unlink()
+    git(snapshot, "commit", "-q", "-m", "Remove synthetic nonfile")
+    result = scan(snapshot, push_input=push_record(oid(snapshot), base))
+    assert result.returncode == 1
+    assert 'rule=git-non-file-history-entry path="nested" line=0' in result.stdout
+
+
+def test_history_deduplication_cannot_hide_an_older_symlink_with_same_blob(snapshot: Path) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    base = oid(snapshot)
+    (snapshot / "nested").symlink_to("README.md")
+    commit(snapshot)
+    (snapshot / "nested").unlink()
+    write(snapshot, "nested", "README.md")
+    commit(snapshot)
+    result = scan(snapshot, push_input=push_record(oid(snapshot), base))
+    assert result.returncode == 1
+    assert 'rule=git-non-file-history-entry path="nested" line=0' in result.stdout
+
+
+def test_history_checks_forbidden_empty_tree_entries(snapshot: Path) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    base = oid(snapshot)
+    empty_tree = git(snapshot, "mktree", data=b"").stdout.strip()
+    tree = git(snapshot, "mktree", data=b"040000 tree " + empty_tree + b"\tstore\n").stdout.strip()
+    target = git(snapshot, "commit-tree", tree.decode(), "-p", base, data=b"Synthetic empty tree fixture\n").stdout.decode().strip()
+    result = scan(snapshot, push_input=push_record(target, base))
+    assert result.returncode == 1
+    assert 'rule=private-runtime-tree path="store" line=0' in result.stdout
+
+
+def test_push_checks_intermediate_commits_from_merged_branch(snapshot: Path) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    base = oid(snapshot)
+    git(snapshot, "checkout", "-q", "-b", "feature")
+    write(snapshot, "settings.txt", token())
+    commit(snapshot)
+    (snapshot / "settings.txt").unlink()
+    commit(snapshot)
+    git(snapshot, "checkout", "-q", "main")
+    write(snapshot, "README.md", "clean main revision\n")
+    commit(snapshot)
+    git(snapshot, "merge", "-q", "--no-ff", "-m", "Merge synthetic feature", "feature")
+    result = scan(snapshot, push_input=push_record(oid(snapshot), base))
+    assert result.returncode == 1
+    assert 'rule=telegram-token path="settings.txt" line=1' in result.stdout
+
+
+def test_pre_push_hook_executes_history_guard_without_consuming_protocol(snapshot: Path) -> None:
+    initialize(snapshot)
+    commit(snapshot)
+    base = oid(snapshot)
+    write(snapshot, "settings.txt", token())
+    commit(snapshot)
+    (snapshot / "settings.txt").unlink()
+    commit(snapshot)
+    write(snapshot, "scripts/check_public_release.py", SCRIPT.read_bytes())
+    write(snapshot, "scripts/check_fortune_secrets.py", (SCRIPT.parent / "check_fortune_secrets.py").read_bytes())
+    hook = SCRIPT.parent.parent / ".githooks" / "pre-push"
+    result = subprocess.run(
+        [str(hook), "synthetic-remote", "https://example.invalid/no-network"],
+        input=push_record(oid(snapshot), base), cwd=snapshot,
+        capture_output=True, text=True, check=False,
+    )
+    assert result.returncode == 1
+    assert 'rule=telegram-token path="settings.txt" line=1' in result.stdout
+    assert token() not in result.stdout + result.stderr
+
+
+def test_history_supports_sha256_git_objects(snapshot: Path) -> None:
+    try:
+        git(snapshot, "init", "-q", "-b", "main", "--object-format=sha256")
+    except subprocess.CalledProcessError:
+        pytest.skip("Git does not support SHA-256 repositories")
+    git(snapshot, "config", "commit.gpgsign", "false")
+    commit(snapshot)
+    base = oid(snapshot)
+    write(snapshot, "README.md", "clean SHA-256 revision\n")
+    commit(snapshot)
+    target = oid(snapshot)
+    assert len(target) == 64
+    result = scan(snapshot, push_input=push_record(target, base))
+    assert result.returncode == 0, result.stdout + result.stderr
+
+
+@pytest.mark.parametrize("limit", ["MAX_HISTORY_COMMITS", "MAX_HISTORY_ENTRIES", "MAX_HISTORY_BYTES", "MAX_HISTORY_SECONDS", "MAX_TREE_OUTPUT_BYTES"])
+def test_history_limits_fail_closed(snapshot: Path, monkeypatch: pytest.MonkeyPatch, limit: str) -> None:
+    import importlib
+
+    monkeypatch.syspath_prepend(str(SCRIPT.parent))
+    guard = importlib.import_module("check_public_release")
+    initialize(snapshot)
+    commit(snapshot)
+    target = oid(snapshot)
+    monkeypatch.setattr(guard, limit, 0)
+    with pytest.raises(RuntimeError):
+        guard.scan_history(snapshot, target, [])
+
+
+def test_history_oversized_blob_blocks_without_printing_payload(snapshot: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    import importlib
+
+    monkeypatch.syspath_prepend(str(SCRIPT.parent))
+    guard = importlib.import_module("check_public_release")
+    initialize(snapshot)
+    write(snapshot, "oversized.txt", "synthetic oversized body\n" * 100)
+    commit(snapshot)
+    monkeypatch.setattr(guard, "MAX_FILE_BYTES", 1000)
+    findings, _ = guard.scan_history(snapshot, oid(snapshot), [])
+    assert guard.Finding("oversized.txt", 0, "file-too-large-to-inspect") in findings

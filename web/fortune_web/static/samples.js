@@ -14,6 +14,8 @@
       adult: document.querySelector(`[data-sample-adult="${id}"]`),
       status: document.querySelector(`[data-sample-status="${id}"]`),
       report: document.getElementById(`sp-report-${id}`),
+      close: document.querySelector(`[data-sample-close="${id}"]`),
+      title: document.getElementById(`sp-title-${id}`)?.textContent || "리포트",
       viewed: false, confirmed: false, request: null, retry: false, nativeToggle: false
     })).filter(p => p.open && p.interest && p.adult && p.status && p.report);
     const deleteButton = document.getElementById("sp-delete-button");
@@ -24,7 +26,23 @@
     let csrf = "", generation = 0, day = dayKey(), deleting = false, deletionComplete = false;
     // A session GET may set a cookie. Always drain it before replacing a session
     // or deleting one; merely ignoring its JSON would not prevent a cookie race.
-    let sessionFlight = null;
+    let sessionFlight = null, browserStateChannel = null;
+
+    function connectBrowserState() {
+      if (browserStateChannel || !window.BroadcastChannel) return;
+      try {
+        browserStateChannel = new BroadcastChannel("fortune-browser-state");
+        browserStateChannel.onmessage = event => {
+          if (event.data === "profile-invalidated") {
+            invalidate("다른 탭에서 정보가 바뀌었어요. 샘플 다시 읽기로 이용 기록을 확인해 주세요.");
+          }
+        };
+      } catch (_) { /* Restored pages also invalidate below when channels are blocked. */ }
+    }
+    function notifyBrowserState() {
+      // A fixed, transient signal carries no identity, personal data or URL.
+      try { browserStateChannel?.postMessage("profile-invalidated"); } catch (_) { /* optional coordination */ }
+    }
 
     const isOpen = p => p.report.tagName === "DETAILS" ? p.report.open : !p.report.hidden;
     function setOpen(p, value) {
@@ -42,12 +60,14 @@
         p.open.setAttribute("aria-busy", String(busy && p.request.kind === "view"));
         p.open.textContent = busy && p.request.kind === "view" ? "샘플 확인 중…"
           : p.retry ? "샘플 다시 읽기" : isOpen(p) && p.viewed ? "샘플 닫기" : "샘플 읽기";
+        p.open.setAttribute("aria-label", `${p.title} · ${p.open.textContent}`);
         p.adult.disabled = deleting || busy;
         p.interest.disabled = deleting || busy || !isOpen(p) || !p.viewed || !p.adult.checked || p.confirmed;
         p.interest.setAttribute("aria-busy", String(busy && p.request.kind === "interest"));
         p.interest.dataset.confirmed = String(p.confirmed);
         p.interest.textContent = busy && p.request.kind === "interest" ? "관심 기록 중…"
           : p.confirmed ? "관심을 기록했어요" : "이 가격이면 관심 있어요";
+        p.interest.setAttribute("aria-label", `${p.title} · ${p.interest.textContent}`);
       });
       if (deleteButton) deleteButton.disabled = deleting;
       if (confirm) { confirm.disabled = deleting || deletionComplete; confirm.textContent = deleting ? "삭제 확인 중…" : "삭제하기"; }
@@ -189,9 +209,28 @@
         refreshDay();
         if (isOpen(p) && p.viewed && !p.retry) { setOpen(p, false); render(); return; }
         setOpen(p, true);
+        // Expanding a desktop card can move the whole report below the fold.
+        // Move focus before the opener becomes disabled during acknowledgement.
+        const summary = p.report.querySelector("summary");
+        if (summary) {
+          summary.focus({preventScroll: true});
+          summary.scrollIntoView({block: "start", behavior: "auto"});
+        }
         if (p.viewed) { render(); return; }
         void record(p, "view");
       });
+      if (p.close) {
+        p.close.hidden = false;
+        p.close.addEventListener("click", () => {
+          setOpen(p, false);
+          render();
+          // An acknowledgement may still be pending; the native summary remains
+          // usable in that case and avoids focusing a disabled opener.
+          const target = p.open.disabled ? p.report.querySelector("summary") : p.open;
+          target?.focus({preventScroll: true});
+          target?.scrollIntoView({block: "nearest", behavior: "auto"});
+        });
+      }
       p.interest.addEventListener("click", () => { void record(p, "interest"); });
       p.adult.addEventListener("change", () => { refreshDay(); render(); });
       // Native summary keyboard/click activation also counts as an explicit open.
@@ -234,6 +273,7 @@
         if (deleting || deletionComplete) return;
         const knownToken = csrf, existingFlight = sessionFlight;
         deleting = true;
+        notifyBrowserState();
         invalidate("삭제를 확인하고 있어요…");
         const mine = generation;
         deleteStatus.textContent = "삭제를 확인하고 있어요. 완료될 때까지 기다려 주세요.";
@@ -251,12 +291,14 @@
           const {status, data} = await requestJSON("/api/profile", {
             method: "DELETE", headers: {"X-CSRF-Token": token}
           });
+          notifyBrowserState();
           if (mine !== generation) throw new Error("stale");
           if (status !== 401 && (status !== 200 || data?.ok !== true)) throw new Error("delete_unconfirmed");
           invalidate("이 브라우저의 정보를 삭제했어요. 샘플은 계속 읽을 수 있어요.");
           deletionComplete = true;
           deleteStatus.textContent = "이 브라우저의 출생정보와 이용 기록을 삭제했어요. 익명 일별 집계는 남습니다.";
         } catch (_) {
+          notifyBrowserState();
           invalidate("삭제 완료를 확인하지 못했어요. 삭제 창에서 다시 시도해 주세요.");
           deleteStatus.textContent = "삭제 완료를 확인하지 못했어요. 연결을 확인하고 삭제하기를 다시 눌러 주세요.";
         } finally {
@@ -265,7 +307,12 @@
         }
       });
     }
+    window.addEventListener("pagehide", () => {
+      invalidate("화면을 나갔어요. 돌아온 뒤 샘플 다시 읽기를 눌러 주세요.");
+      browserStateChannel?.close(); browserStateChannel = null;
+    });
     window.addEventListener("pageshow", event => {
+      connectBrowserState();
       if (event.persisted) {
         day = dayKey();
         invalidate("화면으로 돌아왔어요. 샘플 다시 읽기를 눌러 이용 기록을 다시 확인해 주세요.");
@@ -274,6 +321,7 @@
     document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshDay(); });
     window.addEventListener("focus", refreshDay);
     // No API request, cookie access, or storage access on page load.
+    connectBrowserState();
     render();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init, {once: true});

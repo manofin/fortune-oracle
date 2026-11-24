@@ -44,6 +44,15 @@ REFLECTIONS = {
 STEMS = dict(zip("甲乙丙丁戊己庚辛壬癸", "목목화화토토금금수수"))
 BRANCHES = dict(zip("子丑寅卯辰巳午未申酉戌亥", "수토목목토화화토금금토수"))
 ELEMENT_POLES = {"목": "adaptation", "화": "initiative", "토": "structure", "금": "structure", "수": "reflection"}
+# Everyday suggestions keep the existing day-branch -> element -> pole rule.
+# These are conditional examples, not newly inferred personality traits.
+BAZI_RELATIONSHIP_PRACTICE = {
+    "목": "의견이 다르다면, 내 설명을 보태기 전에 상대가 중요하게 보는 점을 하나 물어보세요.",
+    "화": "마음을 전할 일이 있다면, 바라는 점 하나를 짧게 말하고 상대의 답을 들어보세요.",
+    "토": "함께 약속을 정한다면, 서로 가능한 시간과 맡을 일을 하나씩 확인해 보세요.",
+    "금": "서로 원하는 것이 다르다면, 꼭 필요한 것과 양보할 수 있는 것을 하나씩 나눠 보세요.",
+    "수": "바로 답하기 어렵다면, 잠시 생각할 시간을 요청한 뒤 내 뜻을 한 문장으로 전해 보세요.",
+}
 WESTERN_SIGNS = ("양자리", "황소자리", "쌍둥이자리", "게자리", "사자자리", "처녀자리", "천칭자리", "전갈자리", "사수자리", "염소자리", "물병자리", "물고기자리")
 RASHIS = ("Mesha", "Vrishabha", "Mithuna", "Karka", "Simha", "Kanya", "Tula", "Vrishchika", "Dhanu", "Makara", "Kumbha", "Meena")
 SIGN_POLES = ("initiative", "structure", "adaptation", "connection", "initiative", "structure", "connection", "reflection", "adaptation", "structure", "adaptation", "reflection")
@@ -107,18 +116,47 @@ class _Findings:
         self.evidence = {}
         self.claims = {key: [] for key in THEMES}
 
-    def add(self, method, theme, anchor, label, value, pole):
+    def add(self, method, theme, anchor, label, value, pole, *, text=None):
         evidence_id = f"{method}.{anchor}"
         self.evidence[evidence_id] = {"id": evidence_id, "method": method, "label": label, "value": value}
         self.claims[theme].append({
             "id": f"{method}.{anchor}.{theme}", "method": method, "time_scope": "natal",
             "rule_id": f"{RULE_VERSION}/{method}/{anchor}/{pole}/{theme}",
             "evidence_ids": [evidence_id], "axis": "approach", "pole": pole,
-            "text": f"{METHODS[method]}의 {label} 계산값에 연결된 {THEMES[theme]}의 성찰 주제는 ‘{POLES[pole]}’입니다.",
+            "text": text if text is not None else
+                    f"{METHODS[method]}의 {label} 계산값에 연결된 {THEMES[theme]}의 성찰 주제는 ‘{POLES[pole]}’입니다.",
         })
 
 
-def _bazi(facts, out):
+def _valid_pillar(value):
+    return isinstance(value, str) and len(value) == 2 and value[0] in STEMS and value[1] in BRANCHES
+
+
+def _resource_counts(pillars, elements):
+    """Validate adapter counts against all eight known characters, without repair."""
+    if not isinstance(elements, dict) or not elements:
+        return None
+    expected = {element: 0 for element in ELEMENT_POLES}
+    for key in ("year", "month", "day", "time"):
+        pillar = pillars.get(key)
+        if not _valid_pillar(pillar):
+            return None
+        expected[STEMS[pillar[0]]] += 1
+        expected[BRANCHES[pillar[1]]] += 1
+    aliases = {key: element for element, char in zip("목화토금수", "木火土金水")
+               for key in (element, f"{element}({char})")}
+    counts = {element: 0 for element in ELEMENT_POLES}
+    for key, value in elements.items():
+        if key not in aliases or type(value) is not int or not 0 <= value <= 8:
+            return None
+        element = aliases[key]
+        if value != expected[element]:
+            return None
+        counts[element] = value
+    return counts if counts == expected else None
+
+
+def _bazi(facts, out, *, time_known):
     pillars = facts.get("eight_char", {})
     if not isinstance(pillars, dict):
         return
@@ -128,19 +166,23 @@ def _bazi(facts, out):
         ("work", "month", "월지 오행", 1, BRANCHES),
     ):
         pillar = pillars.get(key)
-        if isinstance(pillar, str) and len(pillar) == 2 and pillar[part] in mapping:
+        if _valid_pillar(pillar):
             element = mapping[pillar[part]]
-            out.add("bazi", theme, f"{key}_{part}", label, f"{pillar[part]} · {element}", ELEMENT_POLES[element])
-    elements = facts.get("elements")
-    if isinstance(elements, dict):
-        counts = {e: elements.get(e, elements.get(f"{e}({ch})", 0)) for e, ch in zip("목화토금수", "木火土金水")}
-        if all(isinstance(v, int) and not isinstance(v, bool) and 0 <= v <= 8 for v in counts.values()) and sum(counts.values()) > 0:
-            peak = max(counts.values())
-            # Ties remain multiple perspectives; dict order must not select a false winner.
-            for element, count in counts.items():
-                if count == peak:
-                    out.add("bazi", "resources", f"elements_{element}", "팔자 오행 개수의 최다 항목",
-                            " · ".join(f"{e} {n}개" for e, n in counts.items()), ELEMENT_POLES[element])
+            text = None
+            if theme == "relationships":
+                text = (
+                    f"{BAZI_RELATIONSHIP_PRACTICE[element]} "
+                    f"계산된 일지 {pillar[part]}({element})에서 ‘{POLES[ELEMENT_POLES[element]]}’ 주제를 읽은 제안입니다. "
+                    "실제 관계나 성격을 확인한 결과는 아닙니다.")
+            out.add("bazi", theme, f"{key}_{part}", label, f"{pillar[part]} · {element}", ELEMENT_POLES[element], text=text)
+    counts = _resource_counts(pillars, facts.get("elements")) if time_known else None
+    if counts is not None:
+        peak = max(counts.values())
+        # Ties remain multiple perspectives; dict order must not select a false winner.
+        for element, count in counts.items():
+            if count == peak:
+                out.add("bazi", "resources", f"elements_{element}", "팔자 오행 개수의 최다 항목",
+                        " · ".join(f"{e} {n}개" for e, n in counts.items()), ELEMENT_POLES[element])
 
 
 def _ziwei(facts, out):
@@ -148,7 +190,7 @@ def _ziwei(facts, out):
     stars = facts.get("stars_full", facts.get("stars", {}))
     if isinstance(ming, dict) and isinstance(stars, dict):
         index = ming.get("index")
-        entries = stars.get(str(index), [])
+        entries = stars.get(str(index), []) if type(index) is int and 0 <= index < 12 else []
         if isinstance(entries, list):
             for star in entries:
                 if star in STAR_POLES:
@@ -228,6 +270,16 @@ def _render(report):
     return "\n".join(lines)
 
 
+def _input_exclusion(method, inp):
+    if inp is None:
+        return "유효한 출생일·시각 형식·시간대가 필요합니다. 원문 입력을 다시 확인해 주세요."
+    if method in {"ziwei", "western", "vedic"} and not inp.has_birth_time:
+        return "출생시각 미상으로 시간에 의존하는 계산을 제외했습니다."
+    if method == "ziwei" and inp.gender not in {"male", "female"}:
+        return "전통 계산에 사용할 성별이 지정되지 않아 제외했습니다."
+    return None
+
+
 def build_integrated_report(profile=None):
     """Return all four statuses and an evidence-linked natal report, without persistence."""
     valid = True
@@ -236,6 +288,10 @@ def build_integrated_report(profile=None):
         inp = from_profile(clean)
     except Exception:
         valid, clean, inp = False, {}, None
+    # Keep eligibility tied to the validated caller input, even if an adapter
+    # returns stale computed facts or mutates its own input object.
+    exclusions = {method: _input_exclusion(method, inp) for method in METHODS}
+    time_known = bool(inp and inp.has_birth_time)
     try:
         cards = adapt_all(inp, profile=clean) if valid else []
     except Exception:
@@ -250,14 +306,14 @@ def build_integrated_report(profile=None):
         card = by_method.get(method)
         staged = _Findings()
         try:
-            calculated = bool(card and isinstance(card.backend, str)
+            calculated = bool(not exclusions[method] and card and isinstance(card.backend, str)
                               and card.backend == METHOD_BACKENDS[method] and is_calculated_card(card))
         except (TypeError, ValueError, AttributeError, KeyError):
             calculated = False
         if calculated:
             try:
                 if method == "bazi":
-                    _bazi(card.facts, staged)
+                    _bazi(card.facts, staged, time_known=time_known)
                 elif method == "ziwei":
                     _ziwei(card.facts, staged)
                 else:
@@ -269,14 +325,11 @@ def build_integrated_report(profile=None):
         findings.evidence.update(staged.evidence)
         for theme in THEMES:
             findings.claims[theme].extend(staged.claims[theme])
-        status = "ready" if used and card.status == "runnable" else "partial" if used else "unavailable"
+        status = ("ready" if used and card.status == "runnable" and (method != "bazi" or time_known)
+                  else "partial" if used else "unavailable")
         reason = "계산된 출생 자료를 해석에 사용했습니다."
-        if not valid:
-            reason = "유효한 출생일·시각 형식·시간대가 필요합니다. 원문 입력을 다시 확인해 주세요."
-        elif method in {"ziwei", "western", "vedic"} and not inp.has_birth_time:
-            reason = "출생시각 미상으로 시간에 의존하는 계산을 제외했습니다."
-        elif method == "ziwei" and inp.gender not in {"male", "female"}:
-            reason = "전통 계산에 사용할 성별이 지정되지 않아 제외했습니다."
+        if exclusions[method]:
+            reason = exclusions[method]
         elif card and card.calculation_mode == "approximate":
             reason = "근사 계산은 통합 해석의 근거에 포함하지 않습니다."
         elif not used:

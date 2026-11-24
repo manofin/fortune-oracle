@@ -2,7 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#151a2e">
+  <meta name="theme-color" content="#f6f4ed" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#17231f" media="(prefers-color-scheme: dark)">
   <meta name="description" content="출생정보로 계산한 근거와 해석을 구분해 읽는 나만의 하루.">
   <title>Fortune Oracle — 나의 하루를 읽는 시간</title>
   <link rel="canonical" href="{{ public_origin }}/">
@@ -24,22 +25,22 @@
   <link rel="stylesheet" href="/assets/style.css"><script src="/assets/share-card.js" defer></script>{% if integrated_enabled %}<script src="/assets/integrated-card.js" defer></script>{% endif %}<script src="/assets/app.js" defer></script>
 </head>
 <body data-integrated-enabled="{{ 'true' if integrated_enabled else 'false' }}" data-birth-location-enabled="{{ 'true' if birth_location_enabled else 'false' }}">
-  <a class="skip" href="#birth-form">출생정보 입력으로 이동</a>
+  <a class="skip skip-input" href="#birth-form">출생정보 입력으로 이동</a>
+  <a class="skip skip-reading" href="#reading-title">나의 풀이로 이동</a>
   <header class="hero">
     <div class="topbar">
-      <a class="brand" href="/" aria-label="Fortune Oracle 홈"><span class="brand-mark" aria-hidden="true"></span> FORTUNE ORACLE</a>
-      <span class="top-note">나를 이해하는 작은 시간</span>
+      <a class="brand" href="/" aria-label="Fortune Oracle 홈"><span class="brand-mark" aria-hidden="true">日</span> FORTUNE ORACLE</a>
+      <nav class="topnav" aria-label="페이지 이동"><a class="sample-entry" href="/samples">리포트 예시 <span aria-hidden="true">↗</span></a></nav>
     </div>
     <div class="hero-body">
       <div class="hero-copy">
-        <p class="eyebrow">오늘의 사주 한 줄</p>
-        <h1>오늘의 나에게, <br><em>작은 힌트 하나.</em></h1>
-        <p class="intro-copy">세 단어로 오늘을 돌아보세요.<br>계산 근거는 차근차근, 선택은 내 방식으로.</p>
+        <p class="edition">오늘의 사주 한 줄</p>
+        <h1>오늘의 나에게,<br><em>작은 힌트 하나.</em></h1>
+        <p class="intro-copy">내 사주와 오늘의 일진을 세 단어로 읽고,<br>하루에 해볼 일 하나를 찾아보세요.</p>
         <a class="cta" href="#birth-form">내 사주로 오늘 보기 <span aria-hidden="true">→</span></a>
-        <a class="sample-entry" href="/samples">입력 전에, 리포트 세 가지 먼저 읽기 <span aria-hidden="true">↗</span></a>
       </div>
       <figure class="hero-sample" aria-label="예시 사주표. 년주 庚午, 월주 辛巳, 일주 庚辰, 시주 庚辰. 실제 내 사주가 아닙니다.">
-        <figcaption><span>예시 · 사주표</span><span>내 사주 아님</span></figcaption>
+        <figcaption><strong>사주팔자</strong><span>가상 인물의 명식 예시</span></figcaption>
         <div class="pillars sample" aria-hidden="true">
           <div class="pillar"><span>년주</span><strong><span class="ch metal" data-read="경 · 금">庚</span><span class="ch fire" data-read="오 · 화">午</span></strong></div>
           <div class="pillar"><span>월주</span><strong><span class="ch metal" data-read="신 · 금">辛</span><span class="ch fire" data-read="사 · 화">巳</span></strong></div>
@@ -50,68 +51,44 @@
     </div>
   </header>
   <main class="layout">
-    <aside class="intro">
-      <section class="form-card" aria-labelledby="form-title">
-        <div class="section-top"><h2 id="form-title">나의 출생정보</h2><span class="small-label">한 번 입력</span></div>
-        <form id="birth-form">
-          <fieldset class="input-group"><legend>나를 부르는 이름</legend>
-          <label for="display-name">별명 <span class="optional">선택</span></label>
-          <input id="display-name" name="display_name" maxlength="30" placeholder="어떻게 불러드릴까요?" autocomplete="off">
-          </fieldset><fieldset class="input-group"><legend>계산에 사용할 출생정보</legend>
-          <label for="birth-date">생년월일 <span class="optional">양력</span></label>
-          <input id="birth-date" name="birth_date" type="date" min="1800-01-01" required autocomplete="bday">
-          <div class="field-row"><label for="birth-time">출생시각</label><label class="check"><input id="unknown-time" type="checkbox" checked> 시각을 몰라요</label></div>
-          <input id="birth-time" name="birth_time" type="time" disabled>
-          <p class="field-note">모르면 비워 두세요. 시주와 대운을 임의로 채우지 않습니다.</p>
-          <label for="birth-zone">출생지 시간대</label><p class="field-note">목록에서 고르거나 다른 지역의 IANA 시간대를 입력하세요.</p>
-          <input id="birth-zone" name="timezone" value="한국 시간" list="timezones" required maxlength="64" autocomplete="off">
-          <datalist id="timezones"><option value="한국 시간" label="한국 (서울)"><option value="일본 시간" label="일본 (도쿄)"><option value="미국 동부 시간" label="미국 동부 (뉴욕)"><option value="미국 서부 시간" label="미국 서부 (로스앤젤레스)"><option value="영국 시간" label="영국 (런던)"></datalist>
-          {% if birth_location_enabled %}<details class="birth-location"><summary>출생지 추가 <span class="optional">선택 · 상승점 계산에 사용</span></summary>
-            <label for="birthplace-text">출생 도시</label><input id="birthplace-text" name="birthplace_text" maxlength="80" placeholder="예: 서울" autocomplete="off">
-            <div class="coordinate-fields"><div><label for="birth-latitude">위도</label><input id="birth-latitude" name="latitude" type="number" min="-90" max="90" step="any" placeholder="예: 37.5665"></div><div><label for="birth-longitude">경도</label><input id="birth-longitude" name="longitude" type="number" min="-180" max="180" step="any" placeholder="예: 126.9780"></div></div>
-            <p class="field-note">도시명으로 위치를 추정하지 않습니다. 좌표는 두 항목을 함께 입력해 주세요. 비우면 위치가 필요한 계산을 제외하고, 출생지 시간대는 위에서 직접 지정합니다.</p>
-          </details>{% endif %}
-          </fieldset><fieldset class="input-group"><legend>해석에 참고할 정보</legend>
-          <label for="gender">성별 <span class="optional">선택 · 일부 전통 계산에 사용</span></label>
-          <select id="gender" name="gender"><option value="unknown">선택하지 않음</option><option value="female">여성</option><option value="male">남성</option></select>
-          <p class="field-note">선택하지 않으면 성별이 필요한 자미두수 계산은 제외합니다.</p>
-          </fieldset>
-          <p id="form-error" class="error" role="alert" hidden></p>
-          <button class="primary" id="save-button" type="submit" disabled>저장하고 오늘의 풀이 보기 <span aria-hidden="true">↗</span></button>
-          <p class="privacy-note">같은 브라우저에서 90일간 다시 볼 수 있습니다. 다른 기기에서는 이어볼 수 없으며, 언제든 삭제할 수 있습니다.</p>
-          <p class="privacy-note">이용 단계별 횟수만 자체 집계합니다. 통계에는 이름·출생정보·풀이 본문을 넣지 않으며, 삭제 후에는 개인과 연결되지 않는 날짜별 합계만 남습니다.</p>
-        </form>
-      </section>
-    </aside>
     <section class="workspace" aria-label="나의 풀이">
       <div id="empty-state" class="empty-state">
-        <div class="orbit" aria-hidden="true"><span>✦</span></div>
-        <p class="eyebrow">YOUR STORY STARTS HERE</p>
-        <h2>나의 하루를 세 단어로 만나보세요.</h2>
-        <p>먼저 가볍게 읽고, 궁금하면 근거까지.<br>마음에 남는 키워드는 이미지로 나눌 수 있어요.</p>
-        <ol class="steps"><li><span>01</span> 출생정보 입력</li><li><span>02</span> 계산 근거 확인</li><li><span>03</span> 내 하루에 비춰보기</li></ol>
+        <h2>풀이 읽는 순서</h2>
+        <ol class="steps">
+          <li><strong>오늘의 키워드</strong><p>내 사주와 그날의 일진에서 나온 세 단어를 읽어요.</p></li>
+          <li><strong>해볼 일과 주의할 점</strong><p>제안 중 내 상황에 맞는 행동을 하나 골라요.</p></li>
+          <li><strong>해석 근거와 한계</strong><p>상세를 펼쳐 어떤 계산이 풀이로 이어졌는지 살펴봐요.</p></li>
+        </ol>
       </div>
       <div id="reading-panel" hidden>
-        <div class="reading-heading"><div><p class="eyebrow">YOUR DAILY READING</p><h2 id="reading-title" tabindex="-1">나의 하루</h2></div><button class="text-button" id="delete-button" type="button">정보 삭제</button></div>
+        <div class="reading-heading"><div><h1 id="reading-title" tabindex="-1">나의 하루</h1></div><div class="profile-actions"><a href="#birth-form">정보 수정</a><button class="text-button" id="delete-button" type="button">정보 삭제</button></div></div>
         <nav class="tabs" aria-label="풀이 선택"><button type="button" data-view="today" aria-pressed="true">오늘</button><button type="button" data-view="tomorrow" aria-pressed="false">내일</button><button type="button" data-view="month" aria-pressed="false">이번 달 흐름</button>{% if integrated_enabled %}<button type="button" data-view="integrated" aria-pressed="false">통합 성향</button>{% endif %}</nav>
         <p id="loading" class="loading" role="status" hidden>계산 근거를 확인하고 있습니다…</p>
         <p id="reading-error" class="error prominent" role="alert" hidden></p>
         <article id="daily-result" class="result-card" hidden>
-          <div class="result-top"><span class="badge">계산에 바탕을 둔 해석</span><span><span id="reading-date-label" class="date-label" aria-hidden="true"></span><time id="reading-date" class="sr-only"></time></span></div>
-          <div id="day-pillar" class="day-pillar" aria-hidden="true"></div>
-          <p class="result-kicker" id="keyword-title">오늘을 바라보는 키워드</p>
-          <h3 id="keywords"></h3>
-          <p id="day-relation" class="relation"></p>
+          <div class="result-top"><span class="badge">계산된 사주·일진을 바탕으로 한 해석입니다.</span><span class="daily-date-context"><span id="reading-date-label" class="date-label" aria-hidden="true"></span><time id="reading-date" class="sr-only"></time><span id="reading-timezone"></span></span></div>
+          <div class="reading-lead">
+            <div><p class="result-kicker" id="keyword-title">오늘을 바라보는 키워드</p><h3 id="keywords"></h3></div>
+            <div id="day-pillar" class="day-pillar" aria-hidden="true"></div>
+          </div>
+          <div id="daily-guidance" hidden>
+            <section class="daily-theme" aria-labelledby="daily-theme-title"><h4 id="daily-theme-title"></h4><p id="day-relation" class="relation"></p><p id="daily-theme-qualifier" class="daily-qualifier" hidden></p></section>
+            <div class="daily-practice">
+              <div id="daily-practice-qualifiers" hidden></div>
+              <section aria-labelledby="daily-action-title"><h4 id="daily-action-title"></h4><p id="daily-action"></p></section>
+              <section aria-labelledby="daily-caution-title"><h4 id="daily-caution-title"></h4><p id="daily-caution"></p></section>
+            </div>
+          </div>
           <section class="interpretation-index" aria-label="경험적 해석 지수와 한계"><div class="score-row"><span>경험적 해석 지수</span><strong id="score"></strong><span class="score-unit">/ 100</span></div>
           <p class="field-note">이 지수는 예측 확률이 아닙니다. 선택은 자신의 상황에 비춰 판단해 주세요.</p>
           </section>
-          <details class="full-reading"><summary>계산 근거와 전체 풀이 읽기</summary><p id="full-text" class="preserve-lines"></p></details>
+          <details id="daily-details" class="full-reading"><summary id="daily-details-summary">계산 근거와 전체 풀이 읽기</summary><div id="daily-evidence" hidden></div><p id="full-text" class="preserve-lines"></p></details>
           <button id="open-share" class="secondary" type="button">내 키워드 카드 만들기 ↗</button>
           <p class="field-note">이름·출생정보·팔자를 빼고, 날짜·키워드·해석 지수만 이미지에 담습니다.</p>
         </article>
         <article id="month-result" class="result-card" hidden><span class="badge">일진 기반 해석 지수 · 예측 확률 아님</span><h3>이번 달의 흐름</h3><div id="kline-chart"></div><details class="full-reading"><summary>월간 근거와 해석 읽기</summary><p id="month-text" class="preserve-lines"></p></details></article>
         <article id="integrated-result" class="integrated-result" hidden aria-labelledby="integrated-title">
-          <header class="integrated-intro"><p class="eyebrow">FOUR PERSPECTIVES · ONE PORTRAIT</p><h3 id="integrated-title">여러 관점으로 읽는 나</h3><p>출생 성향을 주제별로 살펴봅니다. 비슷한 해석과 다른 관점을 함께 읽고, 각 문장의 계산 근거를 확인해 보세요.</p><p class="field-note">오늘의 운세나 예측 정확도를 뜻하지 않습니다.</p></header>
+          <header class="integrated-intro"><h3 id="integrated-title">여러 관점으로 읽는 나</h3><p>출생 성향을 주제별로 살펴봅니다. 비슷한 해석과 다른 관점을 함께 읽고, 각 문장의 계산 근거를 확인해 보세요.</p><p class="field-note">오늘의 운세나 예측 정확도를 뜻하지 않습니다.</p></header>
           <section aria-labelledby="integrated-methods-title" class="integrated-methods-section"><h4 id="integrated-methods-title">이번 풀이에 사용한 체계</h4><div id="integrated-methods" class="integrated-methods"></div></section>
           <section class="integrated-summary-section" aria-labelledby="integrated-summary-title"><h4 id="integrated-summary-title">나를 살펴보는 실마리</h4><ul id="integrated-summary"></ul></section>
           <div id="integrated-themes" class="integrated-themes"></div>
@@ -121,7 +98,19 @@
           <button id="open-integrated-share" class="secondary" type="button">결과 원문을 이미지로 저장 ↗</button>
           <p class="field-note">결과 문구를 그대로 여러 장에 나눕니다. 이름·출생정보는 넣지 않지만, 명식에서 파생된 계산 근거와 해석은 포함됩니다.</p>
         </article>
-        <section id="chart-section" class="birth-chart" hidden><div class="section-top"><h3>나의 팔자</h3><span class="small-label">계산값</span></div><div id="pillars" class="pillars"></div><div id="element-bars" class="element-bars" aria-label="사주표 여덟 글자의 오행 개수"></div><p id="chart-warning" class="field-note"></p></section>
+        <section id="chart-section" class="birth-chart" hidden>
+          <div class="section-top"><h3>나의 팔자</h3><span class="small-label">계산값</span></div>
+          <div id="pillars" class="pillars"></div>
+          <div id="element-bars" class="element-bars" aria-label="계산된 사주 글자의 오행 개수"></div>
+          <p id="chart-warning" class="field-note"></p>
+          <details id="natal-markers" class="natal-markers" hidden>
+            <summary>내 사주에서 보는 원진과 도화</summary>
+            <p>출생 사주의 각 기둥에서 두 번째 글자(지지)를 살펴봅니다. 아래에는 이 글의 판정 기준과 그 기준에 맞은 자리를 표시합니다.</p>
+            <p id="natal-coverage" class="field-note"></p>
+            <div id="natal-marker-results"></div>
+            <p class="field-note">여기서 다루는 신살은 원진과 도화 두 가지입니다. 전통적 해석은 성격이나 관계의 결과를 예측하는 척도가 아닙니다.</p>
+          </details>
+        </section>
         <section class="special-readings" aria-labelledby="more-title">
           <h3 id="more-title" class="more-title">더 살펴보기</h3>
           <details data-icon="日"><summary>중요한 날을 앞두고 있다면 <span>D-day</span></summary>
@@ -136,7 +125,11 @@
           <details id="compat-details" data-icon="合"><summary>우리의 닮은 점과 다른 점 <span>두 사람 궁합</span></summary>
             <p class="field-note">내 정보와 상대의 사주를 비교합니다. 상대에게 동의를 받은 정보만 입력해 주세요. 이름은 받지 않고, 상대의 입력과 결과는 저장하지 않습니다.</p>
             <form id="compat-form" autocomplete="off">
-              <label for="partner-date">상대 생년월일 <span class="optional">양력</span></label><input id="partner-date" name="birth_date" type="date" min="1800-01-01" required autocomplete="off">
+              <label for="partner-calendar">상대 생년월일 달력</label>
+              <select id="partner-calendar" name="birth_calendar"><option value="solar">양력</option><option value="lunar">음력 (한국 달력)</option></select>
+              <label id="partner-leap-label" class="check" hidden><input id="partner-leap-month" type="checkbox" disabled> 윤달에 태어났어요</label>
+              <p id="partner-calendar-note" class="field-note" hidden>한국 음력 1900-01-01~2050-11-18 지원. YYYY-MM-DD로 입력하세요. 미래 출생일은 저장할 수 없습니다. 출생시각과 시간대는 그대로 사용합니다.</p>
+              <label for="partner-date">상대 생년월일</label><input id="partner-date" name="birth_date" type="date" min="1800-01-01" required autocomplete="off">
               <div class="field-row"><label for="partner-time">상대 출생시각</label><label class="check"><input id="partner-unknown-time" type="checkbox" checked> 시각을 몰라요</label></div>
               <input id="partner-time" name="birth_time" type="time" disabled autocomplete="off">
               <label for="partner-zone">상대 출생지 시간대</label><input id="partner-zone" name="timezone" value="한국 시간" list="timezones" maxlength="64" required autocomplete="off">
@@ -147,15 +140,15 @@
           </details>
         </section>
         <section id="premium-interest" class="premium-interest" aria-labelledby="premium-title" hidden>
-          <header class="premium-heading"><p class="eyebrow">조금 더 깊이, 나를 읽는 시간</p><h3 id="premium-title">정밀 풀이 <span class="premium-badge">준비 중</span></h3><p>무료 풀이 다음으로, 한 주제를 더 깊게 살펴보는 유료 리포트를 준비하고 있어요. 관심 있는 주제를 알려주세요.</p></header>
+          <header class="premium-heading"><h3 id="premium-title">정밀 풀이 <span class="premium-badge">준비 중</span></h3><p>무료 풀이 다음으로, 한 주제를 더 깊게 살펴보는 유료 리포트를 준비하고 있어요. 관심 있는 주제를 알려주세요.</p></header>
           <a class="sample-catalog-link" href="/samples"><strong>어떤 리포트가 내 생활에 쓸모 있을까요?</strong><span>내 사용설명서 · 관계 대화집 · 네 관점 교차 리포트<br>가상 완성본과 목차·가설 가격 비교하기 ↗</span></a>
           <div class="premium-grid">
-            <article class="premium-card" data-theme="relationships"><div class="premium-card-top"><span class="premium-symbol" aria-hidden="true">合</span><span class="premium-badge">준비 중</span></div><h4>연애·관계</h4><p class="premium-description">마음을 주고받는 방식과 관계에서 소중히 여기는 것을 돌아봐요.</p><button type="button" data-premium-interest="relationships" aria-label="연애·관계 관심 있어요" aria-describedby="premium-status-relationships">관심 있어요</button><p id="premium-status-relationships" class="premium-status" role="status" aria-live="polite" aria-atomic="true"></p></article>
-            <article class="premium-card" data-theme="resources"><div class="premium-card-top"><span class="premium-symbol" aria-hidden="true">土</span><span class="premium-badge">준비 중</span></div><h4>돈·생활 습관</h4><p class="premium-description">시간과 자원을 쓰는 습관을 살피고, 내게 맞는 균형을 생각해 봐요.</p><button type="button" data-premium-interest="resources" aria-label="돈·생활 습관 관심 있어요" aria-describedby="premium-status-resources">관심 있어요</button><p id="premium-status-resources" class="premium-status" role="status" aria-live="polite" aria-atomic="true"></p></article>
-            <article class="premium-card" data-theme="career"><div class="premium-card-top"><span class="premium-symbol" aria-hidden="true">金</span><span class="premium-badge">준비 중</span></div><h4>일·진로</h4><p class="premium-description">일할 때 드러나는 성향과 나다운 선택을 위한 질문을 살펴봐요.</p><button type="button" data-premium-interest="career" aria-label="일·진로 관심 있어요" aria-describedby="premium-status-career">관심 있어요</button><p id="premium-status-career" class="premium-status" role="status" aria-live="polite" aria-atomic="true"></p></article>
-            <article class="premium-card" data-theme="study"><div class="premium-card-top"><span class="premium-symbol" aria-hidden="true">水</span><span class="premium-badge">준비 중</span></div><h4>공부·준비</h4><p class="premium-description">배움의 리듬과 준비 습관을 돌아봐요. 시험 결과를 예측하지 않아요.</p><button type="button" data-premium-interest="study" aria-label="공부·준비 관심 있어요" aria-describedby="premium-status-study">관심 있어요</button><p id="premium-status-study" class="premium-status" role="status" aria-live="polite" aria-atomic="true"></p></article>
-            <article class="premium-card" data-theme="western"><div class="premium-card-top"><span class="premium-symbol" aria-hidden="true">星</span><span class="premium-badge">준비 중</span></div><h4>서양 점성술 상세</h4><p class="premium-description">출생 차트의 상징을 따라 나의 성향과 관계를 더 깊이 읽어봐요.</p><button type="button" data-premium-interest="western" aria-label="서양 점성술 상세 관심 있어요" aria-describedby="premium-status-western">관심 있어요</button><p id="premium-status-western" class="premium-status" role="status" aria-live="polite" aria-atomic="true"></p></article>
-            <article class="premium-card" data-theme="ziwei"><div class="premium-card-top"><span class="premium-symbol" aria-hidden="true">木</span><span class="premium-badge">준비 중</span></div><h4>자미두수 상세</h4><p class="premium-description">명반의 여러 영역을 연결해 내 생활을 돌아보는 관점을 넓혀봐요.</p><button type="button" data-premium-interest="ziwei" aria-label="자미두수 상세 관심 있어요" aria-describedby="premium-status-ziwei">관심 있어요</button><p id="premium-status-ziwei" class="premium-status" role="status" aria-live="polite" aria-atomic="true"></p></article>
+            <article class="premium-card" data-theme="relationships"><div class="premium-card-top"><span class="premium-badge">준비 중</span></div><h4>연애·관계</h4><p class="premium-description">마음을 주고받는 방식과 관계에서 소중히 여기는 것을 돌아봐요.</p><button type="button" data-premium-interest="relationships" aria-label="연애·관계 관심 있어요" aria-describedby="premium-status-relationships">관심 있어요</button><p id="premium-status-relationships" class="premium-status" role="status" aria-live="polite" aria-atomic="true"></p></article>
+            <article class="premium-card" data-theme="resources"><div class="premium-card-top"><span class="premium-badge">준비 중</span></div><h4>돈·생활 습관</h4><p class="premium-description">시간과 자원을 쓰는 습관을 살피고, 내게 맞는 균형을 생각해 봐요.</p><button type="button" data-premium-interest="resources" aria-label="돈·생활 습관 관심 있어요" aria-describedby="premium-status-resources">관심 있어요</button><p id="premium-status-resources" class="premium-status" role="status" aria-live="polite" aria-atomic="true"></p></article>
+            <article class="premium-card" data-theme="career"><div class="premium-card-top"><span class="premium-badge">준비 중</span></div><h4>일·진로</h4><p class="premium-description">일할 때 드러나는 성향과 나다운 선택을 위한 질문을 살펴봐요.</p><button type="button" data-premium-interest="career" aria-label="일·진로 관심 있어요" aria-describedby="premium-status-career">관심 있어요</button><p id="premium-status-career" class="premium-status" role="status" aria-live="polite" aria-atomic="true"></p></article>
+            <article class="premium-card" data-theme="study"><div class="premium-card-top"><span class="premium-badge">준비 중</span></div><h4>공부·준비</h4><p class="premium-description">배움의 리듬과 준비 습관을 돌아봐요. 시험 결과를 예측하지 않아요.</p><button type="button" data-premium-interest="study" aria-label="공부·준비 관심 있어요" aria-describedby="premium-status-study">관심 있어요</button><p id="premium-status-study" class="premium-status" role="status" aria-live="polite" aria-atomic="true"></p></article>
+            <article class="premium-card" data-theme="western"><div class="premium-card-top"><span class="premium-badge">준비 중</span></div><h4>서양 점성술 상세</h4><p class="premium-description">출생 차트의 상징을 따라 나의 성향과 관계를 더 깊이 읽어봐요.</p><button type="button" data-premium-interest="western" aria-label="서양 점성술 상세 관심 있어요" aria-describedby="premium-status-western">관심 있어요</button><p id="premium-status-western" class="premium-status" role="status" aria-live="polite" aria-atomic="true"></p></article>
+            <article class="premium-card" data-theme="ziwei"><div class="premium-card-top"><span class="premium-badge">준비 중</span></div><h4>자미두수 상세</h4><p class="premium-description">명반의 여러 영역을 연결해 내 생활을 돌아보는 관점을 넓혀봐요.</p><button type="button" data-premium-interest="ziwei" aria-label="자미두수 상세 관심 있어요" aria-describedby="premium-status-ziwei">관심 있어요</button><p id="premium-status-ziwei" class="premium-status" role="status" aria-live="polite" aria-atomic="true"></p></article>
           </div>
           <p class="premium-privacy">연락처는 받지 않으며 알림도 보내지 않습니다. 관심은 이 브라우저 세션 기준으로 테마별 하루 한 번 집계하고, 정보 삭제나 만료 후에는 날짜별 합계만 남습니다.</p>
         </section>
@@ -163,11 +156,49 @@
       </div>
       <p id="status" class="status" role="status"></p>
     </section>
+    <aside class="intro">
+      <section class="form-card" aria-labelledby="form-title">
+        <div class="section-top"><h2 id="form-title">나의 출생정보</h2><span class="small-label">한 번 입력</span></div>
+        <form id="birth-form">
+          <fieldset class="input-group"><legend class="sr-only">나를 부르는 이름</legend>
+          <label for="display-name">별명 <span class="optional">선택</span></label>
+          <input id="display-name" name="display_name" maxlength="30" placeholder="어떻게 불러드릴까요?" autocomplete="off">
+          </fieldset><fieldset class="input-group"><legend class="sr-only">계산에 사용할 출생정보</legend>
+          <label for="birth-calendar">생년월일 달력</label>
+          <select id="birth-calendar" name="birth_calendar"><option value="solar">양력</option><option value="lunar">음력 (한국 달력)</option></select>
+          <label id="birth-leap-label" class="check" hidden><input id="birth-leap-month" type="checkbox" disabled> 윤달에 태어났어요</label>
+          <p id="birth-calendar-note" class="field-note" hidden>한국 음력 1900-01-01~2050-11-18 지원. YYYY-MM-DD로 입력하세요. 미래 출생일은 저장할 수 없습니다. 출생시각과 시간대는 그대로 사용합니다.</p>
+          <label for="birth-date">생년월일</label>
+          <input id="birth-date" name="birth_date" type="date" min="1800-01-01" required autocomplete="bday">
+          <div class="field-row"><label for="birth-time">출생시각</label><label class="check"><input id="unknown-time" type="checkbox" checked> 시각을 몰라요</label></div>
+          <input aria-describedby="birth-time-note" id="birth-time" name="birth_time" type="time" disabled>
+          <p class="field-note" id="birth-time-note">출생시각을 모르면 시주와 대운은 계산하지 않아요.</p>
+          <label for="birth-zone">출생지 시간대</label>
+          <input aria-describedby="birth-zone-note" id="birth-zone" name="timezone" value="한국 시간" list="timezones" required maxlength="64" autocomplete="off">
+          <p class="field-note" id="birth-zone-note">목록에서 고르거나 다른 지역의 IANA 시간대를 입력하세요.</p>
+          <datalist id="timezones"><option value="한국 시간" label="한국 (서울)"><option value="일본 시간" label="일본 (도쿄)"><option value="미국 동부 시간" label="미국 동부 (뉴욕)"><option value="미국 서부 시간" label="미국 서부 (로스앤젤레스)"><option value="영국 시간" label="영국 (런던)"></datalist>
+          {% if birth_location_enabled %}<details class="birth-location"><summary>출생지 추가 <span class="optional">선택 · 상승점 계산에 사용</span></summary>
+            <label for="birthplace-text">출생 도시</label><input id="birthplace-text" name="birthplace_text" maxlength="80" placeholder="예: 서울" autocomplete="off">
+            <div class="coordinate-fields"><div><label for="birth-latitude">위도</label><input id="birth-latitude" name="latitude" type="number" min="-90" max="90" step="any" placeholder="예: 37.5665"></div><div><label for="birth-longitude">경도</label><input id="birth-longitude" name="longitude" type="number" min="-180" max="180" step="any" placeholder="예: 126.9780"></div></div>
+            <p class="field-note">도시명으로 위치를 추정하지 않습니다. 좌표는 두 항목을 함께 입력해 주세요. 비우면 위치가 필요한 계산을 제외하고, 출생지 시간대는 위에서 직접 지정합니다.</p>
+          </details>{% endif %}
+          </fieldset><fieldset class="input-group"><legend class="sr-only">해석에 참고할 정보</legend>
+          <label for="gender">성별 <span class="optional">선택 · 일부 전통 계산에 사용</span></label>
+          <select id="gender" name="gender"><option value="unknown">선택하지 않음</option><option value="female">여성</option><option value="male">남성</option></select>
+          <p class="field-note">선택하지 않으면 성별이 필요한 자미두수 계산은 제외합니다.</p>
+          </fieldset>
+          <p id="form-error" class="error" role="alert" hidden></p>
+          <button class="primary" id="save-button" type="submit" disabled>저장하고 오늘의 풀이 보기 <span aria-hidden="true">↗</span></button>
+          <p class="privacy-note">같은 브라우저에서 90일간 다시 볼 수 있습니다. 다른 기기에서는 이어볼 수 없으며, 언제든 삭제할 수 있습니다.</p>
+          <p class="privacy-note">이용 단계별 횟수만 자체 집계합니다. 통계에는 이름·출생정보·풀이 본문을 넣지 않으며, 삭제 후에는 개인과 연결되지 않는 날짜별 합계만 남습니다.</p>
+        </form>
+      </section>
+    </aside>
   </main>
   <footer><span>FORTUNE ORACLE</span><p>오락과 자기성찰을 위한 참고입니다. 의학·투자·법률 결정을 지시하지 않습니다.</p></footer>
-  <dialog id="delete-dialog"><h2>출생정보를 삭제할까요?</h2><p>저장한 출생정보와 이 브라우저의 이용 기록을 삭제합니다. 삭제 후에는 다시 입력해야 합니다.</p><div class="dialog-actions"><button id="cancel-delete" type="button">돌아가기</button><button id="confirm-delete" class="danger" type="button">모두 삭제</button></div></dialog>
+  <dialog id="delete-dialog" aria-labelledby="delete-title"><h2 id="delete-title">출생정보를 삭제할까요?</h2><p>저장한 출생정보와 이 브라우저의 이용 기록을 삭제합니다. 삭제 후에는 다시 입력해야 합니다.</p><div class="dialog-actions"><button id="cancel-delete" type="button">돌아가기</button><button id="confirm-delete" class="danger" type="button">모두 삭제</button></div></dialog>
   <dialog id="share-dialog" aria-labelledby="share-title" data-native-share="false">
-    <header class="share-header"><div><p class="share-eyebrow">MY DAILY NOTE</p><h2 id="share-title">마음에 남은 세 단어</h2></div><button id="close-share" type="button" aria-label="공유 카드 닫기">닫기</button></header>
+    <header class="share-header"><div><h2 id="share-title">마음에 남은 세 단어</h2></div><button id="close-share" type="button" aria-label="공유 카드 닫기">닫기</button></header>
     <div class="share-body">
       <div class="share-preview"><canvas id="share-canvas" role="img" aria-label="날짜, 세 키워드와 해석 지수를 담은 공유 카드" hidden></canvas><p id="share-placeholder" aria-hidden="true">나의 하루를 한 장에</p></div>
       <section class="share-controls" aria-label="카드 저장과 공유">
@@ -179,7 +210,7 @@
     </div>
   </dialog>
   <dialog id="integrated-share-dialog" aria-labelledby="integrated-share-title">
-    <header class="share-header"><div><p class="share-eyebrow">MY PERSONAL PORTRAIT</p><h2 id="integrated-share-title">나의 풀이, 그대로</h2></div><button id="close-integrated-share" type="button" aria-label="통합 리포트 이미지 닫기">닫기</button></header>
+    <header class="share-header"><div><h2 id="integrated-share-title">나의 풀이, 그대로</h2></div><button id="close-integrated-share" type="button" aria-label="통합 리포트 이미지 닫기">닫기</button></header>
     <div class="integrated-share-body"><canvas id="integrated-share-canvas" role="img" aria-label="통합 성향 리포트 이미지" hidden></canvas><p id="integrated-share-placeholder">원문을 읽기 좋은 크기로 나누고 있습니다…</p></div>
     <div class="integrated-share-controls"><p id="integrated-share-status" role="status"></p><div class="integrated-page-controls"><button id="integrated-page-prev" type="button" disabled>이전</button><span id="integrated-page-number" aria-live="polite"></span><button id="integrated-page-next" type="button" disabled>다음</button></div><button id="download-integrated-share" class="primary" type="button" disabled>이 페이지 PNG 저장 ↓</button><p class="field-note">각 페이지를 저장해 순서대로 공유할 수 있어요. 공유하기 전에 포함된 계산 근거와 해석을 확인해 주세요.</p></div>
   </dialog>

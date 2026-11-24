@@ -67,25 +67,33 @@ def localize_daily(reading, language='ko'):
     result = {**reading,'language':code}
     if code == 'ko':
         return result
+    # Sections currently carry Korean copy only; preserve the established English text.
+    result.pop('sections', None)
     score = result['score']
     grade = 'Strong momentum' if score >= 78 else 'Supportive' if score >= 62 else 'Steady' if score >= 46 else 'Take care' if score >= 32 else 'Leave more room'
     keywords = [_KEYWORDS[k] for k in result['keywords']]
     lines = [f"{ASPECT_EN.get(result['aspect'],'Overall')} · {score:.0f}/100 — {grade}",
         f"Day pillar {pillar_label(result['day_pillar'])} ({ELEMENT_EN[result['day_element']]}) · {_RELATION_EN[result['relation']]}",
         'Reflection keywords: ' + ' · '.join(keywords) + '.']
+    basis = result.get('birth_time_basis', {})
     if result['dayun_pillar']:
         start,end = result['dayun_years']
         result['dayun_theme'] = f"{pillar_label(result['dayun_pillar'])} · calendar years {start}–{end}"
         lines.append(f"Solar-term-based ten-year cycle {pillar_label(result['dayun_pillar'])}, calendar years {start}–{end}. Interpretive adjustment: {result['dayun_adjustment']:+.0f} points.")
+    elif basis.get('solar_terms') == 'civil_day_interval_confirmed':
+        lines.append('Ten-year cycle adjustment omitted: birth time is unknown, so no ten-year cycle was calculated.')
     else:
         lines.append('Ten-year cycle adjustment omitted: required inputs or an applicable cycle are unavailable.')
     lines.append('This score is an interpretive index, not a predicted probability.')
-    basis = result.get('birth_time_basis', {})
     if basis:
-        lines.append('Birth day/hour use local civil time; true solar time correction is not applied.')
+        if basis.get('day_hour') == 'local_civil_time' and basis.get('true_solar_time') is False:
+            if basis.get('solar_terms') in ('civil_day_interval_confirmed', 'date_only_uncertain'):
+                lines.append('Birth day uses the local civil date; true solar time correction is not applied.')
+            elif basis.get('solar_terms') == 'birth_instant_utc_plus_8':
+                lines.append('Birth day/hour use local civil time; true solar time correction is not applied.')
         if basis.get('solar_terms') == 'civil_day_interval_confirmed':
             lines.append('Year/month are unchanged throughout the local birth date. Hour and ten-year cycle are omitted.')
-        elif basis.get('solar_terms') != 'birth_instant_utc_plus_8':
+        elif basis.get('solar_terms') == 'date_only_uncertain':
             lines.append('Without a known birth time, year/month pillars near solar terms are uncertain.')
     result.update(grade=grade,keywords=keywords,lines=lines,disclaimer=DISCLAIMER_EN)
     return result

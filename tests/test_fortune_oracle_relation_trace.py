@@ -164,3 +164,44 @@ class TestSafety:
         summary = trace_to_relation_summary(trace)
         # Just check it doesn't raise
         assert isinstance(summary, RelationSummary)
+
+
+@pytest.mark.parametrize("first,second,name", [
+    ("甲子", "己丑", "甲己合"), ("乙丑", "庚寅", "乙庚合"),
+    ("丙寅", "辛卯", "丙辛合"), ("丁卯", "壬辰", "丁壬合"),
+    ("戊辰", "癸巳", "戊癸合"),
+])
+def test_stem_pairs_reach_summary_in_both_orders(first, second, name):
+    for year, day in ((first, second), (second, first)):
+        trace = detect_relation_trace({"year": year, "day": day, "time": ""})
+        expected = f"년간 {year[0]} ↔ 일간 {day[0]} ({name})"
+        assert trace.tiangan_he == [expected]
+        assert trace_to_relation_summary(trace).tiangan_he == [expected]
+        assert not any(word in expected for word in ("합화", "끌림", "(목)", "(수)"))
+
+
+def test_repeated_stems_preserve_all_four_positional_matches():
+    chart = {"year": "丁卯", "month": "壬寅", "day": "丁未", "time": "壬午"}
+    expected = ["년간 丁 ↔ 월간 壬 (丁壬合)", "년간 丁 ↔ 시간 壬 (丁壬合)",
+                "월간 壬 ↔ 일간 丁 (丁壬合)", "일간 丁 ↔ 시간 壬 (丁壬合)"]
+    assert detect_relation_trace(chart).tiangan_he == expected
+
+
+@pytest.mark.parametrize("bad", ["壬", "壬X", "壬卯", "壬寅extra", 7, True, ["壬寅"], {"stem": "壬"}])
+def test_invalid_pillar_cannot_create_a_stem_match(bad):
+    trace = detect_relation_trace({"year": "丁卯", "month": bad, "day": "甲子"})
+    assert trace.tiangan_he == []
+    assert any("월간" in warning and "제외" in warning for warning in trace.warnings)
+
+
+@pytest.mark.parametrize("bad", [[], "丁壬", 1, True])
+def test_invalid_chart_has_no_relations(bad):
+    trace = detect_relation_trace(bad)
+    assert trace.tiangan_he == trace.dizhi_liuhe == trace.chong == []
+    assert trace.warnings
+
+
+def test_invalid_hour_does_not_erase_confirmed_pair_or_leak_input():
+    trace = detect_relation_trace({"year": "丁卯", "month": "壬寅", "time": "private-invalid"})
+    assert trace.tiangan_he == ["년간 丁 ↔ 월간 壬 (丁壬合)"]
+    assert "private-invalid" not in " ".join(trace.warnings)

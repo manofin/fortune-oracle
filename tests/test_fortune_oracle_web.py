@@ -42,7 +42,13 @@ def test_register_first_reading_return_delete_and_other_browser_isolation(app):
     assert today["computed"] and tomorrow["computed"]
     assert today["date"] == "2026-10-28" and tomorrow["date"] == "2026-10-29"
     assert "경험적 해석" in today["text"] and "예측 확률이 아닙니다" in tomorrow["text"]
-    assert a.get("/api/chart").json["pillars"]["day"] == "壬午"
+    chart = a.get("/api/chart").json
+    assert chart["pillars"]["day"] == "壬午"
+    markers = chart["natal_markers"]
+    assert markers["coverage"]["complete"] is True
+    by_rule = {rule["id"]: rule for rule in markers["rules"]}
+    assert {"position": "day", "branch": "午"} in by_rule["dohwa_broad_branches"]["evidence"]
+    assert "natal_markers" not in today["reading"]
     assert len(a.get("/api/kline").json["candles"]) == 31
     assert a.delete("/api/profile", headers=ha).status_code == 200
     assert a.get("/api/readings/today").status_code == 401
@@ -76,6 +82,9 @@ def test_unknown_birth_time_can_register_without_fabricated_daily_result(app):
     chart = client.get("/api/chart").json
     assert chart["computed"] and chart["pillars"]["day"] == "戊戌"
     assert not chart["pillars"].get("time")
+    markers = chart["natal_markers"]
+    assert markers["coverage"]["available_positions"] == ["day"]
+    assert all(rule["status"] == "insufficient_input" for rule in markers["rules"])
     for day in ("today", "tomorrow"):
         reading = client.get("/api/readings/" + day).json
         assert not reading["computed"] and reading["text"].startswith("계산 결과가 아님")

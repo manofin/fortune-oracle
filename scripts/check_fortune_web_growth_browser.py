@@ -12,6 +12,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--url", default="http://127.0.0.1:8765")
     parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--browser", choices=("chromium", "firefox", "webkit"), default="chromium")
     args = parser.parse_args()
     origin = urlparse(args.url)
     assert origin.hostname in {"127.0.0.1", "localhost"}, "Use a temporary loopback preview"
@@ -19,8 +20,10 @@ def main():
     errors, external, events, passed = [], [], [], []
 
     with sync_playwright() as p:
-        browser = p.chromium.launch()
-        context = browser.new_context(viewport={"width": 390, "height": 844}, is_mobile=True, has_touch=True)
+        browser = getattr(p, args.browser).launch()
+        browser_version = browser.version
+        context = browser.new_context(viewport={"width": 390, "height": 844},
+                                      is_mobile=args.browser != "firefox", has_touch=True)
         # Native OS handoff is simulated; no third-party sharing or clipboard access occurs.
         context.add_init_script("""
             window.cardText = []; window.copied = []; window.handoffs = []; window.nativeMode = 'cancel';
@@ -54,6 +57,11 @@ def main():
         assert page.evaluate("fetch('/healthz').then(r => r.json()).then(r => r.version)") == "local-preview"
         expect(page.locator("#empty-state")).to_be_visible()
 
+        def expect_share_preview():
+            # PNG encoding runs asynchronously in the browser. Wait for the
+            # actual rendered canvas before checking its content or actions.
+            expect(page.locator("#share-canvas")).to_be_visible(timeout=15000)
+
         def register():
             page.locator("#display-name").fill("가상<친구>")
             page.locator("#birth-date").fill("1990-05-17")
@@ -70,7 +78,7 @@ def main():
         expect(page.locator("#reading-title")).to_have_text("가상<친구>님의 하루")
         page.evaluate("history.replaceState({}, '', '?campaign=synthetic#private-result')")
         page.locator("#open-share").click()
-        expect(page.locator("#share-canvas")).to_be_visible()
+        expect_share_preview()
         assert page.evaluate("document.fonts.check('40px FortuneKorean', '오늘의키워드')")
         for width, height, label in ((320, 640, "small-phone"), (390, 844, "mobile"), (1280, 900, "desktop")):
             page.set_viewport_size({"width":width, "height":height})
@@ -93,7 +101,10 @@ def main():
         for private in ("가상<친구>", "1990-05-17", "12:30", "Asia/Seoul", "壬午"):
             assert private not in "\n".join(drawn)
         assert "예측 확률이 아닙니다" in "\n".join(drawn)
-        assert page.locator("#keywords").inner_text().split(" · ")[0] in drawn
+        rendered_keywords = page.locator("#keywords .kw").all_text_contents()
+        assert rendered_keywords and all(keyword in drawn for keyword in rendered_keywords), {
+            "displayed_keywords": rendered_keywords, "canvas_text": drawn,
+        }
         with page.expect_download() as pending:
             page.locator("#download-share").click()
         download = pending.value
@@ -127,7 +138,7 @@ def main():
         page.locator("#close-share").click()
         page.evaluate("Object.defineProperty(navigator, 'share', {value:undefined, configurable:true})")
         page.locator("#open-share").click()
-        expect(page.locator("#share-canvas")).to_be_visible()
+        expect_share_preview()
         expect(page.locator("#native-share")).to_be_hidden()
         expect(page.locator("#download-share")).to_be_enabled()
         page.locator("#close-share").click()
@@ -163,12 +174,14 @@ def main():
             response = route.fetch(); data = response.json()
             data["reading"]["keywords"] = ["속도", "표현", "관심", "행동", "관계의 온도"]
             data["text"] = "키워드: 속도 · 표현 · 관심 · 행동 · 관계의 온도\n" + data["text"]
+            relation = next(section for section in data["sections"]["evidence"] if section["id"] == "relation")
+            relation["paragraphs"][-1] = "키워드: 속도 · 표현 · 관심 · 행동 · 관계의 온도"
             route.fulfill(response=response, json=data)
         page.route("**/api/readings/tomorrow", five_keyword_reading)
         page.locator('[data-view="tomorrow"]').click()
         expect(page.locator("#keywords")).to_have_text("속도 · 표현 · 관심")
-        expect(page.locator("#full-text")).to_contain_text("관계의 온도")
-        page.locator("#open-share").click(); expect(page.locator("#share-canvas")).to_be_visible()
+        expect(page.locator("#daily-evidence")).to_contain_text("관계의 온도")
+        page.locator("#open-share").click(); expect_share_preview()
         expect(page.locator("#download-share")).to_be_enabled()
         page.locator("#close-share").click(); page.unroute("**/api/readings/tomorrow")
         passed.append("five-keyword response keeps all details but projects exactly three keywords into summary and PNG")
@@ -176,16 +189,20 @@ def main():
         page.locator(".special-readings > details").first.locator("summary").click()
         target = page.locator("#target-date").get_attribute("max")
         page.locator("#target-date").fill(target); page.locator("#scenario").select_option("exam")
-        page.locator("#date-submit").click()
+        with page.expect_response(lambda response: urlparse(response.url).path == "/api/readings/date") as dated_response:
+            page.locator("#date-submit").click()
         expect(page.locator("#reading-date")).to_have_text(target)
         expect(page.locator("#keyword-title")).to_have_text("그날을 준비하는 키워드")
-        expect(page.locator("#day-relation")).to_contain_text("성찰 질문")
+        dated = dated_response.value.json()
+        expect(page.locator("#day-relation")).to_have_text(dated["sections"]["theme"]["text"])
+        expect(page.locator("#daily-action")).to_have_text(dated["sections"]["action"]["text"])
+        expect(page.locator("#daily-practice-qualifiers")).to_contain_text("선택한 상황에 맞춘 제안")
         expect(page.locator("#open-share")).to_be_enabled()
         page.screenshot(path=str(args.output / "mobile-dday.png"))
-        page.locator("#open-share").click(); expect(page.locator("#share-canvas")).to_be_visible()
+        page.locator("#open-share").click(); expect_share_preview()
         expect(page.locator("#download-share")).to_be_enabled()
         page.locator("#close-share").click()
-        passed.append("D-day computes the inclusive maximum date and labels situation copy as reflection")
+        passed.append("D-day computes the inclusive maximum date, preserves the basic interpretation and labels the selected situation action")
 
         page.locator("#compat-details summary").click()
         page.locator("#partner-date").fill("1997-08-19")
@@ -259,7 +276,9 @@ def main():
         browser.close()
 
     result = {"passed":passed, "events":events, "page_errors":errors, "external_requests":external,
-              "scope":"local Chromium + real API; synthetic data; OS sharing/clipboard simulated; no deployment"}
+              "browser": args.browser, "browser_version": browser_version,
+              "scope":f"local {args.browser} + real API; synthetic data; OS sharing/clipboard simulated; no deployment",
+              "device_scope":"Linux browser with phone viewport/touch; not physical iPhone or Safari"}
     (args.output / "growth-browser-result.json").write_text(json.dumps(result, ensure_ascii=False, indent=2) + "\n")
     print(json.dumps(result, ensure_ascii=False))
 

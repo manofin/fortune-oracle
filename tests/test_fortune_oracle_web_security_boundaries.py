@@ -23,5 +23,11 @@ def test_non_ascii_csrf_and_methods(app):
     assert client.put('/api/profile', headers={'X-CSRF-Token': secrets.token_hex(32) + 'é'}, json=PROFILE).status_code == 403
     assert client.get('/api/session').json['profile'] == before
     for path, method in [('/api/profile', 'POST'), ('/api/chart', 'PUT'), ('/api/session', 'DELETE')]:
-        assert client.open(path, method=method).status_code == 405
-        assert app.test_client().open(path, method=method).status_code == 405
+        for browser in (client, app.test_client()):
+            response = browser.open(path, method=method)
+            assert response.status_code == 405 and response.is_json
+            allowed = {value.strip() for value in response.headers['Allow'].split(',')}
+            expected = {'PUT', 'DELETE', 'OPTIONS'} if path == '/api/profile' else {'GET', 'HEAD', 'OPTIONS'}
+            assert allowed == expected and method not in allowed
+            assert response.headers['Cache-Control'] == 'no-store'
+            assert 'Set-Cookie' not in response.headers

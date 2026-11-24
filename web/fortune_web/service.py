@@ -5,9 +5,12 @@ import re
 
 from hermes_ext.fortune_oracle.bazi_bridge import BaziInput, calculate_bazi_from_profile
 from hermes_ext.fortune_oracle.daily_reading import prepare_daily_reading, prepare_kline_reading
-from hermes_ext.fortune_oracle.daily_fortune_engine import build_personalized_daily
+from hermes_ext.fortune_oracle.daily_fortune_engine import (
+    build_personalized_daily, daily_display_lines, daily_display_sections,
+)
 from hermes_ext.fortune_oracle.compatibility import build_compatibility
 from hermes_ext.fortune_oracle.localization import local_today, reading_zone
+from hermes_ext.fortune_oracle.natal_markers import evaluate_natal_markers
 
 
 ZONE_LABELS = {"Asia/Seoul": "한국 시간", "Asia/Tokyo": "일본 시간",
@@ -16,11 +19,21 @@ ZONE_LABELS = {"Asia/Seoul": "한국 시간", "Asia/Tokyo": "일본 시간",
 ZONE_VALUES = {label: zone for zone, label in ZONE_LABELS.items()}
 
 FIELDS = {"birth_date", "birth_time", "display_name", "timezone", "gender"}
+CALENDAR_FIELDS = {"birth_calendar", "birth_leap_month"}
 LOCATION_FIELDS = {"birthplace_text", "latitude", "longitude"}
+SCENARIO_PRACTICES = {
+    "exam": (
+        "결과를 예상하기보다, 복습과 휴식에 필요한 시간을 하나씩 정해 보세요.",
+        "풀이 점수로 시험 결과를 예상하거나, 준비 계획을 무리하게 바꾸지 마세요.",
+    ),
+    "meeting": (
+        "상대의 마음을 단정하기보다, 나누고 싶은 이야기와 듣고 싶은 이야기를 떠올려 보세요.",
+        "풀이 점수로 상대의 마음이나 만남의 결과를 단정하지 말고, 상대의 뜻은 대화로 확인하세요.",
+    ),
+}
 SCENARIOS = {
     "general": "그날 내가 직접 선택할 수 있는 작은 일은 무엇일까요?",
-    "exam": "결과를 예상하기보다, 복습과 휴식에 필요한 시간을 하나씩 정해 보세요.",
-    "meeting": "상대의 마음을 단정하기보다, 나누고 싶은 이야기와 듣고 싶은 이야기를 떠올려 보세요.",
+    **{scenario: practice[0] for scenario, practice in SCENARIO_PRACTICES.items()},
 }
 
 
@@ -29,11 +42,13 @@ class InvalidProfile(ValueError):
 
 
 def validate_birth(payload, *, allow_location=False):
-    accepted = FIELDS | LOCATION_FIELDS if allow_location is True else FIELDS
+    accepted = FIELDS | CALENDAR_FIELDS
+    if allow_location is True:
+        accepted |= LOCATION_FIELDS
     if not isinstance(payload, dict) or set(payload) - accepted:
         raise InvalidProfile("출생정보 입력 항목을 확인해 주세요.")
     if any(not isinstance(value, str) for key, value in payload.items()
-           if key not in {"latitude", "longitude"}):
+           if key not in {"latitude", "longitude", "birth_leap_month"}):
         raise InvalidProfile("입력값의 형식을 확인해 주세요.")
     try:
         for value in payload.values():
@@ -54,6 +69,24 @@ def validate_birth(payload, *, allow_location=False):
     profile["gender"] = profile["gender"] or "unknown"
     if profile["gender"] not in ("male", "female", "unknown"):
         raise InvalidProfile("성별 항목을 다시 선택해 주세요.")
+    from korean_lunar_calendar import KoreanLunarCalendar
+
+    calendar = payload.get("birth_calendar", "solar")
+    leap = payload.get("birth_leap_month", False)
+    if calendar not in ("solar", "lunar") or type(leap) is not bool or (calendar == "solar" and leap):
+        raise InvalidProfile("양력·음력과 윤달 여부를 확인해 주세요.")
+    original = profile["birth_date"]
+    if calendar == "lunar":
+        if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", original):
+            raise InvalidProfile("음력 날짜는 YYYY-MM-DD 형식으로 입력해 주세요.")
+        year, month, day = map(int, original.split("-"))
+        converter = KoreanLunarCalendar()
+        if not 1900 <= year <= 2050 or not converter.setLunarDate(year, month, day, leap):
+            raise InvalidProfile("지원하는 한국 음력 날짜(1900-01-01~2050-11-18)와 실제 윤달을 입력해 주세요.")
+        if (converter.lunarYear, converter.lunarMonth, converter.lunarDay, converter.isIntercalation) != (year, month, day, leap):
+            raise InvalidProfile("음력 날짜나 윤달이 일치하지 않습니다.")
+        profile["birth_date"] = converter.SolarIsoFormat()
+    profile.update(birth_calendar=calendar, birth_leap_month=leap, birth_date_input=original)
     error = BaziInput(birth_date=profile["birth_date"], birth_time=profile["birth_time"],
                       timezone=profile["timezone"], gender=profile["gender"]).validate()
     if error:
@@ -86,6 +119,8 @@ def integrated(profile):
 
 def daily(profile, day, now=None):
     result = prepare_daily_reading(profile, day=day, now=now)
+    if result.get("kind") == "daily" and "sections" in result.get("reading", {}):
+        result["sections"] = daily_display_sections(result["reading"])
     # The library's missing-profile hint mentions a Telegram command.
     if not profile:
         result["text"] = "계산 결과가 아님\n출생정보를 먼저 등록해 주세요."
@@ -98,6 +133,7 @@ def chart(profile):
         return {"ok": False, "computed": False, "text": "계산 결과가 아님\n팔자 계산을 완료하지 못했습니다. 출생정보를 확인해 주세요."}
     return {"ok": True, "computed": True, "pillars": result.eight_char,
             "elements": result.elements, "warnings": result.warnings,
+            "natal_markers": evaluate_natal_markers(result.eight_char),
             "text": "간지는 출생정보로 계산했습니다. 성향과 조언은 전통적 해석입니다."}
 
 
@@ -137,14 +173,17 @@ def dated_reading(profile, payload, now=None):
                 "text": "계산 결과가 아님\n선택한 날의 풀이를 계산하지 못했습니다. 출생정보를 확인해 주세요."}
     scenario = payload.get("scenario", "general")
     reflection = SCENARIOS[scenario]
+    action, caution = SCENARIO_PRACTICES.get(scenario, (None, None))
     text = "\n".join([
-        "계산된 사주·일진을 바탕으로 한 해석입니다. 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다.",
-        f"{target.isoformat()} · {reading_zone(profile).key}", *reading["lines"],
-        "상황별 성찰 질문 (별도 점수·성공 확률 아님): " + reflection, reading["disclaimer"],
+        "계산된 사주·일진을 바탕으로 한 해석입니다.",
+        f"{target.isoformat()} · {reading_zone(profile).key}",
+        *daily_display_lines(reading, action_override=action, caution_override=caution),
+        reading["disclaimer"],
     ])
     return {"ok": True, "computed": True, "kind": "dated", "date": target.isoformat(),
             "reading_timezone": reading_zone(profile).key, "reading": reading,
-            "scenario": scenario, "reflection": reflection, "text": text}
+            "scenario": scenario, "reflection": reflection, "text": text,
+            "sections": daily_display_sections(reading, action_override=action, caution_override=caution)}
 
 
 def compatibility(profile, payload):
@@ -152,7 +191,7 @@ def compatibility(profile, payload):
         raise InvalidProfile("비교할 상대의 출생정보만 입력해 주세요.")
     # A nickname is unnecessary for comparison and is not accepted at this boundary.
     partner = payload["partner"]
-    if not isinstance(partner, dict) or set(partner) - (FIELDS - {"display_name"}):
+    if not isinstance(partner, dict) or set(partner) - ((FIELDS | CALENDAR_FIELDS) - {"display_name"}):
         raise InvalidProfile("상대 이름이나 사용자 ID는 받지 않습니다. 출생정보만 입력해 주세요.")
     partner = validate_birth(partner)
     try:

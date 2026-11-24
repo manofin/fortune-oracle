@@ -1,0 +1,192 @@
+{
+  "audience": "operator_only_do_not_give_to_participants",
+  "procedure_revision": "basic-reading-evaluation-v2-draft",
+  "collection_status": "not_started",
+  "responses_received": 0,
+  "material_approval": "pending",
+  "candidate_commit": "78893ff877b8e2c5ed480e43c3fb40d1a411ebe8",
+  "candidate_commit_rule": "Keep this product candidate fixed. Record the separate reviewed materials commit, procedure revision and manifest hash for every session; a materials-only PR head does not replace the product candidate.",
+  "candidate_source_sha256": {
+    "plugins/hermes_ext/fortune_oracle/daily_fortune_engine.py": "e131b442cc947acf5456df44168a825c092b29c39c928fd7dba3de8f7884481d",
+    "plugins/hermes_ext/fortune_oracle/bazi_bridge.py": "8c1b2b72fb11eb412bbd1731a6129e4837c6c61a8a5e705d20567b8849ee6a40",
+    "plugins/hermes_ext/fortune_oracle/localization.py": "db57fa952ab46b9aaad337bbcaf08a8e86ff57c45746f8453e7b610a5d045a79",
+    "plugins/hermes_ext/fortune_oracle/scripts/life_kline_bazi_bridge.mjs": "136d8e3c089c166b97e28e688c0736b59e1ef81ca490d34c81fe80e6366e1375",
+    "web/fortune_web/static/index.html": "c5505452fb010e4ba5b583451ccce55ad0f4944af2bd3d92b987644c15656b4a",
+    "web/fortune_web/static/app.js": "c118623f3c2c0841d2bf80c90c7283a55c7ac281f31379d87fd1ed8e9f22e558",
+    "web/fortune_web/static/style.css": "111f230c899d57f29710e0fc24524c6914b72f7d9f6e1dc292128e67f9438189",
+    "web/fortune_web/service.py": "2f8e141e2db0c794defe4698c9e0b1e52129042d044b177f689f9da4945a4fcf"
+  },
+  "source_samples_sha256": "75cc6ec0fcdea9f236550a3afa5d31bd9d30d5a219f2f0e0406f8b3f64902169",
+  "operator_protocol_sha256": "b114bc930c600c364b1164e8d97f5207be13bffc9b092c1dcb93e38babd6998c",
+  "materials_id": "9c4b49d80dab96654b6d8d840c962b33dc38689f23fe02654c92c63b9d1759ac",
+  "participant_file_sha256": {
+    "participant/comparison-sheet.md": "fc1b7a269bf8910dffb045329265f7bd2ba99e3bf7fb2ee61f795c36abed7085",
+    "participant/instructions.md": "f8916d7b360f3e969c189d60bd7a824cf7343f2facd4136c7b4259c9f156448e",
+    "participant/observation-sheet.md": "d68f435b3eef234c03a6605bd44181ae530b95128bc1e2ad130bc8ab37ea089c",
+    "participant/reading-a.md": "7d315ced26f50034f4a5528a2ae8905c9ccb93a1506d08e874ddfcc420db2ae2",
+    "participant/reading-b.md": "7b873c5b8776e450cffd8e0c230c580a09b2c2208bba650dd7a0caac0b117c5a",
+    "participant/reading-c.md": "dfa5dc1f5db8845dc69c4f598aad9b1601d34032f55bc61b94ddc350a67c9215",
+    "participant/reading-d.md": "7c61c8867b00c4cdc5d96f1efcbb7b978f9b3f6d96cdcb156590d1435691fd93",
+    "participant/response-sheet.md": "250e489f9479d66d46ba0c3b4ddc375d6cb8db03ce7ca8338a287528b9aa6305",
+    "participant/scope-check.md": "d9b4da6bcc10570347d70e6dccaa5dfbaa7e8361c92bdb3b30114af1ed957e97",
+    "participant/ui-collapsed.png": "88f11f7e324b1e3c300c0ac860215d62e39491029281a01238fc4920b292016e",
+    "participant/ui-context.md": "de9fd4e1a679000387f232194b62e0b1347a5dd5d86f5cfed6602bccc86e2759",
+    "participant/ui-expanded.png": "a749b3e949ea9a06e1402a2db008f7df7fe71099e865cdbb19b272e10a397a40"
+  },
+  "mapping": {
+    "participant/reading-a.md": {
+      "case": 1,
+      "version": "after",
+      "internal_id": "1-X"
+    },
+    "participant/reading-b.md": {
+      "case": 1,
+      "version": "before",
+      "internal_id": "1-Y"
+    },
+    "participant/reading-c.md": {
+      "case": 2,
+      "version": "before",
+      "internal_id": "2-X"
+    },
+    "participant/reading-d.md": {
+      "case": 2,
+      "version": "after",
+      "internal_id": "2-Y"
+    }
+  },
+  "assignments": [
+    {
+      "participant_id": "P01",
+      "condition": "C1",
+      "sequence": [
+        {
+          "case": 1,
+          "files": [
+            "participant/reading-a.md",
+            "participant/reading-b.md"
+          ]
+        },
+        {
+          "case": 2,
+          "files": [
+            "participant/reading-d.md",
+            "participant/reading-c.md"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "P02",
+      "condition": "C2",
+      "sequence": [
+        {
+          "case": 1,
+          "files": [
+            "participant/reading-b.md",
+            "participant/reading-a.md"
+          ]
+        },
+        {
+          "case": 2,
+          "files": [
+            "participant/reading-c.md",
+            "participant/reading-d.md"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "P03",
+      "condition": "C3",
+      "sequence": [
+        {
+          "case": 2,
+          "files": [
+            "participant/reading-d.md",
+            "participant/reading-c.md"
+          ]
+        },
+        {
+          "case": 1,
+          "files": [
+            "participant/reading-a.md",
+            "participant/reading-b.md"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "P04",
+      "condition": "C4",
+      "sequence": [
+        {
+          "case": 2,
+          "files": [
+            "participant/reading-c.md",
+            "participant/reading-d.md"
+          ]
+        },
+        {
+          "case": 1,
+          "files": [
+            "participant/reading-b.md",
+            "participant/reading-a.md"
+          ]
+        }
+      ]
+    },
+    {
+      "participant_id": "P05",
+      "condition": "C1",
+      "sequence": [
+        {
+          "case": 1,
+          "files": [
+            "participant/reading-a.md",
+            "participant/reading-b.md"
+          ]
+        },
+        {
+          "case": 2,
+          "files": [
+            "participant/reading-d.md",
+            "participant/reading-c.md"
+          ]
+        }
+      ]
+    }
+  ],
+  "extra_participant_rule": "Repeat C1,C2,C3,C4 in participant ID order; never reassign using observed scores.",
+  "ui_fixture": {
+    "synthetic_input": {
+      "birth_date": "1990-05-15",
+      "birth_time": "07:30",
+      "gender": "male",
+      "timezone": "Asia/Seoul"
+    },
+    "date": "2026-11-24",
+    "scenario": "meeting",
+    "initial_details_open": false,
+    "scenario_label": "기대되는 만남",
+    "context_file": "participant/ui-context.md",
+    "context_text": "이 화면은 가상 인물의 2026년 11월 24일 풀이에서 ‘기대되는 만남’을 선택한 결과입니다.",
+    "context_timing": "Once, after text responses are locked and before presenting the initial UI screen; identical in every display mode",
+    "context_interpretation_limit": "Measures source understanding with input context supplied, not recognition of the selected situation from the cropped card alone",
+    "collapsed_capture": "participant/ui-collapsed.png",
+    "expanded_capture": "participant/ui-expanded.png",
+    "capture_viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "browser_record_sha256": "d0fb17c1b271e827120703b27965ea825f89a00b2f7b970657d9c1dfee69c6df",
+    "require_same_candidate_as_text": true,
+    "capture_mode_is_not_interactive_or_physical_device_validation": true
+  },
+  "scope_check": {
+    "file": "participant/scope-check.md",
+    "case": 2,
+    "version": "after",
+    "present_only_after_primary_responses_are_locked": true
+  }
+}

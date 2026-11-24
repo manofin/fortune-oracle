@@ -1,0 +1,16 @@
+# Separate CPython 3.11 astronomy test environment (validated Linux x86-64).
+# NumPy 2.3.5 supports Python 3.11; the runtime ephemeris manifest keeps 2.5.3.
+# Install with --only-binary=:all:; do not mix with the Python 3.14 core test venv.
+# This test environment does not authorize public Vedic activation or resolve
+# pyswisseph/Swiss Ephemeris licensing. Preserve the existing binding notice.
+-r ../plugins/hermes_ext/fortune_oracle/vedic-requirements.txt
+pytest==9.2.0
+skyfield==1.55
+jplephem==2.24
+sgp4==2.27
+numpy==2.3.5
+certifi==2026.7.22
+iniconfig==2.3.1
+packaging==26.3
+pluggy==1.7.0
+Pygments==2.21.0

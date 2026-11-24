@@ -4,10 +4,10 @@ from collections.abc import Mapping
 
 from .localization import language_code, local_today, reading_zone, localize_daily, DISCLAIMER_EN
 from .localization import NOT_CALCULATED_KO, NOT_CALCULATED_EN
-from .daily_fortune_engine import build_personalized_daily, build_personalized_series
+from .daily_fortune_engine import build_personalized_daily, build_personalized_series, render_daily_channel_text
 
 
-def prepare_daily_reading(profile=None, *, day='today', language=None, reading_timezone=None, now=None):
+def prepare_daily_reading(profile=None, *, day='today', language=None, reading_timezone=None, now=None, compact=False):
     profile = dict(profile) if isinstance(profile,Mapping) else {}
     try:
         code = language_code(language if language is not None else profile.get('language'))
@@ -30,7 +30,7 @@ def prepare_daily_reading(profile=None, *, day='today', language=None, reading_t
                        'Birth information is missing. Register it with /register_birth.' if code == 'en' else
                        '출생정보가 없습니다. /register_birth 로 등록해 주세요.')
     basis = ('Interpretation based on calculated birth-chart and daily pillars; scores and advice are heuristic, not probabilities.'
-             if code == 'en' else '계산된 사주·일진을 바탕으로 한 해석입니다. 점수와 조언은 경험적 해석이며 예측 확률이 아닙니다.')
+             if code == 'en' else '계산된 사주·일진을 바탕으로 한 해석입니다.')
     target = today + timedelta(days=1 if day == 'tomorrow' else 0)
     if day == 'week':
         dates = [target+timedelta(days=i) for i in range(7)]
@@ -53,7 +53,8 @@ def prepare_daily_reading(profile=None, *, day='today', language=None, reading_t
         return failure('calculation_unavailable', unavailable)
     if not result:
         return failure('calculation_unavailable', unavailable)
-    text = '\n'.join([basis, f"{result['date']} · {zone.key}",*result['lines'],result['disclaimer']])
+    text = (render_daily_channel_text(result, reading_timezone=zone.key) if compact else
+            '\n'.join([basis, f"{result['date']} · {zone.key}",*result['lines'],result['disclaimer']]))
     return {'ok':True,'computed':True,'kind':'daily','language':code,'reading_timezone':zone.key,
             'date':result['date'],'reading':result,'text':text}
 

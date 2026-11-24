@@ -1,0 +1,3720 @@
+{
+  "source": "local Chromium mobile viewport emulation; synthetic adult profiles",
+  "source_sha256": {
+    "web/fortune_web/static/index.html": "c5505452fb010e4ba5b583451ccce55ad0f4944af2bd3d92b987644c15656b4a",
+    "web/fortune_web/static/app.js": "c118623f3c2c0841d2bf80c90c7283a55c7ac281f31379d87fd1ed8e9f22e558",
+    "web/fortune_web/static/style.css": "111f230c899d57f29710e0fc24524c6914b72f7d9f6e1dc292128e67f9438189",
+    "web/fortune_web/service.py": "2f8e141e2db0c794defe4698c9e0b1e52129042d044b177f689f9da4945a4fcf",
+    "plugins/hermes_ext/fortune_oracle/daily_fortune_engine.py": "3d715e95821c7595e845124caf262adfc5b5118892c8afe0dab25f280dc64a3f",
+    "scripts/check_fortune_web_basic_reading_browser.py": "3ac66798f0178c5cd6cb56bf9b848075d713bef1efd85ffac0dbab0c1a12428c"
+  },
+  "browserVersion": "156.0.8078.4",
+  "physicalDeviceTested": false,
+  "pdfTested": false,
+  "pageErrors": [],
+  "externalRequests": [],
+  "observations": [
+    {
+      "sample": "synthetic-a",
+      "expanded": false,
+      "screenshot": "synthetic-a-320-collapsed.png",
+      "viewportWidth": 320,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 582,
+      "fullTextHeight": 463,
+      "cardScreenfuls": 0.69,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        91,
+        33,
+        16,
+        94,
+        71,
+        57,
+        41,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      }
+    },
+    {
+      "sample": "synthetic-a",
+      "expanded": true,
+      "screenshot": "synthetic-a-320-expanded.png",
+      "viewportWidth": 320,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 1045,
+      "fullTextHeight": 463,
+      "cardScreenfuls": 1.24,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        91,
+        33,
+        16,
+        94,
+        71,
+        57,
+        41,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      }
+    },
+    {
+      "sample": "synthetic-a",
+      "expanded": false,
+      "screenshot": "synthetic-a-360-collapsed.png",
+      "viewportWidth": 360,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 582,
+      "fullTextHeight": 421,
+      "cardScreenfuls": 0.69,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        91,
+        33,
+        16,
+        94,
+        71,
+        57,
+        41,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      }
+    },
+    {
+      "sample": "synthetic-a",
+      "expanded": true,
+      "screenshot": "synthetic-a-360-expanded.png",
+      "viewportWidth": 360,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 1003,
+      "fullTextHeight": 421,
+      "cardScreenfuls": 1.19,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        91,
+        33,
+        16,
+        94,
+        71,
+        57,
+        41,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      }
+    },
+    {
+      "sample": "synthetic-a",
+      "expanded": false,
+      "screenshot": "synthetic-a-390-collapsed.png",
+      "viewportWidth": 390,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 560,
+      "fullTextHeight": 400,
+      "cardScreenfuls": 0.66,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        91,
+        33,
+        16,
+        94,
+        71,
+        57,
+        41,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      }
+    },
+    {
+      "sample": "synthetic-a",
+      "expanded": true,
+      "screenshot": "synthetic-a-390-expanded.png",
+      "viewportWidth": 390,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 960,
+      "fullTextHeight": 400,
+      "cardScreenfuls": 1.14,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        91,
+        33,
+        16,
+        94,
+        71,
+        57,
+        41,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      }
+    },
+    {
+      "sample": "synthetic-a",
+      "expanded": false,
+      "screenshot": "synthetic-a-412-collapsed.png",
+      "viewportWidth": 412,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 496,
+      "fullTextHeight": 379,
+      "cardScreenfuls": 0.59,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        91,
+        33,
+        16,
+        94,
+        71,
+        57,
+        41,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 213,
+          "bottom": 250,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 279,
+          "height": 16
+        }
+      }
+    },
+    {
+      "sample": "synthetic-a",
+      "expanded": true,
+      "screenshot": "synthetic-a-412-expanded.png",
+      "viewportWidth": 412,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 875,
+      "fullTextHeight": 379,
+      "cardScreenfuls": 1.04,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        91,
+        33,
+        16,
+        94,
+        71,
+        57,
+        41,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 213,
+          "bottom": 250,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 279,
+          "height": 16
+        }
+      }
+    },
+    {
+      "sample": "synthetic-a",
+      "expanded": false,
+      "screenshot": "synthetic-a-430-collapsed.png",
+      "viewportWidth": 430,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 475,
+      "fullTextHeight": 379,
+      "cardScreenfuls": 0.56,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        91,
+        33,
+        16,
+        94,
+        71,
+        57,
+        41,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 213,
+          "bottom": 229,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 242,
+          "bottom": 258,
+          "height": 16
+        }
+      }
+    },
+    {
+      "sample": "synthetic-a",
+      "expanded": true,
+      "screenshot": "synthetic-a-430-expanded.png",
+      "viewportWidth": 430,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 854,
+      "fullTextHeight": 379,
+      "cardScreenfuls": 1.01,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        91,
+        33,
+        16,
+        94,
+        71,
+        57,
+        41,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 213,
+          "bottom": 229,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 242,
+          "bottom": 258,
+          "height": 16
+        }
+      }
+    },
+    {
+      "sample": "synthetic-b",
+      "expanded": false,
+      "screenshot": "synthetic-b-320-collapsed.png",
+      "viewportWidth": 320,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 561,
+      "fullTextHeight": 526,
+      "cardScreenfuls": 0.66,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        74,
+        47,
+        16,
+        94,
+        71,
+        36,
+        41,
+        48,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 300,
+          "height": 37
+        }
+      }
+    },
+    {
+      "sample": "synthetic-b",
+      "expanded": true,
+      "screenshot": "synthetic-b-320-expanded.png",
+      "viewportWidth": 320,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 1087,
+      "fullTextHeight": 526,
+      "cardScreenfuls": 1.29,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        74,
+        47,
+        16,
+        94,
+        71,
+        36,
+        41,
+        48,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 300,
+          "height": 37
+        }
+      }
+    },
+    {
+      "sample": "synthetic-b",
+      "expanded": false,
+      "screenshot": "synthetic-b-360-collapsed.png",
+      "viewportWidth": 360,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 561,
+      "fullTextHeight": 484,
+      "cardScreenfuls": 0.66,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        74,
+        47,
+        16,
+        94,
+        71,
+        36,
+        41,
+        48,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 300,
+          "height": 37
+        }
+      }
+    },
+    {
+      "sample": "synthetic-b",
+      "expanded": true,
+      "screenshot": "synthetic-b-360-expanded.png",
+      "viewportWidth": 360,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 1045,
+      "fullTextHeight": 484,
+      "cardScreenfuls": 1.24,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        74,
+        47,
+        16,
+        94,
+        71,
+        36,
+        41,
+        48,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 300,
+          "height": 37
+        }
+      }
+    },
+    {
+      "sample": "synthetic-b",
+      "expanded": false,
+      "screenshot": "synthetic-b-390-collapsed.png",
+      "viewportWidth": 390,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 518,
+      "fullTextHeight": 463,
+      "cardScreenfuls": 0.61,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        74,
+        47,
+        16,
+        94,
+        71,
+        36,
+        41,
+        48,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 279,
+          "height": 16
+        }
+      }
+    },
+    {
+      "sample": "synthetic-b",
+      "expanded": true,
+      "screenshot": "synthetic-b-390-expanded.png",
+      "viewportWidth": 390,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 981,
+      "fullTextHeight": 463,
+      "cardScreenfuls": 1.16,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        74,
+        47,
+        16,
+        94,
+        71,
+        36,
+        41,
+        48,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 279,
+          "height": 16
+        }
+      }
+    },
+    {
+      "sample": "synthetic-b",
+      "expanded": false,
+      "screenshot": "synthetic-b-412-collapsed.png",
+      "viewportWidth": 412,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 475,
+      "fullTextHeight": 442,
+      "cardScreenfuls": 0.56,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        74,
+        47,
+        16,
+        94,
+        71,
+        36,
+        41,
+        48,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 213,
+          "bottom": 229,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 242,
+          "bottom": 258,
+          "height": 16
+        }
+      }
+    },
+    {
+      "sample": "synthetic-b",
+      "expanded": true,
+      "screenshot": "synthetic-b-412-expanded.png",
+      "viewportWidth": 412,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 917,
+      "fullTextHeight": 442,
+      "cardScreenfuls": 1.09,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        74,
+        47,
+        16,
+        94,
+        71,
+        36,
+        41,
+        48,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 213,
+          "bottom": 229,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 242,
+          "bottom": 258,
+          "height": 16
+        }
+      }
+    },
+    {
+      "sample": "synthetic-b",
+      "expanded": false,
+      "screenshot": "synthetic-b-430-collapsed.png",
+      "viewportWidth": 430,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 475,
+      "fullTextHeight": 400,
+      "cardScreenfuls": 0.56,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        74,
+        47,
+        16,
+        94,
+        71,
+        36,
+        41,
+        48,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 213,
+          "bottom": 229,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 242,
+          "bottom": 258,
+          "height": 16
+        }
+      }
+    },
+    {
+      "sample": "synthetic-b",
+      "expanded": true,
+      "screenshot": "synthetic-b-430-expanded.png",
+      "viewportWidth": 430,
+      "viewportHeight": 844,
+      "pageOverflow": false,
+      "cardHeight": 875,
+      "fullTextHeight": 400,
+      "cardScreenfuls": 1.04,
+      "textOutside": false,
+      "textFontSize": "14px",
+      "textLineHeight": "normal",
+      "readingDate": "2026-11-15",
+      "summary": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "semanticSubheadings": 5,
+      "paragraphs": [
+        74,
+        47,
+        16,
+        94,
+        71,
+        36,
+        41,
+        48,
+        102
+      ],
+      "clipped": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 213,
+          "bottom": 229,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 242,
+          "bottom": 258,
+          "height": 16
+        }
+      }
+    }
+  ],
+  "semanticObservations": [
+    {
+      "sample": "synthetic-a",
+      "view": "today",
+      "scenario": null,
+      "date": "2026-11-15",
+      "relation": "pressure",
+      "summary": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일: 해야 할 일 하나의 마감과 범위를 확인하고 쉴 틈을 남겨 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점: 점수를 근거로 무리하거나 건강 상태를 판단하지 마세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정",
+        "출생시각 기준",
+        "해석의 한계"
+      ]
+    },
+    {
+      "sample": "synthetic-a",
+      "view": "tomorrow",
+      "scenario": null,
+      "date": "2026-11-16",
+      "relation": "pressure",
+      "summary": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일: 해야 할 일 하나의 마감과 범위를 확인하고 쉴 틈을 남겨 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점: 점수를 근거로 무리하거나 건강 상태를 판단하지 마세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정",
+        "출생시각 기준",
+        "해석의 한계"
+      ]
+    },
+    {
+      "sample": "synthetic-a",
+      "view": "today",
+      "scenario": null,
+      "date": "2026-11-15",
+      "relation": "pressure",
+      "summary": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일: 해야 할 일 하나의 마감과 범위를 확인하고 쉴 틈을 남겨 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점: 점수를 근거로 무리하거나 건강 상태를 판단하지 마세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정",
+        "출생시각 기준",
+        "해석의 한계"
+      ]
+    },
+    {
+      "sample": "synthetic-a",
+      "view": "dday",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "relation": "pressure",
+      "summary": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일: 해야 할 일 하나의 마감과 범위를 확인하고 쉴 틈을 남겨 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점: 점수를 근거로 무리하거나 건강 상태를 판단하지 마세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정",
+        "출생시각 기준",
+        "해석의 한계"
+      ]
+    },
+    {
+      "sample": "synthetic-a",
+      "view": "dday",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "relation": "pressure",
+      "summary": "해야 할 일과 쉴 여유를 함께 점검하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 결과를 예상하기보다, 복습과 휴식에 필요한 시간을 하나씩 정해 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점 (선택한 상황에 맞춘 제안): 풀이 점수로 시험 결과를 예상하거나, 준비 계획을 무리하게 바꾸지 마세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정",
+        "출생시각 기준",
+        "해석의 한계"
+      ]
+    },
+    {
+      "sample": "synthetic-a",
+      "view": "dday",
+      "scenario": "exam",
+      "date": "2026-11-17",
+      "relation": "input",
+      "summary": "필요한 것을 배우고 정리하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 결과를 예상하기보다, 복습과 휴식에 필요한 시간을 하나씩 정해 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점 (선택한 상황에 맞춘 제안): 풀이 점수로 시험 결과를 예상하거나, 준비 계획을 무리하게 바꾸지 마세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정",
+        "출생시각 기준",
+        "해석의 한계"
+      ]
+    },
+    {
+      "sample": "synthetic-a",
+      "view": "dday",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "relation": "input",
+      "summary": "필요한 것을 배우고 정리하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 상대의 마음을 단정하기보다, 나누고 싶은 이야기와 듣고 싶은 이야기를 떠올려 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점 (선택한 상황에 맞춘 제안): 풀이 점수로 상대의 마음이나 만남의 결과를 단정하지 말고, 상대의 뜻은 대화로 확인하세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정",
+        "출생시각 기준",
+        "해석의 한계"
+      ]
+    },
+    {
+      "sample": "synthetic-a",
+      "view": "dday",
+      "scenario": "exam",
+      "date": "2026-11-17",
+      "relation": "input",
+      "summary": "필요한 것을 배우고 정리하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 결과를 예상하기보다, 복습과 휴식에 필요한 시간을 하나씩 정해 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점 (선택한 상황에 맞춘 제안): 풀이 점수로 시험 결과를 예상하거나, 준비 계획을 무리하게 바꾸지 마세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정",
+        "출생시각 기준",
+        "해석의 한계"
+      ]
+    },
+    {
+      "sample": "synthetic-a",
+      "view": "dday",
+      "scenario": "exam",
+      "date": "2026-11-18",
+      "relation": "same",
+      "summary": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 결과를 예상하기보다, 복습과 휴식에 필요한 시간을 하나씩 정해 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점 (선택한 상황에 맞춘 제안): 풀이 점수로 시험 결과를 예상하거나, 준비 계획을 무리하게 바꾸지 마세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정",
+        "출생시각 기준",
+        "해석의 한계"
+      ]
+    },
+    {
+      "sample": "synthetic-b",
+      "view": "today",
+      "scenario": null,
+      "date": "2026-11-15",
+      "relation": "same",
+      "summary": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "primaryAction": "해볼 일: 우선순위 하나를 적어 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점: 내 기준만으로 다른 사람의 뜻을 단정하지 마세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 279,
+          "height": 16
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 279,
+          "height": 16
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정 미적용",
+        "출생시각 기준",
+        "해석의 한계"
+      ]
+    },
+    {
+      "sample": "synthetic-b",
+      "view": "tomorrow",
+      "scenario": null,
+      "date": "2026-11-16",
+      "relation": "same",
+      "summary": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "primaryAction": "해볼 일: 우선순위 하나를 적어 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점: 내 기준만으로 다른 사람의 뜻을 단정하지 마세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 279,
+          "height": 16
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 279,
+          "height": 16
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정 미적용",
+        "출생시각 기준",
+        "해석의 한계"
+      ]
+    },
+    {
+      "sample": "synthetic-b",
+      "view": "today",
+      "scenario": null,
+      "date": "2026-11-15",
+      "relation": "same",
+      "summary": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "primaryAction": "해볼 일: 우선순위 하나를 적어 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점: 내 기준만으로 다른 사람의 뜻을 단정하지 마세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 279,
+          "height": 16
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 279,
+          "height": 16
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정 미적용",
+        "출생시각 기준",
+        "해석의 한계"
+      ]
+    },
+    {
+      "sample": "synthetic-b",
+      "view": "dday",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "relation": "same",
+      "summary": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "primaryAction": "해볼 일: 우선순위 하나를 적어 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점: 내 기준만으로 다른 사람의 뜻을 단정하지 마세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 279,
+          "height": 16
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 279,
+          "height": 16
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정 미적용",
+        "출생시각 기준",
+        "해석의 한계"
+      ]
+    },
+    {
+      "sample": "synthetic-b",
+      "view": "dday",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "relation": "same",
+      "summary": "중요하게 여길 기준 하나를 돌아보는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 결과를 예상하기보다, 복습과 휴식에 필요한 시간을 하나씩 정해 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점 (선택한 상황에 맞춘 제안): 풀이 점수로 시험 결과를 예상하거나, 준비 계획을 무리하게 바꾸지 마세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정 미적용",
+        "출생시각 기준",
+        "해석의 한계"
+      ]
+    },
+    {
+      "sample": "synthetic-b",
+      "view": "dday",
+      "scenario": "exam",
+      "date": "2026-11-17",
+      "relation": "output",
+      "summary": "생각을 짧고 분명하게 전하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 결과를 예상하기보다, 복습과 휴식에 필요한 시간을 하나씩 정해 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점 (선택한 상황에 맞춘 제안): 풀이 점수로 시험 결과를 예상하거나, 준비 계획을 무리하게 바꾸지 마세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정 미적용",
+        "출생시각 기준",
+        "해석의 한계"
+      ]
+    },
+    {
+      "sample": "synthetic-b",
+      "view": "dday",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "relation": "output",
+      "summary": "생각을 짧고 분명하게 전하는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 상대의 마음을 단정하기보다, 나누고 싶은 이야기와 듣고 싶은 이야기를 떠올려 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점 (선택한 상황에 맞춘 제안): 풀이 점수로 상대의 마음이나 만남의 결과를 단정하지 말고, 상대의 뜻은 대화로 확인하세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정 미적용",
+        "출생시각 기준",
+        "해석의 한계"
+      ]
+    }
+  ],
+  "stateChecks": [
+    {
+      "sample": "synthetic-a",
+      "check": "editing_date_and_scenario_preserves_today",
+      "passed": true
+    },
+    {
+      "sample": "synthetic-a",
+      "check": "submitted_date_and_scenario_replace_old_content",
+      "passed": true
+    },
+    {
+      "sample": "synthetic-a",
+      "check": "editing_scenario_cancels_late_dated_reply",
+      "passed": true
+    },
+    {
+      "sample": "synthetic-a",
+      "check": "editing_date_cancels_late_dated_reply",
+      "passed": true
+    },
+    {
+      "check": "absent_sections_uses_complete_text_and_clears_guidance",
+      "passed": true
+    },
+    {
+      "check": "partial_sections_uses_complete_text_and_clears_guidance",
+      "passed": true
+    },
+    {
+      "check": "duplicate_evidence_sections_uses_complete_text_and_clears_guidance",
+      "passed": true
+    },
+    {
+      "check": "unknown_version_sections_uses_complete_text_and_clears_guidance",
+      "passed": true
+    },
+    {
+      "sample": "synthetic-b",
+      "check": "editing_date_and_scenario_preserves_today",
+      "passed": true
+    },
+    {
+      "sample": "synthetic-b",
+      "check": "submitted_date_and_scenario_replace_old_content",
+      "passed": true
+    }
+  ],
+  "contextObservations": [
+    {
+      "sample": "synthetic-a",
+      "view": "dday",
+      "scenario": "meeting",
+      "date": "2026-11-24",
+      "relation": "wealth",
+      "summary": "쓸 수 있는 자원과 맡을 책임을 살피는 주제로 읽습니다.",
+      "primaryAction": "해볼 일 (선택한 상황에 맞춘 제안 · 별도 점수·성공 확률 아님): 상대의 마음을 단정하기보다, 나누고 싶은 이야기와 듣고 싶은 이야기를 떠올려 보세요.",
+      "primaryActionCount": 1,
+      "caution": "주의할 점 (선택한 상황에 맞춘 제안): 풀이 점수로 상대의 마음이나 만남의 결과를 단정하지 말고, 상대의 뜻은 대화로 확인하세요.",
+      "cautionCount": 1,
+      "disclaimerCount": 1,
+      "baseInterpretationVisible": true,
+      "actionVisibleWhenExpanded": true,
+      "actionVisibleWhenCollapsed": true,
+      "collapsedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "expandedVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "evidenceHeadings": [
+        "해석 근거",
+        "점수 근거",
+        "대운 보정",
+        "출생시각 기준",
+        "해석의 한계"
+      ],
+      "case": "meeting_with_wealth_relation",
+      "datesInspected": 10,
+      "baseFinancialCautionAbsent": true
+    }
+  ],
+  "scenarioLayoutObservations": [
+    {
+      "sample": "synthetic-a",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 320,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      },
+      "cardHeight": 574,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 320,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      },
+      "cardHeight": 1045,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 360,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      },
+      "cardHeight": 582,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 360,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      },
+      "cardHeight": 1003,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 390,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      },
+      "cardHeight": 564,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 390,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 271,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 284,
+          "bottom": 321,
+          "height": 37
+        }
+      },
+      "cardHeight": 960,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 412,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 213,
+          "bottom": 250,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 279,
+          "height": 16
+        }
+      },
+      "cardHeight": 496,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 412,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 213,
+          "bottom": 250,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 279,
+          "height": 16
+        }
+      },
+      "cardHeight": 875,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 430,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 213,
+          "bottom": 229,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 242,
+          "bottom": 258,
+          "height": 16
+        }
+      },
+      "cardHeight": 475,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 430,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 213,
+          "bottom": 229,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 242,
+          "bottom": 258,
+          "height": 16
+        }
+      },
+      "cardHeight": 854,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 320,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 604,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 320,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 1067,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 360,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 604,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 360,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 1025,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 390,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 582,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 390,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 982,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 412,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 539,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 412,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 918,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 430,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 539,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 430,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 918,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 320,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 364,
+          "height": 58
+        }
+      },
+      "cardHeight": 625,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 320,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 364,
+          "height": 58
+        }
+      },
+      "cardHeight": 1109,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 360,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 604,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 360,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 1025,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 390,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 561,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 390,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 961,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 412,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 543,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 412,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 918,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 430,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 539,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 430,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 918,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-24",
+      "viewportWidth": 320,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 364,
+          "height": 58
+        }
+      },
+      "cardHeight": 617,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-24",
+      "viewportWidth": 320,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 364,
+          "height": 58
+        }
+      },
+      "cardHeight": 1109,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-24",
+      "viewportWidth": 360,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 604,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-24",
+      "viewportWidth": 360,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 1025,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-24",
+      "viewportWidth": 390,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 582,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-24",
+      "viewportWidth": 390,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 982,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-24",
+      "viewportWidth": 412,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 539,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-24",
+      "viewportWidth": 412,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 918,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-24",
+      "viewportWidth": 430,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 539,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-a",
+      "scenario": "meeting",
+      "date": "2026-11-24",
+      "viewportWidth": 430,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 918,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 320,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 300,
+          "height": 37
+        }
+      },
+      "cardHeight": 553,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 320,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 300,
+          "height": 37
+        }
+      },
+      "cardHeight": 1087,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 360,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 300,
+          "height": 37
+        }
+      },
+      "cardHeight": 561,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 360,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 300,
+          "height": 37
+        }
+      },
+      "cardHeight": 1045,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 390,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 279,
+          "height": 16
+        }
+      },
+      "cardHeight": 522,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 390,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 234,
+          "bottom": 250,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 263,
+          "bottom": 279,
+          "height": 16
+        }
+      },
+      "cardHeight": 981,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 412,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 213,
+          "bottom": 229,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 242,
+          "bottom": 258,
+          "height": 16
+        }
+      },
+      "cardHeight": 475,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 412,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 213,
+          "bottom": 229,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 242,
+          "bottom": 258,
+          "height": 16
+        }
+      },
+      "cardHeight": 917,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 430,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 213,
+          "bottom": 229,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 242,
+          "bottom": 258,
+          "height": 16
+        }
+      },
+      "cardHeight": 475,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "general",
+      "date": "2026-11-16",
+      "viewportWidth": 430,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 213,
+          "bottom": 229,
+          "height": 16
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 242,
+          "bottom": 258,
+          "height": 16
+        }
+      },
+      "cardHeight": 875,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 320,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 596,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 320,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 1130,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 360,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 604,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 360,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 1088,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 390,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 582,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 390,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 1045,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 412,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 539,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 412,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 981,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 430,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 539,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "exam",
+      "date": "2026-11-16",
+      "viewportWidth": 430,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 939,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 320,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 364,
+          "height": 58
+        }
+      },
+      "cardHeight": 617,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 320,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 364,
+          "height": 58
+        }
+      },
+      "cardHeight": 1151,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 360,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 604,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 360,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 256,
+          "bottom": 293,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 306,
+          "bottom": 343,
+          "height": 37
+        }
+      },
+      "cardHeight": 1067,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 390,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 561,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 390,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 1003,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 412,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 539,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 412,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 960,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 430,
+      "expanded": false,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 539,
+      "pageOverflow": false,
+      "clipped": false
+    },
+    {
+      "sample": "synthetic-b",
+      "scenario": "meeting",
+      "date": "2026-11-17",
+      "viewportWidth": 430,
+      "expanded": true,
+      "guidanceVisibility": {
+        "action": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 235,
+          "bottom": 272,
+          "height": 37
+        },
+        "caution": {
+          "displayed": true,
+          "inViewport": true,
+          "top": 285,
+          "bottom": 322,
+          "height": 37
+        }
+      },
+      "cardHeight": 960,
+      "pageOverflow": false,
+      "clipped": false
+    }
+  ]
+}

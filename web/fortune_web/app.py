@@ -5,7 +5,6 @@ import hmac
 import os
 from pathlib import Path
 import threading
-import time
 from urllib.parse import urlsplit
 
 from flask import Flask, g, jsonify, request, render_template_string, send_file
@@ -13,6 +12,7 @@ from werkzeug.exceptions import HTTPException
 
 from . import metrics, service
 from .storage import WebStore
+from .rate_limit import FixedWindowLimiter
 
 
 def create_app(config=None):
@@ -25,6 +25,8 @@ def create_app(config=None):
         MAX_CONTENT_LENGTH=8192, MAX_FORM_PARTS=20,
         NOW=None, VERSION=os.environ.get("FORTUNE_WEB_VERSION", "development"),
         CLEANUP_INTERVAL=60,
+        RATE_LIMIT_REQUESTS=120, RATE_LIMIT_WINDOW=60, RATE_LIMIT_CAPACITY=4096,
+        RATE_LIMIT_INGRESS_REQUESTS=3600,
         PUBLIC_ORIGIN=os.environ.get("FORTUNE_WEB_PUBLIC_ORIGIN", ""),
         INTEGRATED_ENABLED=os.environ.get("FORTUNE_WEB_INTEGRATED_ENABLED", "") == "1",
         BIRTH_LOCATION_ENABLED=os.environ.get("FORTUNE_WEB_BIRTH_LOCATION_ENABLED", "") == "1",
@@ -47,6 +49,16 @@ def create_app(config=None):
         app.config["TRUSTED_HOSTS"] = [parsed.hostname, "127.0.0.1", "localhost"]
         if not app.config["COOKIE_SECURE"]:
             raise RuntimeError("Public hosting requires secure session cookies")
+    limiter = FixedWindowLimiter(
+        app.config["RATE_LIMIT_REQUESTS"], app.config["RATE_LIMIT_WINDOW"],
+        app.config["RATE_LIMIT_CAPACITY"],
+    )
+    app.extensions["fortune_rate_limiter"] = limiter
+    ingress = FixedWindowLimiter(
+        app.config["RATE_LIMIT_INGRESS_REQUESTS"], app.config["RATE_LIMIT_WINDOW"],
+        app.config["RATE_LIMIT_CAPACITY"],
+    )
+    app.extensions["fortune_ingress_limiter"] = ingress
     store = WebStore(app.config["WEB_STORE"])
     store.purge_expired()
     app.extensions["fortune_store"] = store
@@ -62,13 +74,19 @@ def create_app(config=None):
         worker.start()
         app.extensions["fortune_cleanup"] = (stop, worker)
     calculations = threading.BoundedSemaphore(4)
-    rate_lock, rates = threading.Lock(), {}
 
     def error(code, text, status):
         return jsonify(ok=False, computed=False, error=code, text=text), status
 
     def csrf(token):
         return hmac.new(app.config["SECRET_KEY"].encode(), token.encode(), hashlib.sha256).hexdigest()
+
+    def limited_response(decision):
+        response = jsonify(ok=False, computed=False, error=decision.error,
+                           text="요청이 많습니다. 잠시 후 다시 시도해 주세요.")
+        response.status_code = 429
+        response.headers["Retry-After"] = str(decision.retry_after)
+        return response
 
     def measure(token, event, view):
         try:
@@ -83,19 +101,12 @@ def create_app(config=None):
             return
         if isinstance(request.routing_exception, HTTPException):
             raise request.routing_exception
-        # Request bodies and identifiers are never logged; this bounded rate map is memory-only.
-        now = time.monotonic()
-        identity = request.remote_addr or "unknown"
-        with rate_lock:
-            expired = [key for key, value in rates.items() if now - value[0] >= 60]
-            for key in expired:
-                del rates[key]
-            if identity not in rates and len(rates) >= 4096:
-                return error("busy", "요청이 많습니다. 잠시 후 다시 시도해 주세요.", 429)
-            start, count = rates.get(identity, (now, 0))
-            if count >= 120:
-                return error("rate_limited", "요청이 많습니다. 잠시 후 다시 시도해 주세요.", 429)
-            rates[identity] = (start, count + 1)
+        # A separate, higher transport ceiling bounds database lookups, including
+        # forged cookies. Normal sessions behind one proxy have distinct budgets.
+        peer = ("peer", request.remote_addr or "unknown")
+        ingress_decision = ingress.consume(peer)
+        if ingress_decision.error:
+            return limited_response(ingress_decision)
         token = request.cookies.get(app.config["COOKIE_NAME"], "")
         try:
             g.token, g.record = token, store.find(token)
@@ -103,6 +114,12 @@ def create_app(config=None):
             if request.path == "/api/events" and request.method == "POST":
                 return error("interest_unavailable", "관심을 기록하지 못했습니다. 잠시 후 다시 눌러 주세요.", 503)
             raise
+        # Only a live server-side session earns its own budget. Forged/expired
+        # cookies stay in the transport-peer bucket, regardless of proxy headers.
+        identity = ("session", store.key(token)) if g.record is not None else peer
+        decision = limiter.consume(identity)
+        if decision.error:
+            return limited_response(decision)
         if request.method not in ("GET", "HEAD", "OPTIONS"):
             if g.record is None:
                 return error("session_required", "이용 세션이 만료됐습니다. 화면을 새로고침해 주세요.", 401)
@@ -130,9 +147,17 @@ def create_app(config=None):
 
     @app.errorhandler(Exception)
     def fail_closed(exc):
-        status = exc.code if isinstance(exc, HTTPException) else 500
         # Do not expose traceback, input, internal paths, or engine stderr.
-        return error("request_failed", "계산 결과가 아님\n요청을 처리하지 못했습니다. 입력을 확인하거나 잠시 후 다시 시도해 주세요.", status)
+        payload = dict(ok=False, computed=False, error="request_failed",
+                       text="계산 결과가 아님\n요청을 처리하지 못했습니다. 입력을 확인하거나 잠시 후 다시 시도해 주세요.")
+        if isinstance(exc, HTTPException):
+            # Retain protocol headers such as 405 Allow while replacing the
+            # framework's body, which can contain reflected client input.
+            response = exc.get_response()
+            response.set_data(app.json.dumps(payload))
+            response.content_type = "application/json"
+            return response
+        return jsonify(payload), 500
 
     def require_profile(fn):
         @wraps(fn)
@@ -180,6 +205,10 @@ def create_app(config=None):
     def bootstrap():
         token = g.token if g.record is not None else store.create(app.config["SESSION_LIFETIME"])
         profile = g.record["profile"] if g.record else None
+        if profile:
+            # Older stored profiles were solar-only; do not mutate storage on read.
+            profile = {"birth_calendar": "solar", "birth_leap_month": False,
+                       "birth_date_input": profile["birth_date"], **profile}
         measure(token, "visit", "entry")
         response = jsonify(ok=True, profile=profile, csrf=csrf(token), storage="this_browser", retention_days=90,
                            reading_window=service.reading_window(profile, app.config["NOW"]))

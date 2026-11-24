@@ -201,7 +201,19 @@ class TestIntegrationAndCorrections(unittest.TestCase):
         with patch("hermes_ext.fortune_oracle.daily_fortune_engine._kst_today", return_value=T):
             text = core.render_daily_fortune(profile=PROFILES["A"])
         self.assertEqual(text, render_personalized_daily_text(PROFILES["A"], target_date=T))
+        reading = build_personalized_daily(PROFILES["A"], target_date=T)
+        self.assertIn(f"{reading['score']:.0f}점", text)
+        self.assertIn(reading["day_pillar"], text)
+        self.assertIn("예측 확률이 아닙니다", text)
+        self.assertIn("오락과 자기성찰용", text)
+        self.assertNotIn("같은 개수일 때는", text)
+        self.assertLess(len(text), len("\n".join(reading["lines"] + [reading["disclaimer"]])))
         self.assertTrue(5 <= len(text.splitlines()) <= 8)
+        headings = ("이날의 해석:", "해볼 일:", "주의할 점:", "계산 근거:")
+        lines = text.splitlines()
+        positions = [next(i for i, line in enumerate(lines) if line.startswith(heading))
+                     for heading in headings]
+        self.assertEqual(positions, sorted(set(positions)))
         for markup in ("**", "#", "`"):
             self.assertNotIn(markup, text)
 

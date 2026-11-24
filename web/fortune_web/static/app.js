@@ -9,7 +9,9 @@ let entryMeasured = false;
 if (location.search) history.replaceState(history.state, "", location.pathname + location.hash);
 let csrf = "", profile = null, generation = 0, pending = new AbortController(), deleting = false;
 let sessionReady = false, sessionInitialization = null, saving = false, busyState = false;
+let sessionController = null, sessionGeneration = 0, saveOperation = null, browserStateChannel = null;
 let shareSource = null, shareFile = null, shareVersion = 0, dateAvailable = false, formStartedDay = "";
+let pendingDatedGeneration = null;
 const downloadUrls = new Set();
 let integratedReport = null, integratedPages = [], integratedPage = 0, integratedShareVersion = 0;
 const integratedUrls = new Set();
@@ -133,7 +135,28 @@ function clearShare() {
   $("download-share").disabled = true; $("native-share").hidden = true;
   downloadUrls.forEach(url => URL.revokeObjectURL(url)); downloadUrls.clear();
 }
-function cancelPending() { pending.abort(); pending = new AbortController(); hidePremiumInterest(); return ++generation; }
+function cancelPending() { pending.abort(); pending = new AbortController(); pendingDatedGeneration = null; hidePremiumInterest(); return ++generation; }
+function invalidateBrowserState(message = "") {
+  cancelPending(); ++sessionGeneration; sessionController?.abort(); sessionController = null;
+  sessionInitialization = null; sessionReady = false; csrf = ""; profile = null; formStartedDay = "";
+  saveOperation = null; saving = false; empty(); $("birth-form").reset(); $("birth-time").disabled = true;
+  $("delete-dialog").close(); showError("form-error", ""); busy(false); $("status").textContent = message;
+}
+function connectBrowserState() {
+  if (browserStateChannel || !window.BroadcastChannel) return;
+  try {
+    browserStateChannel = new BroadcastChannel("fortune-browser-state");
+    browserStateChannel.onmessage = event => {
+      if (event.data === "profile-invalidated") {
+        invalidateBrowserState("다른 탭에서 출생정보가 바뀌었어요. 새로고침해 현재 정보를 확인해 주세요.");
+      }
+    };
+  } catch (_) { /* Browsers that block channels still revalidate restored pages. */ }
+}
+function notifyBrowserState() {
+  // Transient same-origin signal only: no identity, profile, URL or storage.
+  try { browserStateChannel?.postMessage("profile-invalidated"); } catch (_) { /* optional coordination */ }
+}
 function measure(event, view) {
   if (!csrf) return;
   // Independent of reading cancellation; a revoked session rejects late events server-side.
@@ -192,22 +215,31 @@ async function api(path, options = {}) {
       if (err.name === "AbortError") throw err;
       throw new Error("응답을 읽지 못했습니다. 잠시 후 다시 시도해 주세요.");
     }
-    if (!response.ok) throw new Error(data.text || "요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+    if (!response.ok) {
+      const error = new Error(data.text || "요청을 처리하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+      error.status = response.status; throw error;
+    }
     return data;
   }, signal);
 }
 function empty() {
   monthResizeObserver?.disconnect(); monthResizeObserver = null;
   clearShare(); clearIntegrated(); hidePremiumInterest(true);
+  clearDailySections();
+  clearNatalMarkers();
   $("reading-panel").hidden = true; $("empty-state").hidden = false; document.body.dataset.state = "empty";
   $("reading-title").textContent = "나의 하루"; $("reading-date").textContent = ""; $("reading-date").removeAttribute("datetime");
-  ["full-text", "month-text", "keywords", "day-relation", "score", "pillars", "element-bars", "day-pillar", "reading-date-label", "chart-warning", "kline-chart", "compat-text", "status"].forEach(id => $(id).replaceChildren());
+  ["full-text", "month-text", "keywords", "day-relation", "score", "pillars", "element-bars", "day-pillar", "reading-date-label", "reading-timezone", "chart-warning", "kline-chart", "compat-text", "status"].forEach(id => $(id).replaceChildren());
   ["daily-result", "month-result", "chart-section", "compat-result"].forEach(id => $(id).hidden = true);
   $("compat-form").reset(); $("partner-time").disabled = true; $("date-form").reset();
   showError("reading-error", "");
 }
 function fillForm(value) {
-  $("display-name").value = value.display_name || ""; $("birth-date").value = value.birth_date;
+  $("display-name").value = value.display_name || "";
+  $("birth-calendar").value = value.birth_calendar || "solar";
+  syncBirthCalendar("birth");
+  $("birth-leap-month").checked = value.birth_leap_month === true;
+  $("birth-date").value = value.birth_date_input || value.birth_date;
   $("birth-time").value = value.birth_time || ""; $("unknown-time").checked = !value.birth_time;
   $("birth-time").disabled = !value.birth_time; $("birth-zone").value = TZ_LABEL[value.timezone] || value.timezone;
   $("gender").value = value.gender;
@@ -219,9 +251,12 @@ function fillForm(value) {
 async function bootstrap() {
   if (sessionInitialization) return sessionInitialization;
   sessionReady = false;
-  const controller = new AbortController();
+  const controller = new AbortController(), epoch = sessionGeneration;
+  sessionController = controller;
   const initialization = (async () => {
-    const data = await api("/api/session", {signal:controller.signal}); csrf = data.csrf; profile = data.profile;
+    const data = await api("/api/session", {signal:controller.signal});
+    if (epoch !== sessionGeneration || controller.signal.aborted) return;
+    csrf = data.csrf; profile = data.profile;
     sessionReady = true;
     if (sharedEntry && !entryMeasured) { entryMeasured = true; measure("shared_link_visit", "card"); }
     setReadingWindow(data.reading_window);
@@ -230,9 +265,13 @@ async function bootstrap() {
   sessionInitialization = initialization;
   syncSaveButton();
   try { await initialization; }
-  catch (err) { if (!sessionReady) csrf = ""; throw err; }
+  catch (err) {
+    if (epoch !== sessionGeneration || controller.signal.aborted) return;
+    if (!sessionReady) csrf = ""; throw err;
+  }
   finally {
     if (sessionInitialization === initialization) sessionInitialization = null;
+    if (sessionController === controller) sessionController = null;
     syncSaveButton();
   }
 }
@@ -251,7 +290,8 @@ function drawDaily(result, view) {
   const keywords = reading.keywords.slice(0, 3);
   $("keyword-title").textContent = view === "tomorrow" ? "내일을 바라보는 키워드" : view === "dday" ? "그날을 준비하는 키워드" : "오늘을 바라보는 키워드";
   $("reading-date").textContent = result.date; $("reading-date").dateTime = result.date;
-  $("reading-date-label").textContent = koreanDate(result.date);
+  $("reading-date-label").textContent = `${result.date.slice(0, 4)}년 ${koreanDate(result.date)}`;
+  $("reading-timezone").textContent = typeof result.reading_timezone === "string" ? result.reading_timezone : "";
   // Chips keep the " · " separators as text so the summary still reads "회복 · 유연 · 시작".
   $("keywords").replaceChildren(...keywords.flatMap((word, i) => {
     const chip = document.createElement("span"); chip.className = "kw"; chip.textContent = word;
@@ -265,19 +305,80 @@ function drawDaily(result, view) {
     label.textContent = `${{tomorrow:"내일의 일진", dday:"그날의 일진"}[view] || "오늘의 일진"} · ${dayGlyphs[0].ko}${dayGlyphs[1].ko}일`;
     $("day-pillar").replaceChildren(...dayGlyphs.map(tile), label);
   } else $("day-pillar").replaceChildren();
-  $("day-relation").textContent = result.reflection ? `상황별 성찰 질문: ${result.reflection}` : reading.lines[1] || `일진 ${reading.day_pillar}`;
-  $("score").textContent = String(Math.round(reading.score)); $("full-text").textContent = result.text;
-  $("score").closest(".interpretation-index").style.setProperty("--score", String(Math.max(0, Math.min(100, Math.round(reading.score)))));
+  drawDailySections(result);
+  $("score").textContent = String(Math.round(reading.score));
   $("daily-result").hidden = false;
   shareSource = {date:result.date, keywords, score:reading.score, view};
   measure("reading_viewed", view); showPremiumInterest();
 }
+function validDailySections(sections) {
+  const object = value => value !== null && typeof value === "object" && !Array.isArray(value);
+  const text = value => typeof value === "string" && value.trim().length > 0;
+  const guidance = value => object(value) && text(value.title) && text(value.text) && typeof value.qualifier === "string";
+  if (!object(sections) || sections.schema_version !== 1
+      || ![sections.theme, sections.action, sections.caution].every(guidance)
+      || !Array.isArray(sections.evidence) || sections.evidence.length < 4 || sections.evidence.length > 5) return false;
+  const allowed = new Set(["relation", "score", "cycle", "time", "limitations"]);
+  const ids = new Set();
+  for (const section of sections.evidence) {
+    if (!object(section) || !allowed.has(section.id) || ids.has(section.id) || !text(section.title)
+        || !Array.isArray(section.paragraphs) || !section.paragraphs.length || !section.paragraphs.every(text)) return false;
+    ids.add(section.id);
+  }
+  return ["relation", "score", "cycle", "limitations"].every(id => ids.has(id));
+}
+function clearDailySections() {
+  ["daily-theme-title", "day-relation", "daily-theme-qualifier", "daily-action-title", "daily-action",
+   "daily-caution-title", "daily-caution", "daily-practice-qualifiers", "daily-evidence", "full-text"].forEach(id => $(id).replaceChildren());
+  ["daily-guidance", "daily-theme-qualifier", "daily-practice-qualifiers", "daily-evidence"].forEach(id => $(id).hidden = true);
+  $("full-text").hidden = false;
+  $("daily-details").open = false;
+  $("daily-details-summary").textContent = "계산 근거와 전체 풀이 읽기";
+  delete $("daily-result").dataset.structured;
+}
+function drawDailySections(result) {
+  clearDailySections();
+  const sections = result.sections;
+  if (!validDailySections(sections)) {
+    $("full-text").textContent = typeof result.text === "string" ? result.text : "";
+    return;
+  }
+  $("daily-theme-title").textContent = sections.theme.title;
+  $("day-relation").textContent = sections.theme.text;
+  $("daily-theme-qualifier").textContent = sections.theme.qualifier;
+  $("daily-theme-qualifier").hidden = !sections.theme.qualifier;
+  for (const name of ["action", "caution"]) {
+    $("daily-" + name + "-title").textContent = sections[name].title;
+    $("daily-" + name).textContent = sections[name].text;
+  }
+  // A shared qualifier plus a longer version with the same prefix needs only the longer original caption.
+  const qualifiers = [...new Set([sections.action.qualifier, sections.caution.qualifier].filter(Boolean))];
+  const captions = qualifiers.filter(value => !qualifiers.some(other => other !== value && other.startsWith(value + " · ")));
+  $("daily-practice-qualifiers").replaceChildren(...captions.map(value => reportElement("p", "daily-qualifier", value)));
+  $("daily-practice-qualifiers").hidden = !captions.length;
+  $("daily-evidence").replaceChildren(...sections.evidence.map((section, index) => {
+    const block = reportElement("section", "daily-evidence-section");
+    const heading = reportElement("h4", "", section.title);
+    heading.id = `daily-evidence-title-${index}`;
+    block.setAttribute("aria-labelledby", heading.id);
+    block.dataset.evidence = section.id;
+    block.append(heading, ...section.paragraphs.map(value => reportElement("p", "", value)));
+    return block;
+  }));
+  $("daily-guidance").hidden = false;
+  $("daily-evidence").hidden = false;
+  $("full-text").hidden = true;
+  $("daily-details-summary").textContent = "해석 근거와 한계 읽기";
+  $("daily-result").dataset.structured = "true";
+}
 let monthResizeObserver = null;
 function clearResults() {
   clearShare(); clearIntegrated(); hidePremiumInterest();
+  clearDailySections();
+  clearNatalMarkers();
   monthResizeObserver?.disconnect(); monthResizeObserver = null;
   ["daily-result", "month-result", "chart-section", "compat-result"].forEach(id => $(id).hidden = true);
-  ["pillars", "element-bars", "day-pillar", "chart-warning", "compat-text", "full-text", "month-text"].forEach(id => $(id).replaceChildren());
+  ["pillars", "element-bars", "day-pillar", "chart-warning", "compat-text", "full-text", "month-text", "reading-timezone"].forEach(id => $(id).replaceChildren());
 }
 function reportElement(tag, className, text) {
   const node = document.createElement(tag); if (className) node.className = className;
@@ -359,11 +460,100 @@ function drawIntegrated(result) {
   $("integrated-text").textContent = result.text; integratedReport = result.text;
   $("integrated-result").hidden = false; measure("reading_viewed", "integrated"); showPremiumInterest();
 }
+const PILLAR_LABELS = {year:"년주", month:"월주", day:"일주", time:"시주"};
+const MARKER_LABELS = {
+  wonjin_all_pairs:"두 기둥의 지지 조합",
+  dohwa_year_triad:"년지 기준",
+  dohwa_day_triad:"일지 기준",
+  dohwa_broad_branches:"간이 기준 · 자·오·묘·유",
+};
+const MARKER_STATUS = {
+  detected:"조건에 맞음", not_detected:"조건에 맞는 자리 없음",
+  insufficient_input:"입력 부족", unsupported:"미지원",
+};
+function clearNatalMarkers() {
+  $("natal-markers").open = false;
+  $("natal-markers").hidden = true;
+  $("natal-marker-results").replaceChildren();
+  $("natal-coverage").textContent = "";
+}
+function branchName(branch) {
+  const value = glyph(branch, BRANCHES);
+  return value ? `${value.ko}(${value.han})` : "";
+}
+function validMarkerRule(rule) {
+  if (!rule || !Object.hasOwn(MARKER_LABELS, rule.id) ||
+      !Object.hasOwn(MARKER_STATUS, rule.status) || !Array.isArray(rule.evidence) ||
+      (rule.status === "detected") !== (rule.evidence.length > 0)) return false;
+  const validPlace = (position, branch) => Object.hasOwn(PILLAR_LABELS, position) && !!branchName(branch);
+  if (rule.id === "wonjin_all_pairs") {
+    return rule.evidence.every(match => Array.isArray(match?.positions) && match.positions.length === 2 &&
+      Array.isArray(match.branches) && match.branches.length === 2 &&
+      match.positions.every((position, i) => validPlace(position, match.branches[i])));
+  }
+  return rule.evidence.every(match => match && validPlace(match.position, match.branch));
+}
+function markerBasis(rule) {
+  const place = (position, branch) => `${PILLAR_LABELS[position]} ${branchName(branch)}`;
+  const matches = rule.evidence.map(match => {
+    if (rule.id === "wonjin_all_pairs") {
+      return match.positions.map((position, i) => place(position, match.branches[i])).join(" ↔ ");
+    }
+    return place(match.position, match.branch);
+  });
+  let criterion = "";
+  if (rule.reference_position) {
+    criterion = rule.target_branch
+      ? `${place(rule.reference_position, rule.reference_branch)} 기준으로 ${branchName(rule.target_branch)} 자리를 찾습니다.`
+      : `${PILLAR_LABELS[rule.reference_position]}가 정해져야 기준 글자를 고를 수 있습니다.`;
+  }
+  return {matches:matches.join(" / "), criterion};
+}
+function drawNatalMarkers(data) {
+  clearNatalMarkers();
+  if (data?.schema_version !== 1 || data.rule_version !== "natal-markers-v1" ||
+      !Array.isArray(data.coverage?.available_positions) || !Array.isArray(data.rules) ||
+      !data.rules.every(validMarkerRule)) return;
+  const rules = new Map(data.rules.map(rule => [rule.id, rule]));
+  if (!Object.keys(MARKER_LABELS).every(id => rules.has(id))) return;
+
+  const sections = [
+    {title:"원진", ids:["wonjin_all_pairs"],
+      description:"네 기둥에서 두 지지를 짝지어 자·미, 축·오, 인·유, 묘·신, 진·해, 사·술 중 하나인지 봅니다.",
+      reflection:"전통 풀이에서 원진은 관계에서 서운함이 생기는 순간을 돌아보는 소재입니다. 마음에 걸리는 말이 있다면, 상대에게 그 뜻을 물어보세요."},
+    {title:"도화", ids:["dohwa_year_triad", "dohwa_day_triad", "dohwa_broad_branches"],
+      description:"년지와 일지를 출발점으로 삼는 기준을 각각 살펴봅니다. 자·오·묘·유가 한 자리라도 있는지 보는 간이 기준도 따로 표시합니다.",
+      reflection:"전통 풀이에서 도화는 자신을 표현하고 사람과 어울리는 일을 돌아보는 소재입니다. 모임을 앞두고 있다면 나누고 싶은 이야기 하나를 떠올려 보세요."},
+  ];
+  const nodes = sections.map(section => {
+    const box = reportElement("section", "natal-marker");
+    const list = reportElement("dl");
+    box.append(reportElement("h4", "", section.title), reportElement("p", "", section.description), list);
+    for (const id of section.ids) {
+      const rule = rules.get(id);
+      const {matches, criterion} = markerBasis(rule);
+      const value = reportElement("dd");
+      value.append(reportElement("span", rule.status === "detected" ? "marker-hit" : "", MARKER_STATUS[rule.status]));
+      if (matches) value.append(" · ", matches);
+      if (criterion) value.append(reportElement("small", "marker-criterion", criterion));
+      list.append(reportElement("dt", "", MARKER_LABELS[id]), value);
+    }
+    if (section.ids.some(id => rules.get(id).status === "detected")) {
+      box.append(reportElement("p", "marker-reflection", section.reflection));
+    }
+    return box;
+  });
+  const available = data.coverage.available_positions.map(key => PILLAR_LABELS[key]).join("·");
+  $("natal-coverage").textContent = `판정 규칙 v1 · 확인한 자리 ${available || "없음"}. ` +
+    (data.coverage.complete ? "" : "빠진 자리를 알게 되면 추가로 맞는 조합이 생길 수 있습니다.");
+  $("natal-marker-results").replaceChildren(...nodes);
+  $("natal-markers").hidden = false;
+}
 function drawChart(result) {
   $("pillars").replaceChildren(); $("element-bars").replaceChildren();
-  if (!result.ok) { $("chart-section").hidden = true; return; }
+  if (!result.ok) { clearNatalMarkers(); $("chart-section").hidden = true; return; }
   const counts = {목:0, 화:0, 토:0, 금:0, 수:0};
-  [["year", "년주"], ["month", "월주"], ["day", "일주"], ["time", "시주"]].forEach(([key, label]) => {
+  Object.entries(PILLAR_LABELS).forEach(([key, label]) => {
     const cell = document.createElement("div"); cell.className = "pillar";
     const title = document.createElement("span"); title.textContent = label;
     const value = document.createElement("strong");
@@ -385,6 +575,7 @@ function drawChart(result) {
     }));
   }
   $("chart-warning").textContent = result.warnings.join(" "); $("chart-section").hidden = false;
+  drawNatalMarkers(result.natal_markers);
 }
 function drawMonth(data) {
   monthResizeObserver?.disconnect();
@@ -417,7 +608,17 @@ function drawMonth(data) {
     container.replaceChildren(svg);
   }
   render();
-  monthResizeObserver = new ResizeObserver(render);
+  // Changing the SVG can resize its container. Write in the next frame rather
+  // than during ResizeObserver delivery, which causes loop errors in WebKit.
+  let resizeFrame = 0;
+  const observer = new ResizeObserver(() => {
+    if (resizeFrame) return;
+    resizeFrame = requestAnimationFrame(() => {
+      resizeFrame = 0;
+      if (monthResizeObserver === observer) render();
+    });
+  });
+  monthResizeObserver = observer;
   monthResizeObserver.observe(container);
 }
 
@@ -453,7 +654,10 @@ $("birth-form").addEventListener("input", () => {
 });
 $("birth-form").addEventListener("submit", async event => {
   event.preventDefault(); if (deleting || saving) return;
-  const data = Object.fromEntries(new FormData(event.currentTarget)); data.birth_time = $("unknown-time").checked ? "" : $("birth-time").value;
+  const data = Object.fromEntries(new FormData(event.currentTarget));
+  data.birth_leap_month = $("birth-calendar").value === "lunar" && $("birth-leap-month").checked;
+  data.birth_time = $("unknown-time").checked ? "" : $("birth-time").value;
+  const operation = {}; saveOperation = operation;
   saving = true; syncSaveButton(); showError("form-error", "");
   let mine = null;
   try {
@@ -468,38 +672,76 @@ $("birth-form").addEventListener("submit", async event => {
     }
     if (!sessionReady) {
       try { await bootstrap(); }
-      catch (_) { showError("form-error", "서비스에 연결하지 못했습니다. 잠시 후 저장을 다시 눌러 주세요."); return; }
+      catch (_) {
+        if (saveOperation === operation) showError("form-error", "서비스에 연결하지 못했습니다. 잠시 후 저장을 다시 눌러 주세요.");
+        return;
+      }
     }
-    if (deleting || !sessionReady) return;
+    if (saveOperation !== operation || deleting || !sessionReady) return;
     mine = cancelPending(); busy(true);
-    const result = await api("/api/profile", {method:"PUT", body:JSON.stringify(data)});
-    if (mine !== generation) return;
+    // Drain submitted mutations independently of reading/UI invalidation: the
+    // server may commit even after a sibling replaces this document's state.
+    const result = await api("/api/profile", {method:"PUT", body:JSON.stringify(data), signal:null});
+    notifyBrowserState();
+    if (mine !== generation || saveOperation !== operation) return;
     profile = result.profile;
     setReadingWindow(result.reading_window);
     $("status").textContent = "출생정보를 저장했습니다.";
-    await loadView("today"); $("reading-title").focus({preventScroll:true});
-    if (window.matchMedia("(max-width: 620px)").matches) $("reading-panel").scrollIntoView({block:"start", behavior:"auto"});
-  } catch (err) { if (err.name !== "AbortError" && (mine === null || mine === generation)) showError("form-error", err.message); }
+    await loadView("today");
+    if (saveOperation !== operation || !profile) return;
+    $("reading-title").focus({preventScroll:true});
+    if (window.matchMedia("(max-width: 60rem)").matches) $("reading-panel").scrollIntoView({block:"start", behavior:"auto"});
+  } catch (err) {
+    if (mine !== null && (!Number.isInteger(err.status) || err.status >= 500)) notifyBrowserState();
+    if (saveOperation === operation && err.name !== "AbortError" && (mine === null || mine === generation)) showError("form-error", err.message);
+  }
   finally {
-    if (mine === null || mine === generation) busy(false);
-    saving = false; syncSaveButton();
+    if (saveOperation === operation) {
+      if (mine === null || mine === generation) busy(false);
+      saveOperation = null; saving = false; syncSaveButton();
+    }
   }
 });
 document.querySelectorAll("[data-view]").forEach(button => button.addEventListener("click", () => loadView(button.dataset.view)));
 document.querySelectorAll("[data-premium-interest]").forEach(button => button.addEventListener("click", () => recordPremiumInterest(button)));
-addEventListener("pagehide", () => { clearPremiumRequests(); clearPremiumMessages(); updatePremiumButtons(); });
+addEventListener("pagehide", () => {
+  // A cached document must not retain a private form, result or export after
+  // another tab deletes the shared cookie while this document is suspended.
+  invalidateBrowserState(); browserStateChannel?.close(); browserStateChannel = null;
+});
+addEventListener("pageshow", event => {
+  connectBrowserState();
+  if (event.persisted) {
+    invalidateBrowserState();
+    bootstrap().catch(() => showError("form-error", "현재 정보를 확인하지 못했습니다. 새로고침해 주세요."));
+  } else if (performance.getEntriesByType("navigation")[0]?.type === "back_forward") {
+    // WebKit can restore native date fields into a newly loaded history entry
+    // after the previous document's pagehide scrub. Do this once at pageshow;
+    // a pending bootstrap must preserve input the user types afterwards.
+    $("birth-form").reset(); $("birth-time").disabled = true;
+    $("compat-form").reset(); $("partner-time").disabled = true;
+    $("date-form").reset();
+    if (dateAvailable) $("target-date").value = $("target-date").min;
+    if (sessionReady && profile) fillForm(profile);
+  }
+});
 document.addEventListener("visibilitychange", () => { if (!document.hidden) refreshPremiumDay(); });
 $("delete-button").addEventListener("click", () => $("delete-dialog").showModal());
 $("cancel-delete").addEventListener("click", () => $("delete-dialog").close());
 $("delete-dialog").addEventListener("cancel", event => { if (deleting) event.preventDefault(); });
 $("confirm-delete").addEventListener("click", async () => {
   if (deleting) return;
-  deleting = true; cancelPending(); busy(true); $("confirm-delete").disabled = true;
+  deleting = true; const mine = cancelPending(); notifyBrowserState(); busy(true); $("confirm-delete").disabled = true;
   $("cancel-delete").disabled = true; $("delete-button").disabled = true;
   try {
-    await api("/api/profile", {method:"DELETE"}); profile = null; formStartedDay = ""; empty(); $("birth-form").reset(); $("birth-time").disabled = true;
+    await api("/api/profile", {method:"DELETE", signal:null});
+    notifyBrowserState();
+    if (mine !== generation) return;
+    profile = null; formStartedDay = ""; empty(); $("birth-form").reset(); $("birth-time").disabled = true;
     $("delete-dialog").close(); await bootstrap(); $("status").textContent = "출생정보를 삭제했습니다.";
   } catch (err) {
+    notifyBrowserState();
+    if (mine !== generation) return;
     // The server may have committed deletion before delivery failed: hide stale data and resync.
     empty(); profile = null; formStartedDay = ""; $("birth-form").reset(); $("birth-time").disabled = true; $("delete-dialog").close();
     try {
@@ -532,7 +774,13 @@ $("open-share").addEventListener("click", async () => {
   } catch (err) { if (version === shareVersion) $("share-status").textContent = err.message; }
 });
 $("close-share").addEventListener("click", () => $("share-dialog").close());
-$("share-dialog").addEventListener("close", () => { ++shareVersion; shareFile = null; $("share-canvas").width = 0; });
+$("share-dialog").addEventListener("close", event => {
+  // The browser may deliver the previous close event after the next preview opens.
+  if (event.currentTarget.open) return;
+  ++shareVersion;
+  shareFile = null;
+  $("share-canvas").width = 0;
+});
 $("download-share").addEventListener("click", () => {
   if (!shareFile || !shareSource) return;
   const url = URL.createObjectURL(shareFile), link = document.createElement("a");
@@ -623,6 +871,7 @@ $("download-integrated-share").addEventListener("click", () => {
 async function loadSpecial(view, payload) {
   if (deleting || !profile) return;
   const mine = cancelPending(); busy(true); clearResults(); showError("reading-error", "");
+  if (view === "dday") pendingDatedGeneration = mine;
   document.querySelectorAll("[data-view]").forEach(b => b.setAttribute("aria-pressed", "false"));
   try {
     const result = await api(view === "dday" ? "/api/readings/date" : "/api/compat", {method:"POST", body:JSON.stringify(payload)});
@@ -637,8 +886,13 @@ async function loadSpecial(view, payload) {
     }
   } catch (err) {
     if (err.name !== "AbortError" && mine === generation) { showError("reading-error", err.message); $("reading-error").scrollIntoView({block:"center"}); }
-  } finally { if (mine === generation) busy(false); }
+  } finally { if (mine === generation) { pendingDatedGeneration = null; busy(false); } }
 }
+$("date-form").addEventListener("input", () => {
+  if (deleting || (pendingDatedGeneration !== generation && shareSource?.view !== "dday")) return;
+  // A changed date or situation invalidates only its dated result, including a late reply.
+  cancelPending(); busy(false); clearResults(); showError("reading-error", "");
+});
 $("date-form").addEventListener("submit", event => {
   event.preventDefault(); loadSpecial("dday", Object.fromEntries(new FormData(event.currentTarget)));
 });
@@ -649,36 +903,38 @@ $("partner-unknown-time").addEventListener("change", () => {
 $("compat-form").addEventListener("submit", event => {
   event.preventDefault(); if (deleting) return;
   const partner = Object.fromEntries(new FormData(event.currentTarget));
+  partner.birth_leap_month = $("partner-calendar").value === "lunar" && $("partner-leap-month").checked;
   partner.birth_time = $("partner-unknown-time").checked ? "" : $("partner-time").value;
   loadSpecial("compat", {partner});
   event.currentTarget.reset(); $("partner-time").disabled = true;
 });
-const today = new Date(); $("birth-date").max = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
-$("partner-date").max = $("birth-date").max;
+function syncBirthCalendar(prefix) {
+  const lunar = $(prefix + "-calendar").value === "lunar", input = $(prefix + "-date");
+  // Gregorian date controls reject valid lunar dates such as February 30.
+  const entered = input.value;
+  input.type = lunar ? "text" : "date";
+  input.value = entered;
+  if (lunar) {
+    input.removeAttribute("min"); input.removeAttribute("max");
+    input.pattern = "[0-9]{4}-[0-9]{2}-[0-9]{2}"; input.maxLength = 10;
+    input.placeholder = "YYYY-MM-DD";
+  } else {
+    input.removeAttribute("pattern"); input.removeAttribute("maxlength");
+    input.min = "1800-01-01";
+    const today = new Date();
+    input.max = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,"0")}-${String(today.getDate()).padStart(2,"0")}`;
+    $(prefix + "-leap-month").checked = false;
+  }
+  $(prefix + "-leap-label").hidden = !lunar;
+  $(prefix + "-leap-month").disabled = !lunar;
+  $(prefix + "-calendar-note").hidden = !lunar;
+}
+for (const [prefix, form] of [["birth", "birth-form"], ["partner", "compat-form"]]) {
+  $(prefix + "-calendar").addEventListener("change", () => syncBirthCalendar(prefix));
+  // reset fires before the browser restores default values.
+  $(form).addEventListener("reset", () => queueMicrotask(() => syncBirthCalendar(prefix)));
+  syncBirthCalendar(prefix);
+}
+connectBrowserState();
 bootstrap().catch(err => showError("form-error", err.name === "TimeoutError"
   ? err.message : "서비스에 연결하지 못했습니다. 잠시 후 저장을 다시 눌러 주세요."));
-// Typography rule: text that wraps to two or more lines gets 150% leading; single-line text keeps auto.
-// CSS cannot see line counts, so measure each text block at auto leading and tag the wrapped ones.
-const LEADING_SELECTOR = "p, li, h1, h2, h3, label, legend, summary, figcaption, button, .preserve-lines, .kw";
-let leadingFrame = 0;
-function lineCount(el) {
-  const range = document.createRange(); range.selectNodeContents(el);
-  // Boxes that overlap vertically share a line (chips, separators and inline emphasis sit at different tops).
-  let lines = 0, bottom = -Infinity;
-  [...range.getClientRects()].filter(r => r.height).sort((a, b) => a.top - b.top).forEach(r => {
-    if (r.top >= bottom - 1) { lines++; bottom = r.bottom; } else bottom = Math.max(bottom, r.bottom);
-  });
-  return lines;
-}
-function applyLeading() {
-  leadingFrame = 0;
-  const blocks = [...document.querySelectorAll(LEADING_SELECTOR)].filter(el => el.offsetParent || el.getClientRects().length);
-  blocks.forEach(el => el.classList.remove("lh-multi"));          // measure everything at auto leading first
-  const wrapped = blocks.filter(el => lineCount(el) >= 2);
-  wrapped.forEach(el => el.classList.add("lh-multi"));            // leading never changes where lines break
-}
-function scheduleLeading() { if (!leadingFrame) leadingFrame = requestAnimationFrame(applyLeading); }
-new MutationObserver(scheduleLeading).observe(document.body, {subtree:true, childList:true, characterData:true, attributes:true, attributeFilter:["hidden", "open"]});
-addEventListener("resize", scheduleLeading);
-document.fonts.ready.then(scheduleLeading);
-scheduleLeading();

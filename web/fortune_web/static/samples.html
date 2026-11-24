@@ -2,7 +2,9 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#151a2e">
+  <meta name="theme-color" content="#f6f4ed" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111d18" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
   <meta name="description" content="출생정보 없이 가상 인물 '하루'의 완성본 리포트 예시를 읽고 목차·가격을 비교해 보세요.">
   <title>리포트 예시 둘러보기 — Fortune Oracle</title>
   <meta property="og:type" content="website">
@@ -25,33 +27,45 @@
 
   <main>
     <section class="intro" aria-labelledby="page-title">
-      <p class="eyebrow">SAMPLE PREVIEW</p>
       <h1 id="page-title">출생정보 없이, <em>완성본부터</em> 둘러보기</h1>
-      <p class="intro-copy lh-multi">아래 세 리포트는 모두 가상의 성인 인물 <strong>‘하루’</strong>를 위해 만들어진 편집 예시입니다. 실제 출생정보로 계산한 풀이가 아니며, 실제 결과를 단정하지도 않습니다. 목차·분량·어조·가격을 비교해 보고, 마음에 드는 쪽에만 관심을 표시해 주세요.</p>
-      <ul class="intro-notes">
-        <li>모든 본문은 형식을 보여 주는 편집 예시입니다.</li>
-        <li>출생정보나 연락처를 입력하지 않고 읽을 수 있습니다.</li>
-        <li>표시 가격은 검증되지 않은 가설 가격이며, 현재 판매 중인 상품은 아닙니다.</li>
-      </ul>
+      <div class="intro-context">
+        <p class="intro-copy lh-multi">가상의 성인 인물 <strong>‘하루’</strong>를 위해 쓴 리포트 세 편입니다. 목차와 본문을 읽고 어떤 형식이 내게 어울리는지 비교해 보세요. 각 예시 끝의 질문으로 도움이 된 점과 더 필요한 내용을 돌아볼 수 있습니다.</p>
+        <ul class="intro-notes">
+          <li>실제 출생정보로 계산한 풀이가 아닌 편집 예시입니다.</li>
+          <li>출생정보나 연락처를 입력하지 않고 읽을 수 있습니다.</li>
+          <li>표시 가격은 검증되지 않은 가설 가격이며, 현재 판매 중인 상품은 아닙니다.</li>
+        </ul>
+      </div>
+      <nav class="sample-index" aria-label="리포트 예시 바로가기">
+        <a href="#sample-manual"><span>01</span> 내 사용설명서</a>
+        <a href="#sample-conversation"><span>02</span> 대화집</a>
+        <a href="#sample-perspectives"><span>03</span> 네 관점 리포트</a>
+      </nav>
     </section>
 
     <section class="sample-list" id="sample-list" aria-label="리포트 예시 목록">
 
-      <article class="sample-card" data-product="self_manual_v1">
-        <div class="sample-card-top">
-          <span class="sample-symbol" aria-hidden="true">冊</span>
-          <span class="sample-badge">편집 예시</span>
+      <article class="sample-card" data-product="self_manual_v1" id="sample-manual" aria-labelledby="sp-title-self_manual_v1">
+        <div class="sample-summary">
+          <div class="sample-card-top">
+            <span class="sample-number" aria-hidden="true">01</span>
+            <span class="sample-symbol" aria-hidden="true">冊</span>
+            <span class="sample-badge">편집 예시</span>
+          </div>
+          <h2 id="sp-title-self_manual_v1">내 사용설명서</h2>
+          <p class="sample-tagline lh-multi">나를 스스로 소개하는 방법을 네 부분으로 정리한 가이드. 환경, 부담, 도움 요청, 한 장 요약까지 실제 사용할 문장으로 구성했습니다.</p>
         </div>
-        <h2>내 사용설명서</h2>
-        <p class="sample-tagline lh-multi">나를 스스로 소개하는 방법을 네 부분으로 정리한 가이드. 환경, 부담, 도움 요청, 한 장 요약까지 실제 사용할 문장으로 구성했습니다.</p>
-        <ul class="toc-preview" aria-label="목차 예시">
-          <li>1장 · 나를 소개하는 환경과 루틴</li>
-          <li>2장 · 내가 느끼는 부담과 그 신호</li>
-          <li>3장 · 도움을 요청하는 문장 모음</li>
-          <li>4장 · 한 장 요약</li>
-        </ul>
-        <p class="price-line">가설 가격 <strong>9,900원</strong> <span class="price-note">판매 준비 중</span></p>
-        <button type="button" class="sample-open-button" data-sample-open="self_manual_v1">가상 완성본 읽기</button>
+        <div class="sample-outline">
+          <p class="toc-label">이 리포트에 담긴 내용</p>
+          <ul class="toc-preview" aria-label="목차 예시">
+            <li>1장 · 나를 소개하는 환경과 루틴</li>
+            <li>2장 · 내가 느끼는 부담과 그 신호</li>
+            <li>3장 · 도움을 요청하는 문장 모음</li>
+            <li>4장 · 한 장 요약</li>
+          </ul>
+          <p class="price-line">가설 가격 <strong>9,900원</strong> <span class="price-note">판매 준비 중</span></p>
+          <button type="button" class="sample-open-button" data-sample-open="self_manual_v1">가상 완성본 읽기</button>
+        </div>
         <details class="sample-report" id="sp-report-self_manual_v1">
           <summary>‘하루’의 사용설명서 · 목차와 본문 예시</summary>
           <div class="report-body">
@@ -75,32 +89,49 @@
               <blockquote>“바로 답하기보다 정리할 시간이 필요해요. 내일 오전에 말씀드려도 될까요?”</blockquote>
               <p><strong>이번 주 확인</strong> · 이 문장을 써 본 뒤, 편해진 점 하나와 맞지 않았던 점 하나를 적어 보기.</p>
             </div>
+            <section class="report-review" aria-labelledby="sp-review-self_manual_v1">
+              <h3 id="sp-review-self_manual_v1">읽어 보니 어떠셨어요?</h3>
+              <p>방금 읽은 예시를 떠올리며 생각해 보세요.</p>
+              <ol>
+                <li>도움이 된 문장이 있었나요? 어느 장면에서 써 보고 싶나요?</li>
+                <li>‘부담 신호’와 ‘도움 요청’ 중 설명이 잘 와닿지 않는 부분이 있었나요?</li>
+                <li>나만의 사용설명서라면 꼭 들어갔으면 하는 이야기는 무엇인가요?</li>
+              </ol>
+            </section>
             <p class="report-note">이 본문은 형식 예시이며 실제 계산 결과가 아닙니다.</p>
+            <button type="button" class="sample-close-button" data-sample-close="self_manual_v1" hidden>예시 접고 목록으로</button>
           </div>
         </details>
 
         <div class="interest-row">
+          <p class="sample-interest-help" id="sp-help-self_manual_v1">본문을 읽고 성인 확인을 하면 관심을 표시할 수 있어요.</p>
           <label class="check"><input type="checkbox" data-sample-adult="self_manual_v1"> 만 19세 이상이며, 예시가 편집본임을 확인했어요</label>
-          <button type="button" class="sample-interest-button" data-sample-interest="self_manual_v1" disabled>관심 있어요</button>
+          <button type="button" class="sample-interest-button" data-sample-interest="self_manual_v1" aria-describedby="sp-help-self_manual_v1 sp-status-self_manual_v1" disabled>관심 있어요</button>
         </div>
-        <p class="sample-status" data-sample-status="self_manual_v1" role="status" aria-live="polite" aria-atomic="true"></p>
+        <p class="sample-status" id="sp-status-self_manual_v1" data-sample-status="self_manual_v1" role="status" aria-live="polite" aria-atomic="true"></p>
       </article>
 
-      <article class="sample-card" data-product="conversation_guide_v1">
-        <div class="sample-card-top">
-          <span class="sample-symbol" aria-hidden="true">話</span>
-          <span class="sample-badge">편집 예시</span>
+      <article class="sample-card" data-product="conversation_guide_v1" id="sample-conversation" aria-labelledby="sp-title-conversation_guide_v1">
+        <div class="sample-summary">
+          <div class="sample-card-top">
+            <span class="sample-number" aria-hidden="true">02</span>
+            <span class="sample-symbol" aria-hidden="true">話</span>
+            <span class="sample-badge">편집 예시</span>
+          </div>
+          <h2 id="sp-title-conversation_guide_v1">싸우기 전에 읽는 대화집</h2>
+          <p class="sample-tagline lh-multi">긴장이 오르기 전에 꺼낼 확인 질문, 부탁, 거절, 수습의 문장을 상황별로 모았습니다. 상대의 마음을 단정하지 않고, 선택권을 열어 두는 표현으로 구성했습니다.</p>
         </div>
-        <h2>싸우기 전에 읽는 대화집</h2>
-        <p class="sample-tagline lh-multi">긴장이 오르기 전에 꺼낼 확인 질문, 부탁, 거절, 수습의 문장을 상황별로 모았습니다. 상대의 마음을 단정하지 않고, 선택권을 열어 두는 표현으로 구성했습니다.</p>
-        <ul class="toc-preview" aria-label="목차 예시">
-          <li>확인 질문 · “제가 놓친 부분이 있을까요?”</li>
-          <li>부탁 · 범위와 시점을 함께 말하기</li>
-          <li>거절 · “안 되는 것”과 “대안”을 나누기</li>
-          <li>수습 · 다시 이야기할 시간 정하기</li>
-        </ul>
-        <p class="price-line">가설 가격 <strong>12,900원</strong> <span class="price-note">판매 준비 중</span></p>
-        <button type="button" class="sample-open-button" data-sample-open="conversation_guide_v1">가상 완성본 읽기</button>
+        <div class="sample-outline">
+          <p class="toc-label">이 리포트에 담긴 내용</p>
+          <ul class="toc-preview" aria-label="목차 예시">
+            <li>확인 질문 · “제가 놓친 부분이 있을까요?”</li>
+            <li>부탁 · 범위와 시점을 함께 말하기</li>
+            <li>거절 · “안 되는 것”과 “대안”을 나누기</li>
+            <li>수습 · 다시 이야기할 시간 정하기</li>
+          </ul>
+          <p class="price-line">가설 가격 <strong>12,900원</strong> <span class="price-note">판매 준비 중</span></p>
+          <button type="button" class="sample-open-button" data-sample-open="conversation_guide_v1">가상 완성본 읽기</button>
+        </div>
         <details class="sample-report" id="sp-report-conversation_guide_v1">
           <summary>‘하루’의 대화집 · 목차와 본문 예시</summary>
           <div class="report-body">
@@ -120,45 +151,63 @@
             <p class="lh-multi">다시 이야기할 시점은 서로 확인합니다. 성격 탓으로 넘기기보다 내가 한 행동과 바꾸고 싶은 점을 말합니다.</p>
             <blockquote>“아까 네 말을 끝까지 듣지 않고 끊었어. 미안해. 오늘 저녁에 다시 들을 수 있을까? 다른 시간이 편하면 알려 줘.”</blockquote>
             <p class="lh-multi"><strong>하루의 연습</strong> · 위 문장 중 하나를 자기 말투로 바꿔 보기. 상대의 대답을 예상해 정답을 만들기보다, 실제 답을 들은 뒤 다음 문장을 고릅니다.</p>
+            <section class="report-review" aria-labelledby="sp-review-conversation_guide_v1">
+              <h3 id="sp-review-conversation_guide_v1">읽어 보니 어떠셨어요?</h3>
+              <p>방금 읽은 예시를 떠올리며 생각해 보세요.</p>
+              <ol>
+                <li>그대로 말해 보고 싶은 문장은 어느 것이었나요?</li>
+                <li>입에 잘 붙지 않거나 오히려 어색하게 들리는 표현이 있었나요?</li>
+                <li>부탁·거절·수습 말고 어떤 대화 장면이 더 필요했나요?</li>
+              </ol>
+            </section>
             <p class="report-note">이 본문은 형식 예시이며 실제 계산 결과가 아닙니다.</p>
+            <button type="button" class="sample-close-button" data-sample-close="conversation_guide_v1" hidden>예시 접고 목록으로</button>
           </div>
         </details>
 
         <div class="interest-row">
+          <p class="sample-interest-help" id="sp-help-conversation_guide_v1">본문을 읽고 성인 확인을 하면 관심을 표시할 수 있어요.</p>
           <label class="check"><input type="checkbox" data-sample-adult="conversation_guide_v1"> 만 19세 이상이며, 예시가 편집본임을 확인했어요</label>
-          <button type="button" class="sample-interest-button" data-sample-interest="conversation_guide_v1" disabled>관심 있어요</button>
+          <button type="button" class="sample-interest-button" data-sample-interest="conversation_guide_v1" aria-describedby="sp-help-conversation_guide_v1 sp-status-conversation_guide_v1" disabled>관심 있어요</button>
         </div>
-        <p class="sample-status" data-sample-status="conversation_guide_v1" role="status" aria-live="polite" aria-atomic="true"></p>
+        <p class="sample-status" id="sp-status-conversation_guide_v1" data-sample-status="conversation_guide_v1" role="status" aria-live="polite" aria-atomic="true"></p>
       </article>
 
-      <article class="sample-card" data-product="four_perspectives_v1">
-        <div class="sample-card-top">
-          <span class="sample-symbol" aria-hidden="true">視</span>
-          <span class="sample-badge">편집 예시</span>
+      <article class="sample-card" data-product="four_perspectives_v1" id="sample-perspectives" aria-labelledby="sp-title-four_perspectives_v1">
+        <div class="sample-summary">
+          <div class="sample-card-top">
+            <span class="sample-number" aria-hidden="true">03</span>
+            <span class="sample-symbol" aria-hidden="true">視</span>
+            <span class="sample-badge">편집 예시</span>
+          </div>
+          <h2 id="sp-title-four_perspectives_v1">네 관점 교차 리포트</h2>
+          <p class="sample-tagline lh-multi">사주·자미두수·서양 점성술·베딕의 네 관점에서 ‘하루’를 겹쳐 읽는 예시. 관점마다 공통점·차이점·확인 질문·한계를 함께 제시합니다.</p>
         </div>
-        <h2>네 관점 교차 리포트</h2>
-        <p class="sample-tagline lh-multi">사주·자미두수·서양 점성술·베딕의 네 관점에서 ‘하루’를 겹쳐 읽는 예시. 관점마다 공통점·차이점·확인 질문·한계를 함께 제시합니다.</p>
-        <ul class="toc-preview" aria-label="목차 예시">
-          <li>같은 생활 장면을 네 관점으로 읽기</li>
-          <li>겹치는 문장과 서로 다른 제안</li>
-          <li>계산 근거와 해석을 구분하는 법</li>
-          <li>내 경험으로 확인할 질문과 해석의 한계</li>
-        </ul>
-        <p class="price-line">가설 가격 <strong>19,900원</strong> <span class="price-note">판매 준비 중</span></p>
-        <button type="button" class="sample-open-button" data-sample-open="four_perspectives_v1">가상 완성본 읽기</button>
+        <div class="sample-outline">
+          <p class="toc-label">이 리포트에 담긴 내용</p>
+          <ul class="toc-preview" aria-label="목차 예시">
+            <li>같은 생활 장면을 네 관점으로 읽기</li>
+            <li>겹치는 문장과 서로 다른 제안</li>
+            <li>계산 근거와 해석을 구분하는 법</li>
+            <li>내 경험으로 확인할 질문과 해석의 한계</li>
+          </ul>
+          <p class="price-line">가설 가격 <strong>19,900원</strong> <span class="price-note">판매 준비 중</span></p>
+          <button type="button" class="sample-open-button" data-sample-open="four_perspectives_v1">가상 완성본 읽기</button>
+        </div>
         <details class="sample-report" id="sp-report-four_perspectives_v1">
           <summary>‘하루’의 네 관점 리포트 · 목차와 본문 예시</summary>
           <div class="report-body">
             <p class="report-kicker">가상 인물 ‘하루’의 편집 예시 · 계산 풀이 아님</p>
             <p class="lh-multi"><strong>같은 장면</strong> · 새 프로젝트를 맡은 하루는 충분히 준비한 뒤 시작하고 싶지만, 동료는 빨리 초안을 보고 싶어 합니다. 아래 네 문장은 비교 형식을 보여 주기 위해 만든 이야기입니다. 각 체계가 하루를 이렇게 계산했다는 뜻은 아닙니다.</p>
             <h3>관점별 요약</h3>
-            <table class="perspective-table">
-              <thead><tr><th scope="col">관점</th><th scope="col">이 사례의 편집 문장</th><th scope="col">확인할 질문</th></tr></thead>
-              <tbody>
-                <tr><th scope="row">사주</th><td>하루에게는 반복할 수 있는 작은 시작 단위가 도움이 될 수 있다.</td><td>완성 계획 대신 첫 한 쪽만 만들면 시작이 쉬울까?</td></tr>
-                <tr><th scope="row">자미두수</th><td>혼자 준비하는 시간뿐 아니라, 누구에게 무엇을 확인받을지가 중요할 수 있다.</td><td>동료와 초안의 범위를 먼저 정하면 부담이 줄까?</td></tr>
-                <tr><th scope="row">서양</th><td>바로 반응하기보다 생각을 문장으로 정리할 여유가 필요할 수 있다.</td><td>회의 전에 질문을 받았을 때와 즉석에서 받았을 때 무엇이 달랐나?</td></tr>
-                <tr><th scope="row">베딕</th><td>시작과 쉼의 순서를 정해 두는 방식도 살펴볼 수 있다.</td><td>준비 시간을 늘리는 대신 쉬는 시점을 정하면 어떤 변화가 있을까?</td></tr>
+            <table class="perspective-table" role="table">
+              <caption class="sr-only">같은 장면을 네 관점으로 비교한 편집 예시</caption>
+              <thead role="rowgroup"><tr role="row"><th scope="col" role="columnheader">관점</th><th scope="col" role="columnheader">이 사례의 편집 문장</th><th scope="col" role="columnheader">확인할 질문</th></tr></thead>
+              <tbody role="rowgroup">
+                <tr role="row"><th scope="row" role="rowheader">사주</th><td role="cell"><span class="mobile-cell-label" aria-hidden="true">이 사례의 편집 문장</span>하루에게는 반복할 수 있는 작은 시작 단위가 도움이 될 수 있다.</td><td role="cell"><span class="mobile-cell-label" aria-hidden="true">확인할 질문</span>완성 계획 대신 첫 한 쪽만 만들면 시작이 쉬울까?</td></tr>
+                <tr role="row"><th scope="row" role="rowheader">자미두수</th><td role="cell"><span class="mobile-cell-label" aria-hidden="true">이 사례의 편집 문장</span>혼자 준비하는 시간뿐 아니라, 누구에게 무엇을 확인받을지가 중요할 수 있다.</td><td role="cell"><span class="mobile-cell-label" aria-hidden="true">확인할 질문</span>동료와 초안의 범위를 먼저 정하면 부담이 줄까?</td></tr>
+                <tr role="row"><th scope="row" role="rowheader">서양</th><td role="cell"><span class="mobile-cell-label" aria-hidden="true">이 사례의 편집 문장</span>바로 반응하기보다 생각을 문장으로 정리할 여유가 필요할 수 있다.</td><td role="cell"><span class="mobile-cell-label" aria-hidden="true">확인할 질문</span>회의 전에 질문을 받았을 때와 즉석에서 받았을 때 무엇이 달랐나?</td></tr>
+                <tr role="row"><th scope="row" role="rowheader">베딕</th><td role="cell"><span class="mobile-cell-label" aria-hidden="true">이 사례의 편집 문장</span>시작과 쉼의 순서를 정해 두는 방식도 살펴볼 수 있다.</td><td role="cell"><span class="mobile-cell-label" aria-hidden="true">확인할 질문</span>준비 시간을 늘리는 대신 쉬는 시점을 정하면 어떤 변화가 있을까?</td></tr>
               </tbody>
             </table>
             <h3>공통</h3>
@@ -174,15 +223,26 @@
             </ul>
             <h3>한계</h3>
             <p class="lh-multi">네 체계의 개인 리포트는 실제 제공을 준비 중이며, 베딕을 포함한 계산 결과는 이 페이지에서 제공하지 않습니다. 의견이 겹치는 횟수로 정확도나 미래 사건의 확률을 판단할 수 없습니다. 내 경험과 맞지 않는 문장은 채택하지 않아도 됩니다.</p>
+            <section class="report-review" aria-labelledby="sp-review-four_perspectives_v1">
+              <h3 id="sp-review-four_perspectives_v1">읽어 보니 어떠셨어요?</h3>
+              <p>방금 읽은 예시를 떠올리며 생각해 보세요.</p>
+              <ol>
+                <li>네 관점을 나란히 읽어서 도움이 된 대목이 있었나요?</li>
+                <li>관점 사이의 차이가 보였나요, 비슷한 말처럼 느껴졌나요?</li>
+                <li>비교가 더 쉬우려면 어느 부분에 설명이나 근거가 더 필요할까요?</li>
+              </ol>
+            </section>
             <p class="report-note">이 본문은 형식 예시이며 실제 계산 결과가 아닙니다.</p>
+            <button type="button" class="sample-close-button" data-sample-close="four_perspectives_v1" hidden>예시 접고 목록으로</button>
           </div>
         </details>
 
         <div class="interest-row">
+          <p class="sample-interest-help" id="sp-help-four_perspectives_v1">본문을 읽고 성인 확인을 하면 관심을 표시할 수 있어요.</p>
           <label class="check"><input type="checkbox" data-sample-adult="four_perspectives_v1"> 만 19세 이상이며, 예시가 편집본임을 확인했어요</label>
-          <button type="button" class="sample-interest-button" data-sample-interest="four_perspectives_v1" disabled>관심 있어요</button>
+          <button type="button" class="sample-interest-button" data-sample-interest="four_perspectives_v1" aria-describedby="sp-help-four_perspectives_v1 sp-status-four_perspectives_v1" disabled>관심 있어요</button>
         </div>
-        <p class="sample-status" data-sample-status="four_perspectives_v1" role="status" aria-live="polite" aria-atomic="true"></p>
+        <p class="sample-status" id="sp-status-four_perspectives_v1" data-sample-status="four_perspectives_v1" role="status" aria-live="polite" aria-atomic="true"></p>
       </article>
 
     </section>
